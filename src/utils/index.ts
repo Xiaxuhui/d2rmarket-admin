@@ -1,9 +1,12 @@
 import type { RouteLocationNormalized, RouteRecordNormalized } from 'vue-router';
 import type { App, Component } from 'vue';
 
-import { intersectionWith, isEqual, mergeWith, unionWith } from 'lodash-es';
+import { cloneDeep, intersectionWith, isEqual, mergeWith, unionWith } from 'lodash-es';
 import { unref } from 'vue';
 import { isArray, isObject } from '@/utils/is';
+import { RcFile } from 'ant-design-vue/es/vc-upload/interface';
+import { useLabelStore } from '../store/modules/label';
+import { ComponentFormSchemaType } from '../components/Form';
 
 export const noop = () => {};
 
@@ -93,6 +96,41 @@ export function openWindow(
   window.open(url, target, feature.join(','));
 }
 
+const forceFormProps = {
+  autocomplete: 'off',
+};
+/** 往表单或者表格的配置里新增组件类型、渲染逻辑 */
+const addCustomProp = <U>(target: Recordable) => {
+  const cloneTarget = cloneDeep(target);
+  const label = useLabelStore();
+
+  const selectorOptions = {
+    LabelSelector: label.options,
+  };
+
+  if (cloneTarget.formConfig && cloneTarget.formConfig.schemas) {
+    const schemas = cloneTarget.formConfig.schemas as ComponentFormSchemaType[];
+    schemas.forEach((item) => {
+      const selectorName = item.component;
+      if (selectorOptions[selectorName]) {
+        item.component = 'Select';
+        const componentProps = item.componentProps || {};
+        item.componentProps = {
+          options: selectorOptions[selectorName],
+          ...componentProps,
+        };
+      } else {
+        item.componentProps = {
+          ...item.componentProps,
+          ...forceFormProps,
+        };
+      }
+    });
+  }
+
+  return cloneTarget as Partial<U>;
+};
+
 // dynamic use hook props
 export function getDynamicProps<T extends Record<string, unknown>, U>(props: T): Partial<U> {
   const ret: Recordable = {};
@@ -101,7 +139,7 @@ export function getDynamicProps<T extends Record<string, unknown>, U>(props: T):
     ret[key] = unref((props as Recordable)[key]);
   });
 
-  return ret as Partial<U>;
+  return addCustomProp(ret as Partial<U>);
 }
 
 export function getRawRoute(route: RouteLocationNormalized): RouteLocationNormalized {
@@ -144,4 +182,31 @@ export const withInstall = <T extends CustomComponent>(component: T, alias?: str
     }
   };
   return component as WithInstall<T>;
+};
+
+const hex = (buffer: ArrayBufferLike) => {
+  const hexCodes: string[] = [];
+  const view = new DataView(buffer);
+  for (let i = 0; i < view.byteLength; i += 4) {
+    const value = view.getUint32(i);
+    const stringValue = value.toString(16);
+    const padding = '00000000';
+    const paddedValue = (padding + stringValue).slice(-padding.length);
+    hexCodes.push(paddedValue);
+  }
+  return hexCodes.join('');
+};
+
+export const fileToSha256 = (file: RcFile): Promise<string> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const fileResult = reader.result as BufferSource;
+      crypto.subtle.digest('SHA-256', fileResult).then((hash) => {
+        const sha256result = hex(hash);
+        resolve(sha256result);
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  });
 };

@@ -17,7 +17,9 @@ const stateEnum = {
   [STATE_ENUM.END]: '已完结',
 };
 
-export const getFormConfig: () => Partial<FormProps> = () => {
+export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps> = ({ label }) => {
+  console.log(label);
+
   return {
     labelWidth: 100,
     schemas: [
@@ -33,23 +35,13 @@ export const getFormConfig: () => Partial<FormProps> = () => {
       {
         field: `tag`,
         label: `标签：`,
-        component: 'Select',
+        component: 'LabelSelector',
+        componentProps: {
+          defaultValue: +label,
+        },
         colProps: {
           xl: 12,
           xxl: 8,
-        },
-        componentProps: {
-          mode: 'multiple',
-          options: [
-            {
-              label: '言情',
-              value: 1,
-            },
-            {
-              label: '古装',
-              value: 2,
-            },
-          ],
         },
       },
       {
@@ -84,6 +76,26 @@ export const getFormConfig: () => Partial<FormProps> = () => {
       },
     ],
   };
+};
+
+export const getSeriesColumns: () => BasicColumn[] = () => {
+  return [
+    {
+      title: '剧名',
+      dataIndex: 'name',
+      width: 150,
+      ellipsis: true,
+    },
+    {
+      title: '剧描述',
+      dataIndex: 'info',
+    },
+    {
+      title: '设置时间',
+      dataIndex: 'time',
+      width: 150,
+    },
+  ];
 };
 
 export function getBasicColumns(): BasicColumn[] {
@@ -159,5 +171,17 @@ export const getBasicData = async (params) => {
     });
   }
 
+  return arr;
+};
+
+export const getSeriesList = async () => {
+  const arr: any = [];
+  for (let index = 0; index < 40; index++) {
+    arr.push({
+      name: `仙剑奇侠传${index}`,
+      info: '古装神话',
+      time: '2023-12-12',
+    });
+  }
   return arr;
 };

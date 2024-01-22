@@ -1,6 +1,7 @@
 {
   "playlet": "短剧管理",
   "series": "剧集管理",
+  "setSeries": "单剧管理",
   "tag": "标签管理",
   "homePage": "首页管理",
   "charge": "充值方案"

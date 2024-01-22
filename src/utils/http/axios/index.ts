@@ -19,6 +19,7 @@ import { joinTimestamp, formatRequestDate } from './helper';
 import { useUserStoreWithOut } from '@/store/modules/user';
 import { AxiosRetry } from '@/utils/http/axios/axiosRetry';
 import axios from 'axios';
+import { message } from 'ant-design-vue';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
@@ -274,7 +275,42 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
     ),
   );
 }
+
+const createBusinessAxios = () => {
+  const request = axios.create({ baseURL: '/api' });
+  request.interceptors.request.use(
+    function (config) {
+      if (!config.params) {
+        config.params = {};
+      }
+
+      config.params.uid = 1;
+      return config;
+    },
+    function (error) {
+      return Promise.reject(error);
+    },
+  );
+  request.interceptors.response.use(
+    function (response) {
+      if (response.status === 200) {
+        if (response.data.code !== 0) {
+          message.warning(response.data.msg || 'unknow');
+          return Promise.reject(response.data.msg);
+        }
+      }
+      return response;
+    },
+    function (error) {
+      return Promise.reject(error);
+    },
+  );
+  return request;
+};
+
 export const defHttp = createAxios();
+
+export const defBusinessHttp = createBusinessAxios();
 
 // other api url
 // export const otherHttp = createAxios({

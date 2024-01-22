@@ -1,6 +1,4 @@
-export interface UploadApiResult {
-  message: string;
+export interface GetUploadInfoModel {
   code: number;
-  url: string;
-  location: string;
+  data: string;
 }

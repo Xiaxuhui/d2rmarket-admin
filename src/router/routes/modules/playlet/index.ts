@@ -23,6 +23,15 @@ const playlet: AppRouteModule = {
       },
     },
     {
+      path: 'setSeries',
+      name: 'SetSeries',
+      component: () => import('@/views/playlet/series/set.vue'),
+      meta: {
+        hideMenu: true,
+        title: t('routes.playlet.setSeries'),
+      },
+    },
+    {
       path: 'tag',
       name: 'Tag',
       component: () => import('@/views/playlet/tag/index.vue'),
@@ -46,7 +55,7 @@ const playlet: AppRouteModule = {
         title: t('routes.playlet.charge'),
       },
     },
-  ],
+  ] as const,
 };
 
 export default playlet;

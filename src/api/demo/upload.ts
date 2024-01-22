@@ -1,5 +1,5 @@
 import { defBusinessHttp } from '@/utils/http/axios';
-import { GetUploadInfoModel } from './model/uploadModel';
+import { GetUploadInfoModel } from '../sys/model/uploadModel';
 
 enum Api {
   GET_UPLOAD_PATH = '/manage/s3FileUploadPath',

@@ -139,6 +139,8 @@ export interface ComponentProps {
   InputNumber: ExtractPropTypes<(typeof import('ant-design-vue/es/input-number'))['default']>;
   InputCountDown: CustomComponents['InputCountDown'] & ComponentProps['Input'];
   Select: ExtractPropTypes<(typeof import('ant-design-vue/es/select'))['default']>;
+  // 自定义类型
+  LabelSelector: ExtractPropTypes<(typeof import('ant-design-vue/es/select'))['default']>;
   ApiSelect: CustomComponents['ApiSelect'] & ComponentProps['Select'];
   TreeSelect: ExtractPropTypes<(typeof import('ant-design-vue/es/tree-select'))['default']>;
   ApiTree: CustomComponents['ApiTree'] &
