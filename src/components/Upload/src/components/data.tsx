@@ -70,20 +70,22 @@ export function createTableColumns(): FileBasicColumn[] {
     },
   ];
 }
-export function createActionColumn(handleRemove: Function): FileBasicColumn {
+export function createActionColumn(actionFn: (record) => ActionItem[]): FileBasicColumn {
   return {
     width: 120,
     title: t('component.upload.operating'),
     dataIndex: 'action',
     fixed: false,
     customRender: ({ record }) => {
-      const actions: ActionItem[] = [
-        {
-          label: t('component.upload.del'),
-          color: 'error',
-          onClick: handleRemove.bind(null, record),
-        },
-      ];
+      const actions = actionFn(record);
+
+      // ActionItem[] = [
+      //   {
+      //     label: t('component.upload.del'),
+      //     color: 'error',
+      //     onClick: handleRemove.bind(null, record),
+      //   },
+      // ];
       return <TableAction actions={actions} outside={true} />;
     },
   };

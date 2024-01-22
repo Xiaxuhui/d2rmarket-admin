@@ -124,6 +124,7 @@ export interface FormProps {
   submitFunc?: () => Promise<void>;
   transformDateFunc?: (date: any) => string;
   colon?: boolean;
+  isNotRow?: boolean;
 }
 export type RenderOpts = {
   disabled: boolean;

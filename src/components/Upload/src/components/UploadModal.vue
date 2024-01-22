@@ -56,6 +56,7 @@
   import { useUploadType } from '../hooks/useUpload';
   import { useMessage } from '@/hooks/web/useMessage';
   //   types
+  import type { ActionItem } from '@/components/Table';
   import { FileItem, UploadResultStatus } from '../types/typing';
   import { basicProps } from '../props';
   import { createTableColumns, createActionColumn } from './data';
@@ -77,15 +78,17 @@
 
   const emit = defineEmits(['change', 'register', 'delete']);
 
+  const { t } = useI18n();
+
+  const actionsFn = (record) => (props.actionsFn ? props.actionsFn(record) : []) as ActionItem[];
+
   const columns = createTableColumns();
-  const actionColumn = createActionColumn(handleRemove);
+  const actionColumn = createActionColumn(actionsFn);
 
   // 是否正在上传
   const isUploadingRef = ref(false);
   const fileListRef = ref<FileItem[]>([]);
   const { accept, helpText, maxNumber, maxSize } = toRefs(props);
-
-  const { t } = useI18n();
   const [register, { closeModal }] = useModalInner();
 
   const { getStringAccept, getHelpText } = useUploadType({
@@ -160,11 +163,11 @@
   }
 
   // 删除
-  function handleRemove(record: FileItem) {
-    const index = fileListRef.value.findIndex((item) => item.uuid === record.uuid);
-    index !== -1 && fileListRef.value.splice(index, 1);
-    emit('delete', record);
-  }
+  // function handleRemove(record: FileItem) {
+  //   const index = fileListRef.value.findIndex((item) => item.uuid === record.uuid);
+  //   index !== -1 && fileListRef.value.splice(index, 1);
+  //   emit('delete', record);
+  // }
 
   async function uploadApiByItem(item: FileItem) {
     const { api } = props;
@@ -245,7 +248,7 @@
     for (const item of fileListRef.value) {
       const { status, response } = item;
       if (status === UploadResultStatus.SUCCESS && response) {
-        fileList.push(response.url);
+        fileList.push(response.location);
       }
     }
     // 存在一个上传成功的即可保存

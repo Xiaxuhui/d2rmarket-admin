@@ -6,7 +6,7 @@
     :model="formModel"
     @keypress.enter="handleEnterPress"
   >
-    <Row v-bind="getRow">
+    <Component :is="getLayout ? 'div' : Row" v-bind="getRow">
       <slot name="formHeader"></slot>
       <template v-for="schema in getSchema" :key="schema.field">
         <FormItem
@@ -34,7 +34,7 @@
         </template>
       </FormAction>
       <slot name="formFooter"></slot>
-    </Row>
+    </Component>
   </Form>
 </template>
 <script lang="ts" setup>
@@ -118,6 +118,11 @@
       style: baseRowStyle,
       ...rowProps,
     };
+  });
+
+  const getLayout = computed(() => {
+    const { isNotRow } = unref(getProps);
+    return isNotRow;
   });
 
   const getBindValue = computed(() => ({ ...attrs, ...props, ...unref(getProps) }) as AntFormProps);

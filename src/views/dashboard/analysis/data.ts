@@ -1,43 +1,78 @@
 export interface GrowCardItem {
-  icon: string;
-  title: string;
-  value: number;
-  total: number;
-  color: string;
-  action: string;
+  icon?: string;
+  title?: string;
+  value?: number;
+  total?: number;
+  color?: string;
+  action?: string;
+  prefix?: string;
+  actionFn?(): void;
 }
 
-export const growCardList: GrowCardItem[] = [
+export const getGrowCardList: () => GrowCardItem[] = () => [
   {
-    title: '访问数',
-    icon: 'visit-count|svg',
+    title: '点击数',
+    icon: 'click-volume|svg',
     value: 2000,
-    total: 120000,
-    color: 'green',
-    action: '月',
+    color: 'blue',
+    action: '日',
   },
   {
-    title: '成交额',
+    title: '新增用户',
+    icon: 'user-add|svg',
+    value: 20000,
+    color: 'blue',
+    action: '日',
+  },
+  {
+    title: '新增充值用户',
+    icon: 'charge|svg',
+    value: 8000,
+    color: 'blue',
+    action: '日',
+  },
+  {
+    title: '充值用户',
+    icon: 'charge-user|svg',
+    value: 5000,
+    color: 'blue',
+    action: '日',
+  },
+  {
+    title: '消费金豆',
+    icon: 'gold-bean|svg',
+    value: 2000,
+    color: 'blue',
+    action: '日',
+  },
+  {
+    title: '我的余额',
+    icon: 'cash|svg',
+    value: 20000,
+    actionFn() {
+      console.log('提现');
+    },
+  },
+  {
+    title: 'VIP数量',
+    icon: 'vip|svg',
+    value: 8000,
+  },
+  {
+    title: '下属分销商数',
+    icon: 'salesman|svg',
+    value: 5000,
+  },
+  {
+    title: '投流任务数',
+    icon: 'task|svg',
+    value: 2000,
+  },
+  {
+    title: '我的剧集',
     icon: 'total-sales|svg',
     value: 20000,
-    total: 500000,
-    color: 'blue',
-    action: '月',
   },
-  {
-    title: '下载数',
-    icon: 'download-count|svg',
-    value: 8000,
-    total: 120000,
-    color: 'orange',
-    action: '周',
-  },
-  {
-    title: '成交数',
-    icon: 'transaction|svg',
-    value: 5000,
-    total: 50000,
-    color: 'purple',
-    action: '年',
-  },
+  {},
+  {},
 ];

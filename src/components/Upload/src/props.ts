@@ -1,5 +1,6 @@
 import type { PropType } from 'vue';
 import { FileBasicColumn } from './types/typing';
+import type { ActionItem } from '@/components/Table';
 
 import type { Options } from 'sortablejs';
 
@@ -38,6 +39,10 @@ export const basicProps = {
   accept: {
     type: Array as PropType<string[]>,
     default: () => [],
+  },
+  actionsFn: {
+    type: Function as PropType<(record: any) => ActionItem[]>,
+    default: null,
   },
   multiple: {
     type: Boolean as PropType<boolean>,

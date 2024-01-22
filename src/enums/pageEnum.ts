@@ -3,6 +3,9 @@ export enum PageEnum {
   BASE_LOGIN = '/login',
   // basic home path
   BASE_HOME = '/dashboard',
+  // distributor
+  DISTRIBUTOR_LIST = 'distributor',
+  DISTRIBUTOR_EDIT = 'editDistributor',
   // error page path
   ERROR_PAGE = '/exception',
   // error log page path

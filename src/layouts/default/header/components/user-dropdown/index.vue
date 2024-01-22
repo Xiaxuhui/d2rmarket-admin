@@ -71,6 +71,7 @@
   const { prefixCls } = useDesign('header-user-dropdown');
   const { t } = useI18n();
   const { getShowDoc, getUseLockPage, getShowApi } = useHeaderSetting();
+
   const userStore = useUserStore();
 
   const getUserInfo = computed(() => {

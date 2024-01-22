@@ -16,6 +16,7 @@ import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic';
 import { isArray } from '@/utils/is';
 import { h } from 'vue';
+import { Persistent } from '@/utils/cache/persistent';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -150,6 +151,7 @@ export const useUserStore = defineStore({
       this.setToken(undefined);
       this.setSessionTimeout(false);
       this.setUserInfo(null);
+      Persistent.clearAll();
       goLogin && router.push(PageEnum.BASE_LOGIN);
     },
 

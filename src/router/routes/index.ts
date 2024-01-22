@@ -7,7 +7,17 @@ import { PageEnum } from '@/enums/pageEnum';
 import { t } from '@/hooks/web/useI18n';
 
 // import.meta.glob() 直接引入所有的模块 Vite 独有的功能
-const modules = import.meta.glob('./modules/**/*.ts', { eager: true });
+const modules = import.meta.glob(
+  [
+    './modules/board/index.ts',
+    './modules/playlet/index.ts',
+    './modules/sales/index.ts',
+    './modules/dashboard.ts',
+    './modules/demo/comp.ts',
+  ],
+  { eager: true },
+); // './modules/**/*.ts'
+
 const routeModuleList: AppRouteModule[] = [];
 
 // 加入到路由集合中
