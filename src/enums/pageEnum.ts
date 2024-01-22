@@ -6,6 +6,7 @@ export enum PageEnum {
   // distributor
   DISTRIBUTOR_LIST = 'distributor',
   DISTRIBUTOR_EDIT = 'editDistributor',
+  ADD_PROMOTE = 'addPromote',
   // error page path
   ERROR_PAGE = '/exception',
   // error log page path
