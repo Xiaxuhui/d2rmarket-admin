@@ -1,18 +1,17 @@
 <template>
   <div class="p-4">
     <BasicTable
+      @register="register"
       title="标签管理"
       :columns="columns"
       :dataSource="data"
       :loading="state.loading"
       :pagination="state.pagination"
-      :row-selection="{
-        onChange: onSelectChange,
-      }"
+      :show-selection-bar="false"
+      :before-edit-submit="beforeEditSubmit"
     >
       <template #toolbar>
         <a-button type="primary" @click="addTag">添加</a-button>
-        <a-button type="primary" danger @click="batchDelete">批量删除</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -20,17 +19,15 @@
             stopButtonPropagation
             :actions="[
               {
-                label: '编辑',
-                icon: 'fe:edit',
-                onClick() {
-                  editTag(record.id);
-                },
-              },
-              {
                 label: '删除',
                 icon: 'ic:outline-delete-outline',
-                onClick() {
-                  deleteTag(record.id);
+                color: 'error',
+                popConfirm: {
+                  title: '是否确认删除',
+                  placement: 'left',
+                  confirm: () => {
+                    deleteTag(record);
+                  },
                 },
               },
               {
@@ -46,12 +43,21 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { reactive } from 'vue';
-  import { BasicTable, TableAction } from '@/components/Table';
-  import { getBasicColumns, getBasicData } from './tableData';
+  import { reactive, toRefs } from 'vue';
+  import { BasicTable, TableAction, useTable } from '@/components/Table';
+  import { getBasicColumns } from './tableData';
+  import { useLabelStore } from '../../../store/modules/label';
+  import { LabelModel } from '../../../api/sys/model/labelModel';
+
+  const [register, { insertTableDataRecord, deleteTableDataRecord, findTableDataRecord }] =
+    useTable({
+      showIndexColumn: false,
+    });
+  const labelStore = useLabelStore();
+  const { list, loading, adding } = toRefs(labelStore);
 
   const state = reactive({
-    loading: false,
+    loading: loading.value || adding.value,
     pagination: {
       pageSize: 20,
     },
@@ -59,23 +65,28 @@
   });
 
   const columns = getBasicColumns();
-  const data = getBasicData();
+  const data = list;
 
-  const onSelectChange = (ids) => {
-    console.log(ids);
-    state.selectedRowKeys = ids;
+  const addTag = () => {
+    const newTagName = '新标签名称';
+    labelStore.addLabel(newTagName).then(() => {
+      insertTableDataRecord({ name: newTagName, w: 1 }, 0);
+    });
   };
 
-  const addTag = () => {};
-
-  const editTag = (id) => {
-    console.log(id);
+  const beforeEditSubmit: BeforeEditSubmit = async ({ record }) => {
+    const row = findTableDataRecord(record.key) as LabelModel;
+    try {
+      await labelStore.updatelabel({ id: row.id, name: row.name, w: row.w });
+      return Promise.resolve(true);
+    } catch (error) {
+      return Promise.resolve(false);
+    }
   };
-  const deleteTag = (id) => {
-    console.log(id);
-  };
 
-  const batchDelete = () => {
-    console.log('selectedRowKeys', state.selectedRowKeys);
+  const deleteTag = ({ id, key }: Recordable) => {
+    labelStore.removeLabel(id).then(() => {
+      deleteTableDataRecord(key);
+    });
   };
 </script>

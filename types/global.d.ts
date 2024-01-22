@@ -89,6 +89,13 @@ declare global {
       [elem: string]: any;
     }
   }
+
+  type BeforeEditSubmit = (data: {
+    record: Recordable;
+    index: number;
+    key: Key;
+    value: any;
+  }) => Promise<any>;
 }
 
 declare module 'vue' {

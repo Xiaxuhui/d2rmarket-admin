@@ -5,8 +5,18 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '标签名',
       dataIndex: 'name',
-      width: 300,
+      edit: true,
+      editComponent: 'Input',
+      editComponentProps: {
+        placeholder: '请输入新的标签名称',
+      },
     },
+    // {
+    //   title: '权重',
+    //   dataIndex: 'w',
+    //   edit: true,
+    //   editComponent: 'InputNumber',
+    // },
     {
       title: '操作',
       width: 300,

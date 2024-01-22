@@ -1,7 +1,9 @@
 import { defineApplicationConfig } from '@vben/vite-config';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineApplicationConfig({
   overrides: {
+    plugins: [nodePolyfills()],
     optimizeDeps: {
       include: [
         'echarts/core',
