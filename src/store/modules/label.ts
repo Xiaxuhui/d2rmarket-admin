@@ -54,7 +54,14 @@ export const useLabelStore = defineStore({
       }
     },
     async updatelabel(label: LabelModel) {
-      return updateLabel(label);
+      try {
+        await updateLabel(label);
+        const index = this.list.findIndex((item) => item.id === label.id);
+        this.list[index] = { ...this.list[index], ...label };
+      } catch (error) {
+        console.log(error);
+        //
+      }
     },
   },
 });
