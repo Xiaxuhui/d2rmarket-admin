@@ -3,5 +3,6 @@
   "distributor": "分销商管理",
   "promote": "投放管理",
   "withdraw": "提现核销",
-  "editDistributor": "编辑分销商"
+  "editDistributor": "编辑分销商",
+  "addPromote": "添加任务"
 }
