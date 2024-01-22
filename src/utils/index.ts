@@ -4,6 +4,7 @@ import type { App, Component } from 'vue';
 import { intersectionWith, isEqual, mergeWith, unionWith } from 'lodash-es';
 import { unref } from 'vue';
 import { isArray, isObject } from '@/utils/is';
+import { RcFile } from 'ant-design-vue/es/vc-upload/interface';
 
 export const noop = () => {};
 
@@ -144,4 +145,31 @@ export const withInstall = <T extends CustomComponent>(component: T, alias?: str
     }
   };
   return component as WithInstall<T>;
+};
+
+const hex = (buffer: ArrayBufferLike) => {
+  const hexCodes: string[] = [];
+  const view = new DataView(buffer);
+  for (let i = 0; i < view.byteLength; i += 4) {
+    const value = view.getUint32(i);
+    const stringValue = value.toString(16);
+    const padding = '00000000';
+    const paddedValue = (padding + stringValue).slice(-padding.length);
+    hexCodes.push(paddedValue);
+  }
+  return hexCodes.join('');
+};
+
+export const fileToSha256 = (file: RcFile): Promise<string> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const fileResult = reader.result as BufferSource;
+      crypto.subtle.digest('SHA-256', fileResult).then((hash) => {
+        const sha256result = hex(hash);
+        resolve(sha256result);
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  });
 };

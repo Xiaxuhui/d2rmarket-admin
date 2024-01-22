@@ -87,6 +87,7 @@
     "echarts": "^5.4.3",
     "exceljs": "^4.4.0",
     "lodash-es": "^4.17.21",
+    "mime-types": "^2.1.35",
     "mockjs": "^1.1.0",
     "nprogress": "^0.2.0",
     "path-to-regexp": "^6.2.1",

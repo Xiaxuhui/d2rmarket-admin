@@ -30,6 +30,13 @@ export default defineApplicationConfig({
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/upload`), ''),
         },
+        '/api': {
+          // 朝宇
+          target: 'http://192.168.50.193:9290',
+          changeOrigin: true,
+          ws: true,
+          rewrite: (path) => path.replace(new RegExp(`^/api`), ''),
+        },
       },
       warmup: {
         clientFiles: ['./index.html', './src/{views,components}/*'],

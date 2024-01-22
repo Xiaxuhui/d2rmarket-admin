@@ -274,7 +274,24 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
     ),
   );
 }
+
+const createBusinessAxios = () => {
+  const request = axios.create({ baseURL: '/api' });
+  request.interceptors.request.use(
+    function (config) {
+      config.params.uid = 1;
+      return config;
+    },
+    function (error) {
+      return Promise.reject(error);
+    },
+  );
+  return request;
+};
+
 export const defHttp = createAxios();
+
+export const defBusinessHttp = createBusinessAxios();
 
 // other api url
 // export const otherHttp = createAxios({
