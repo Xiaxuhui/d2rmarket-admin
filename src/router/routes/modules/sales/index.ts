@@ -32,6 +32,15 @@ const playlet: AppRouteModule = {
       },
     },
     {
+      path: 'addPromote',
+      name: 'addPromote',
+      component: () => import('@/views/sales/promote/add.vue'),
+      meta: {
+        title: t('routes.sales.addPromote'),
+        hideMenu: true,
+      },
+    },
+    {
       path: 'promote',
       name: 'Promote',
       component: () => import('@/views/sales/promote/index.vue'),
