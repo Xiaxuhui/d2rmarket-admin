@@ -1,23 +1,10 @@
-import { UploadApiResult } from './model/uploadModel';
-import { defHttp } from '@/utils/http/axios';
-import { UploadFileParams } from '#/axios';
-import { useGlobSetting } from '@/hooks/setting';
-import { AxiosProgressEvent } from 'axios';
+import { defBusinessHttp } from '@/utils/http/axios';
+import { GetUploadInfoModel } from './model/uploadModel';
 
-const { uploadUrl = '' } = useGlobSetting();
-
-/**
- * @description: Upload interface
- */
-export function uploadApi(
-  params: UploadFileParams,
-  onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
-) {
-  return defHttp.uploadFile<UploadApiResult>(
-    {
-      url: uploadUrl,
-      onUploadProgress,
-    },
-    params,
-  );
+enum Api {
+  GET_UPLOAD_PATH = '/manage/s3FileUploadPath',
 }
+
+export const getFileUploadAPI = (params: { sha256: string; size: number; type: number }) => {
+  return defBusinessHttp.get<GetUploadInfoModel>(Api.GET_UPLOAD_PATH, { params });
+};

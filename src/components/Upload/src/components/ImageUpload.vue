@@ -36,7 +36,7 @@
   import { uploadContainerProps } from '../props';
   import { isImgTypeByName } from '../helper';
   import { UploadResultStatus } from '@/components/Upload/src/types/typing';
-  import { getFileUploadAPI } from '@/api/demo/upload';
+  import { getFileUploadAPI } from '@/api/sys/upload';
   import { fileToSha256 } from '../../../../utils/index';
   import { RcFile } from 'ant-design-vue/es/vc-upload/interface';
   import mime from 'mime-types';
