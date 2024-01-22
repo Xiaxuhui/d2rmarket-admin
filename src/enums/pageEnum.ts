@@ -3,6 +3,8 @@ export enum PageEnum {
   BASE_LOGIN = '/login',
   // basic home path
   BASE_HOME = '/dashboard',
+  // playlet series
+  SET_SERIES = 'setSeries',
   // distributor
   DISTRIBUTOR_LIST = 'distributor',
   DISTRIBUTOR_EDIT = 'editDistributor',

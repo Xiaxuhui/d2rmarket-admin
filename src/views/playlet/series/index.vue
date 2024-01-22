@@ -1,7 +1,7 @@
 <template>
   <BasicTable @register="registerTable">
     <template #toolbar>
-      <a-button type="primary" @click="addSeries"> 添加 </a-button>
+      <a-button type="primary" @click="setSeries()"> 添加 </a-button>
       <a-button type="primary" @click="batchListing"> 批量上架 </a-button>
       <a-button type="primary" @click="bathDelist"> 批量下架 </a-button>
     </template>
@@ -14,7 +14,7 @@
               label: '编辑',
               icon: 'fe:edit',
               onClick() {
-                edit(record.id);
+                setSeries(record.id);
               },
             },
             {
@@ -37,10 +37,15 @@
     </template>
   </BasicTable>
 </template>
+
 <script lang="ts" setup>
   import { reactive } from 'vue';
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { getBasicColumns, getBasicData, getFormConfig } from './tableData';
+  import { useGo } from '@/hooks/web/usePage';
+  import { PageEnum } from '@/enums/pageEnum';
+
+  const go = useGo();
 
   const state = reactive<{
     selectedRowKeys: any;
@@ -73,7 +78,14 @@
     pagination: { pageSize: 20 },
   });
 
-  const addSeries = () => {};
+  const setSeries = (id?: string) => {
+    go({
+      path: PageEnum.SET_SERIES,
+      query: {
+        id,
+      },
+    });
+  };
 
   const batchListing = () => {
     console.log('selectedRowKeys', state.selectedRowKeys);
@@ -81,10 +93,6 @@
 
   const bathDelist = () => {
     console.log('selectedRowKeys', state.selectedRowKeys);
-  };
-
-  const edit = (id) => {
-    console.log('id', id);
   };
 
   const deleteSeries = (id) => {
