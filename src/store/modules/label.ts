@@ -15,6 +15,16 @@ export const useLabelStore = defineStore({
     loading: false,
     adding: false,
   }),
+  getters: {
+    options(state) {
+      return state.list.map((item) => {
+        return {
+          label: item.name,
+          value: item.id,
+        };
+      });
+    },
+  },
   actions: {
     async loadLabel() {
       this.loading = true;

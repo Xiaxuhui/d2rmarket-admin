@@ -17,7 +17,9 @@ const stateEnum = {
   [STATE_ENUM.END]: '已完结',
 };
 
-export const getFormConfig: () => Partial<FormProps> = () => {
+export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps> = ({ label }) => {
+  console.log(label);
+
   return {
     labelWidth: 100,
     schemas: [
@@ -33,23 +35,13 @@ export const getFormConfig: () => Partial<FormProps> = () => {
       {
         field: `tag`,
         label: `标签：`,
-        component: 'Select',
+        component: 'LabelSelector',
+        componentProps: {
+          defaultValue: +label,
+        },
         colProps: {
           xl: 12,
           xxl: 8,
-        },
-        componentProps: {
-          mode: 'multiple',
-          options: [
-            {
-              label: '言情',
-              value: 1,
-            },
-            {
-              label: '古装',
-              value: 2,
-            },
-          ],
         },
       },
       {

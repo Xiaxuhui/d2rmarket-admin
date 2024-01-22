@@ -44,8 +44,10 @@
   import { getBasicColumns, getBasicData, getFormConfig } from './tableData';
   import { useGo } from '@/hooks/web/usePage';
   import { PageEnum } from '@/enums/pageEnum';
+  import { useRoute } from 'vue-router';
 
   const go = useGo();
+  const { label } = useRoute().query;
 
   const state = reactive<{
     selectedRowKeys: any;
@@ -65,7 +67,7 @@
     api: getBasicData,
     columns: getBasicColumns(),
     useSearchForm: true,
-    formConfig: getFormConfig(),
+    formConfig: getFormConfig({ label: (label as string) || '' }),
     showTableSetting: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,

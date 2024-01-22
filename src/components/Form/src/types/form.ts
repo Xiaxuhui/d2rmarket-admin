@@ -235,7 +235,7 @@ export interface SlotFormSchema extends BaseFormSchema {
   slot: string;
 }
 
-type ComponentFormSchemaType<T extends ComponentType = ComponentType> = T extends any
+export type ComponentFormSchemaType<T extends ComponentType = ComponentType> = T extends any
   ? ComponentFormSchema<T>
   : never;
 

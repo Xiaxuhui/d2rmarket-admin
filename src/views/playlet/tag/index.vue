@@ -33,7 +33,14 @@
               {
                 label: '相关的剧',
                 icon: 'fluent-mdl2:chart-series',
-                onClick() {},
+                onClick() {
+                  go({
+                    path: PageEnum.SERIES,
+                    query: {
+                      label: record.id,
+                    },
+                  });
+                },
               },
             ]"
           />
@@ -48,6 +55,8 @@
   import { getBasicColumns } from './tableData';
   import { useLabelStore } from '../../../store/modules/label';
   import { LabelModel } from '../../../api/sys/model/labelModel';
+  import { useGo } from '../../../hooks/web/usePage';
+  import { PageEnum } from '../../../enums/pageEnum';
 
   const [register, { insertTableDataRecord, deleteTableDataRecord, findTableDataRecord }] =
     useTable({
@@ -55,6 +64,7 @@
     });
   const labelStore = useLabelStore();
   const { list, loading, adding } = toRefs(labelStore);
+  const go = useGo();
 
   const state = reactive({
     loading: loading.value || adding.value,
