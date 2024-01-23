@@ -97,7 +97,7 @@ declare global {
     value: any;
   }) => Promise<any>;
 
-  type PagegationType = { page: number; pageSize: number };
+  type PagegationType<T = any> = { page: number; pageSize: number } & T;
 }
 
 declare module 'vue' {

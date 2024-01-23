@@ -89,6 +89,9 @@
       onChange: onSelectChange,
     },
     showSelectionBar: true,
+    pagination: {
+      pageSize: 20,
+    },
   });
 
   const setSeries = (id?: string) => {
