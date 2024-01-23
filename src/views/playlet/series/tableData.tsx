@@ -156,16 +156,22 @@ export function getBasicColumns(): BasicColumn[] {
 }
 
 export function getDiversityColumns(): BasicColumn[] {
+  const stateMap = {
+    '-1': '删除',
+    0: '异常',
+    10: '等待中',
+    5: '正常',
+    200: '可公开',
+    300: '已完成',
+  };
+
   return [
     {
       title: '片名',
-      dataIndex: 'id',
+      dataIndex: 'title',
       fixed: 'left',
-    },
-    {
-      title: '视频地址',
-      dataIndex: 'info',
-      ellipsis: true,
+      edit: true,
+      editComponent: 'Input',
     },
     {
       title: '小程序地址',
@@ -173,7 +179,12 @@ export function getDiversityColumns(): BasicColumn[] {
     },
     {
       title: '是否推荐',
-      dataIndex: 'end',
+      dataIndex: 'f',
+      edit: true,
+      editComponent: 'Switch',
+      customRender() {
+        return '是';
+      },
     },
     {
       title: '金豆价格',
@@ -186,7 +197,14 @@ export function getDiversityColumns(): BasicColumn[] {
     },
     {
       title: '状态',
-      dataIndex: 'weight',
+      dataIndex: 'state',
+      customRender({ value }) {
+        if (stateMap[value]) {
+          return stateMap[value];
+        } else {
+          return '未知的状态：' + value;
+        }
+      },
     },
     {
       title: '操作',

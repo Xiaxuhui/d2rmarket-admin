@@ -26,3 +26,65 @@ export interface Serie {
     totalRecords: number;
   };
 }
+
+export interface SerieDetail {
+  code: number;
+  data: {
+    id: number;
+    uid: number;
+    hotLevel: number;
+    type: number;
+    state: number;
+    updateState: number;
+    title: string;
+    picture: string;
+    picAnnexes: {
+      state: number;
+      language: number;
+      type: number;
+      data: {
+        fileName: string;
+        url: string;
+      };
+    }[];
+    meta: string;
+    language: 0;
+    parentBlog: 0;
+    createdTime: 1705642372918;
+    updatedTime: 1705656772916;
+    subBlogs: {
+      id: number;
+      uid: number;
+      hotLevel: number;
+      type: number;
+      state: number;
+      title: string;
+      picture: string;
+      picAnnexes: {
+        state: number;
+        language: number;
+        type: number;
+        data: {
+          fileName: string;
+          url: string;
+        };
+      }[];
+      meta: string;
+      metaAnnexes: {
+        state: number;
+        language: number;
+        type: number;
+        data: {
+          fileName: string;
+          url: string;
+        };
+      }[];
+      language: number;
+      parentBlog: number;
+      createdTime: number;
+      updatedTime: number;
+      isAllowed: number;
+      price: number;
+    }[];
+  };
+}
