@@ -1,6 +1,7 @@
 import { BasicColumn, FormProps } from '@/components/Table';
 import { SelectValue } from 'ant-design-vue/es/select';
 import { tv } from 'tailwind-variants';
+import * as api from '@/api/sys/series';
 
 enum STATE_ENUM {
   END = 10,
@@ -106,8 +107,8 @@ export function getBasicColumns(): BasicColumn[] {
       width: 200,
     },
     {
-      title: '主剧信息',
-      dataIndex: 'info',
+      title: '标题',
+      dataIndex: 'title',
       ellipsis: true,
     },
     {
@@ -194,23 +195,9 @@ export function getDiversityColumns(): BasicColumn[] {
   ];
 }
 
-export const getBasicData = async (params) => {
-  console.log('params', params);
-  const arr: any = [];
-  for (let index = 0; index < 40; index++) {
-    arr.push({
-      id: `${index}`,
-      info: '这是一条主剧信息的测试文案，这是一条主剧信息的测试文案，这是一条主剧信息的测试文案',
-      num: 10,
-      end: 9,
-      state: 10,
-      link: 'https://www.google.com',
-      weight: index,
-      producer: '半次元出品',
-    });
-  }
-
-  return arr;
+export const getBasicData = async (params: PagegationType) => {
+  const { data } = await api.getSeriesList(params);
+  return data.data.list;
 };
 
 export const getSeriesList = async () => {

@@ -46,10 +46,11 @@
 <script lang="ts" setup>
   import { reactive } from 'vue';
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getBasicColumns, getBasicData, getFormConfig } from './tableData';
+  import { getBasicColumns, getFormConfig } from './tableData';
   import { useGo } from '@/hooks/web/usePage';
   import { PageEnum } from '@/enums/pageEnum';
   import { useRoute } from 'vue-router';
+  import * as api from '@/api/sys/series';
 
   const go = useGo();
   const { label } = useRoute().query;
@@ -69,7 +70,13 @@
 
   const [registerTable] = useTable({
     title: '剧集管理',
-    api: getBasicData,
+    api: async (params: PagegationType) => {
+      const { data } = await api.getSeriesList(params);
+      return {
+        items: data.data.list,
+        total: data.data.totalRecords,
+      };
+    },
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getFormConfig({ label: (label as string) || '' }),
@@ -81,8 +88,7 @@
       type: 'checkbox',
       onChange: onSelectChange,
     },
-    showSelectionBar: true, // 显示多选状态栏
-    pagination: { pageSize: 20 },
+    showSelectionBar: true,
   });
 
   const setSeries = (id?: string) => {

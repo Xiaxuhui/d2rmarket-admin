@@ -96,6 +96,8 @@ declare global {
     key: Key;
     value: any;
   }) => Promise<any>;
+
+  type PagegationType = { page: number; pageSize: number };
 }
 
 declare module 'vue' {

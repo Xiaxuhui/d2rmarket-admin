@@ -30,7 +30,23 @@
     {
       field: 'field1',
       component: 'Input',
-      label: '小程序地址：',
+      label: '标题',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'field1',
+      component: 'InputTextArea',
+      label: '简介',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'field1',
+      component: 'Input',
+      label: '小程序地址',
       colProps: {
         span: 8,
       },
@@ -38,7 +54,7 @@
     {
       field: 'field2',
       component: 'Switch',
-      label: '上架：',
+      label: '上架',
       colProps: {
         span: 8,
       },
@@ -46,7 +62,7 @@
     {
       field: 'field2',
       component: 'Switch',
-      label: '已完结：',
+      label: '已完结',
       colProps: {
         span: 8,
       },
@@ -54,7 +70,7 @@
     {
       field: 'field2',
       component: 'InputNumber',
-      label: '总集数：',
+      label: '总集数',
       colProps: {
         span: 8,
       },
@@ -62,7 +78,7 @@
     {
       field: 'field2',
       component: 'Input',
-      label: '片方：',
+      label: '片方',
       colProps: {
         span: 8,
       },
@@ -70,7 +86,7 @@
     {
       field: 'field2',
       component: 'Input',
-      label: '片方分成：',
+      label: '片方分成',
       colProps: {
         span: 8,
       },
@@ -78,7 +94,7 @@
     {
       field: 'field1',
       component: 'ImageUpload',
-      label: '封面：',
+      label: '封面',
       colProps: {
         span: 8,
       },
@@ -86,7 +102,7 @@
     {
       field: 'field1',
       component: 'Select',
-      label: '分类：',
+      label: '分类',
       colProps: {
         span: 8,
       },
@@ -94,7 +110,7 @@
     {
       field: 'field1',
       component: 'Select',
-      label: '标签：',
+      label: '标签',
       colProps: {
         span: 8,
       },
@@ -102,7 +118,7 @@
     {
       field: 'field1',
       component: 'InputNumber',
-      label: '权重：',
+      label: '权重',
       colProps: {
         span: 8,
       },
@@ -110,7 +126,7 @@
     {
       field: 'field1',
       component: 'InputNumber',
-      label: '单集价：',
+      label: '单集价',
       colProps: {
         span: 8,
       },
@@ -118,7 +134,7 @@
     {
       field: 'field1',
       component: 'InputNumber',
-      label: '总价：',
+      label: '总价',
       colProps: {
         span: 8,
       },
