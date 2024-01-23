@@ -6,6 +6,7 @@ export enum PageEnum {
   // playlet series
   SERIES = 'series',
   SET_SERIES = 'setSeries',
+  DIVERSITY = 'diversity',
   // distributor
   DISTRIBUTOR_LIST = 'distributor',
   DISTRIBUTOR_EDIT = 'editDistributor',

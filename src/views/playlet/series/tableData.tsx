@@ -1,4 +1,5 @@
 import { BasicColumn, FormProps } from '@/components/Table';
+import { SelectValue } from 'ant-design-vue/es/select';
 import { tv } from 'tailwind-variants';
 
 enum STATE_ENUM {
@@ -18,8 +19,6 @@ const stateEnum = {
 };
 
 export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps> = ({ label }) => {
-  console.log(label);
-
   return {
     labelWidth: 100,
     schemas: [
@@ -37,7 +36,7 @@ export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps>
         label: `标签：`,
         component: 'LabelSelector',
         componentProps: {
-          defaultValue: +label,
+          defaultValue: (label ? +label : null) as SelectValue,
         },
         colProps: {
           xl: 12,
@@ -150,6 +149,46 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '操作',
       width: 300,
+      dataIndex: 'operation',
+    },
+  ];
+}
+
+export function getDiversityColumns(): BasicColumn[] {
+  return [
+    {
+      title: '片名',
+      dataIndex: 'id',
+      fixed: 'left',
+    },
+    {
+      title: '视频地址',
+      dataIndex: 'info',
+      ellipsis: true,
+    },
+    {
+      title: '小程序地址',
+      dataIndex: 'num',
+    },
+    {
+      title: '是否推荐',
+      dataIndex: 'end',
+    },
+    {
+      title: '金豆价格',
+      width: 100,
+      dataIndex: 'state',
+    },
+    {
+      title: '点赞',
+      dataIndex: 'link',
+    },
+    {
+      title: '状态',
+      dataIndex: 'weight',
+    },
+    {
+      title: '操作',
       dataIndex: 'operation',
     },
   ];

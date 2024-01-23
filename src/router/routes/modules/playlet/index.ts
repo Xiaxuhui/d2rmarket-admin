@@ -32,6 +32,15 @@ const playlet: AppRouteModule = {
       },
     },
     {
+      path: 'diversity',
+      name: 'Diversity',
+      component: () => import('@/views/playlet/series/diversity.vue'),
+      meta: {
+        hideMenu: true,
+        title: t('routes.playlet.diversity'),
+      },
+    },
+    {
       path: 'tag',
       name: 'Tag',
       component: () => import('@/views/playlet/tag/index.vue'),

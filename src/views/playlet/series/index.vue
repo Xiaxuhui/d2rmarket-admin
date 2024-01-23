@@ -25,10 +25,15 @@
               },
             },
             {
-              label: '分类管理',
+              label: '分集管理',
               icon: 'mingcute:classify-2-fill',
               onClick() {
-                manageSeries(record.id);
+                go({
+                  path: PageEnum.DIVERSITY,
+                  query: {
+                    id: record.id,
+                  },
+                });
               },
             },
           ]"
@@ -98,10 +103,6 @@
   };
 
   const deleteSeries = (id) => {
-    console.log('id', id);
-  };
-
-  const manageSeries = (id) => {
     console.log('id', id);
   };
 </script>
