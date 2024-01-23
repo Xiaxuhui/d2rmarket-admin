@@ -48,7 +48,7 @@
   import { TableAction } from '@/components/Table';
   import { Table } from 'ant-design-vue';
   import { ColumnType } from 'ant-design-vue/lib/table/interface';
-  import { getBasicColumns, getModalData } from '../tableData';
+  import { getBasicColumns } from '../tableData';
 
   const lines = ref(10);
 
@@ -65,9 +65,6 @@
   const [register, { setModalProps, redoModalHeight }] = useModalInner((data) => {
     console.log('data', data);
     setModalProps({ width: 1000 });
-    getModalData().then((res) => {
-      state.modalData = res;
-    });
   });
 
   watch(
