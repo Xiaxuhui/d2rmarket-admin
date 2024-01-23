@@ -515,14 +515,14 @@ const comp: AppRouteModule = {
         title: t('routes.demo.comp.strength'),
       },
     },
-    {
-      path: 'upload',
-      name: 'UploadDemo',
-      component: () => import('@/views/demo/comp/upload/index.vue'),
-      meta: {
-        title: t('routes.demo.comp.upload'),
-      },
-    },
+    // {
+    //   path: 'upload',
+    //   name: 'UploadDemo',
+    //   component: () => import('@/views/demo/comp/upload/index.vue'),
+    //   meta: {
+    //     title: t('routes.demo.comp.upload'),
+    //   },
+    // },
     {
       path: 'loading',
       name: 'LoadingDemo',
