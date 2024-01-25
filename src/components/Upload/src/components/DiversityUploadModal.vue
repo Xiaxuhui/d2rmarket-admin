@@ -10,8 +10,8 @@
     :maskClosable="false"
     :keyboard="false"
     class="upload-modal"
-    :okButtonProps="getOkButtonProps"
     :cancelButtonProps="{ disabled: isUploadingRef }"
+    :show-ok-btn="false"
   >
     <template #centerFooter>
       <a-button
@@ -25,8 +25,6 @@
     </template>
 
     <div class="upload-modal-toolbar">
-      <Alert :message="getHelpText" type="info" banner class="upload-modal-toolbar__text" />
-
       <Upload
         :accept="getStringAccept"
         :multiple="multiple"
@@ -50,7 +48,7 @@
 </template>
 <script lang="ts" setup>
   import { ref, toRefs, unref, computed, PropType } from 'vue';
-  import { Upload, Alert } from 'ant-design-vue';
+  import { Upload } from 'ant-design-vue';
   import { BasicModal, useModalInner } from '@/components/Modal';
   // hooks
   import { useUploadType } from '../hooks/useUpload';
@@ -59,12 +57,8 @@
   import type { ActionItem } from '@/components/Table';
   import { FileItem, UploadResultStatus } from '../types/typing';
   import { basicProps } from '../props';
-  import { createTableColumns, createActionColumn } from './data';
-  // utils
-  import { checkImgType, getBase64WithFile } from '../helper';
+  import { createDiversityTableColumns, createActionColumn } from './data';
   import { buildUUID } from '@/utils/uuid';
-  import { isFunction } from '@/utils/is';
-  import { warn } from '@/utils/log';
   import FileList from './FileList.vue';
   import { useI18n } from '@/hooks/web/useI18n';
 
@@ -82,7 +76,7 @@
 
   const actionsFn = (record) => (props.actionsFn ? props.actionsFn(record) : []) as ActionItem[];
 
-  const columns = createTableColumns();
+  const columns = createDiversityTableColumns();
   const actionColumn = createActionColumn(actionsFn);
 
   // 是否正在上传
@@ -91,7 +85,7 @@
   const { accept, helpText, maxNumber, maxSize } = toRefs(props);
   const [register, { closeModal }] = useModalInner();
 
-  const { getStringAccept, getHelpText } = useUploadType({
+  const { getStringAccept } = useUploadType({
     acceptRef: accept,
     helpTextRef: helpText,
     maxNumberRef: maxNumber,
@@ -107,15 +101,6 @@
     );
   });
 
-  const getOkButtonProps = computed(() => {
-    const someSuccess = fileListRef.value.some(
-      (item) => item.status === UploadResultStatus.SUCCESS,
-    );
-    return {
-      disabled: isUploadingRef.value || fileListRef.value.length === 0 || !someSuccess,
-    };
-  });
-
   const getUploadBtnText = computed(() => {
     const someError = fileListRef.value.some((item) => item.status === UploadResultStatus.ERROR);
     return isUploadingRef.value
@@ -128,13 +113,6 @@
   // 上传前校验
   function beforeUpload(file: File) {
     const { size, name } = file;
-    const { maxSize } = props;
-    // 设置最大值，则判断
-    // if (maxSize && file.size / 1024 / 1024 >= maxSize) {
-    //   createMessage.error(t('component.upload.maxSizeMultiple', [maxSize]));
-    //   return false;
-    // }
-
     const commonItem = {
       uuid: buildUUID(),
       file,
@@ -143,162 +121,116 @@
       percent: 0,
       type: name.split('.').pop(),
     };
-    // 生成图片缩略图
-    if (checkImgType(file)) {
-      // beforeUpload，如果异步会调用自带上传方法
-      // file.thumbUrl = await getBase64(file);
-      getBase64WithFile(file).then(({ result: thumbUrl }) => {
-        fileListRef.value = [
-          ...unref(fileListRef),
-          {
-            thumbUrl,
-            ...commonItem,
-          },
-        ];
-      });
-    } else {
-      fileListRef.value = [...unref(fileListRef), commonItem];
-    }
+    fileListRef.value = [...unref(fileListRef), commonItem];
     return false;
   }
 
-  // 删除
-  // function handleRemove(record: FileItem) {
-  //   const index = fileListRef.value.findIndex((item) => item.uuid === record.uuid);
-  //   index !== -1 && fileListRef.value.splice(index, 1);
-  //   emit('delete', record);
-  // }
+  // const getAccessToken = async () => {
+  //   const { data } = await fetch('/getToken').then((res) => res.json());
+  //   return data;
+  // };
 
-  const getAccessToken = async () => {
-    const { data } = await fetch('/getToken').then((res) => res.json());
-    return data;
-  };
-
-  const applySplitUpload = async (access_token: string, filename: string) => {
-    const data = {
-      media_name: filename,
-      media_type: 'MP4',
-    };
-    const { upload_id } = await fetch('/getUPloadID?access_token=' + access_token, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-      body: JSON.stringify(data),
-    }).then((res) => res.json());
-    return upload_id;
-  };
+  // const applySplitUpload = async (access_token: string, filename: string) => {
+  //   const data = {
+  //     media_name: filename,
+  //     media_type: 'MP4',
+  //   };
+  //   const { upload_id } = await fetch('/getUPloadID?access_token=' + access_token, {
+  //     method: 'POST',
+  //     mode: 'cors',
+  //     cache: 'no-cache',
+  //     credentials: 'same-origin',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     redirect: 'follow',
+  //     referrerPolicy: 'no-referrer',
+  //     body: JSON.stringify(data),
+  //   }).then((res) => res.json());
+  //   return upload_id;
+  // };
 
   async function uploadApiByItem(item: FileItem) {
-    const access_token = await getAccessToken();
-    const uploadId = await applySplitUpload(access_token, item.file.name);
-    const data = new FormData();
-    data.set('upload_id', uploadId);
-    data.set('part_number', '1');
-    data.set('resource_type', '1');
-    data.set('data', item.file);
+    item.status = UploadResultStatus.UPLOADING;
+    // const access_token = await getAccessToken();
+    // item.percent = 10;
+    // const uploadId = await applySplitUpload(access_token, item.file.name);
+    // const data = new FormData();
+    // data.set('upload_id', uploadId);
+    // data.set('part_number', '1');
+    // data.set('resource_type', '1');
+    // data.set('data', item.file);
 
-    const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
-    const chunkCount = Math.ceil(item.file.size / CHUNK_SIZE);
+    // const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
+    // const chunkCount = Math.ceil(item.file.size / CHUNK_SIZE);
 
-    const media_part_infos: any[] = [];
-    for (let i = 0; i < chunkCount; i++) {
-      const start = i * CHUNK_SIZE;
-      const end = Math.min(start + CHUNK_SIZE, item.file.size);
-      const chunk = item.file.slice(start, end);
-      const part_number = (i + 1).toString();
-      const data = new FormData();
-      data.set('upload_id', uploadId);
-      data.set('part_number', part_number);
-      data.set('resource_type', '1');
-      data.set('data', chunk);
+    // const media_part_infos: any[] = [];
+    // for (let i = 0; i < chunkCount; i++) {
+    //   const start = i * CHUNK_SIZE;
+    //   const end = Math.min(start + CHUNK_SIZE, item.file.size);
+    //   const chunk = item.file.slice(start, end);
+    //   const part_number = (i + 1).toString();
+    //   const data = new FormData();
+    //   data.set('upload_id', uploadId);
+    //   data.set('part_number', part_number);
+    //   data.set('resource_type', '1');
+    //   data.set('data', chunk);
 
-      const response = await fetch('/splitUpload?access_token=' + access_token, {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: data,
-      });
-      const { etag } = await response.json();
-
-      media_part_infos.push({
-        part_number,
-        etag: JSON.parse(etag),
-      });
-    }
-
-    const { media_id } = await fetch('/sureUpload?access_token=' + access_token, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        upload_id: uploadId,
-        media_part_infos,
-      }),
-    }).then((res) => res.json());
-
-    const { media_info } = await fetch('/getMediaList?access_token=' + access_token, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        media_id,
-      }),
-    }).then((res) => res.json());
-    // const { api } = props;
-    // if (!api || !isFunction(api)) {
-    //   return warn('upload api must exist and be a function');
-    // }
-    // try {
-    //   item.status = UploadResultStatus.UPLOADING;
-    //   const ret = await props.api?.(
-    //     {
-    //       data: {
-    //         ...(props.uploadParams || {}),
-    //       },
-    //       file: item.file,
-    //       name: props.name,
-    //       filename: props.filename,
+    //   const response = await fetch('/splitUpload?access_token=' + access_token, {
+    //     method: 'POST',
+    //     mode: 'cors',
+    //     cache: 'no-cache',
+    //     credentials: 'same-origin',
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data',
     //     },
-    //     function onUploadProgress(progressEvent: ProgressEvent) {
-    //       const complete = ((progressEvent.loaded / progressEvent.total) * 100) | 0;
-    //       item.percent = complete;
-    //     },
-    //   );
-    //   const { data } = ret;
-    //   item.status = UploadResultStatus.SUCCESS;
-    //   item.response = data;
-    //   return {
-    //     success: true,
-    //     error: null,
-    //   };
-    // } catch (e) {
-    //   console.log(e);
-    //   item.status = UploadResultStatus.ERROR;
-    //   return {
-    //     success: false,
-    //     error: e,
-    //   };
+    //     redirect: 'follow',
+    //     referrerPolicy: 'no-referrer',
+    //     body: data,
+    //   });
+    //   const { etag } = await response.json();
+
+    //   media_part_infos.push({
+    //     part_number,
+    //     etag: JSON.parse(etag),
+    //   });
     // }
+
+    // item.percent = 30;
+    // const { media_id } = await fetch('/sureUpload?access_token=' + access_token, {
+    //   method: 'POST',
+    //   mode: 'cors',
+    //   cache: 'no-cache',
+    //   credentials: 'same-origin',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     upload_id: uploadId,
+    //     media_part_infos,
+    //   }),
+    // }).then((res) => res.json());
+
+    // item.percent = 50;
+    // const { media_info } = await fetch('/getMediaList?access_token=' + access_token, {
+    //   method: 'POST',
+    //   mode: 'cors',
+    //   cache: 'no-cache',
+    //   credentials: 'same-origin',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     media_id,
+    //   }),
+    // }).then((res) => res.json());
+    // console.log(media_info.media_id);
+    item.status = UploadResultStatus.SUCCESS;
+    item.percent = 100;
+    return {
+      success: true,
+      error: null,
+    };
   }
 
   // 点击开始上传

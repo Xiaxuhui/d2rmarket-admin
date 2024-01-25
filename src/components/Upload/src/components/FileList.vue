@@ -50,8 +50,8 @@
       }
 
       return () => {
-        const { columns, actionColumn, dataSource } = props;
-        const columnList = [...columns, actionColumn];
+        const { columns, dataSource } = props;
+        const columnList = [...columns];
         return (
           // x scrollbar
           <div class="overflow-x-auto">

@@ -2,7 +2,7 @@
   <div>
     <BasicTable class="m-4" @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="openModal"> 添加 </a-button>
+        <DiversityUpload />
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -28,7 +28,6 @@
         </template>
       </template>
     </BasicTable>
-    <Modal @register="register" />
   </div>
 </template>
 
@@ -37,11 +36,9 @@
   import { getDiversityColumns } from './tableData';
   import { useRoute } from 'vue-router';
   import * as api from '@/api/sys/series';
-  import { useModal } from '@/components/Modal';
-  import Modal from './uploadSerie.vue';
+  import { DiversityUpload } from '@/components/Upload';
 
   const { id } = useRoute().query;
-  const [register, { openModal }] = useModal();
 
   const [registerTable, { setProps }] = useTable({
     api: async () => {
