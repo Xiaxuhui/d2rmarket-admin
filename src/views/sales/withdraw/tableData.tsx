@@ -90,22 +90,3 @@ export function getBasicColumns(): BasicColumn[] {
     },
   ];
 }
-
-export const getBasicData = async (params) => {
-  console.log('params', params);
-  const arr: any = [];
-  for (let index = 0; index < 40; index++) {
-    arr.push({
-      id: `${index}`,
-      info: '这是一条主剧信息的测试文案，这是一条主剧信息的测试文案，这是一条主剧信息的测试文案',
-      num: 10,
-      end: 9,
-      state: 10,
-      link: 'https://www.google.com',
-      weight: index,
-      producer: '半次元出品',
-    });
-  }
-
-  return arr;
-};

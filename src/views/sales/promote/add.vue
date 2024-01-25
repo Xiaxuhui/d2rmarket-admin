@@ -9,8 +9,9 @@
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useRouter } from 'vue-router';
+  import { onMounted } from 'vue';
+  import { detailWithdraw, addWithdraw } from '@/api/withdraw';
+  import { useRouter, useRoute } from 'vue-router';
 
   const schemas: FormSchema[] = [
     {
@@ -22,7 +23,31 @@
       },
     },
     {
-      field: 'field1',
+      field: 'channelId',
+      component: 'Input',
+      label: '推广渠道：',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'link',
+      component: 'Input',
+      label: '推广链接：',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'link2',
+      component: 'Input',
+      label: '内部链接：',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'pf',
       component: 'Input',
       label: '平台：',
       colProps: {
@@ -30,51 +55,11 @@
       },
     },
     {
-      field: 'field2',
+      field: 'notes',
       component: 'Input',
-      label: '小程序路径：',
+      label: '备注：',
       colProps: {
         span: 8,
-      },
-    },
-    {
-      field: 'field3',
-      component: 'Input',
-      label: '对应剧集：',
-      colProps: {
-        span: 8,
-      },
-    },
-    {
-      field: 'field4',
-      component: 'Select',
-      label: '隶属：',
-      colProps: {
-        span: 8,
-      },
-      componentProps: {
-        options: [
-          {
-            label: 'xlsx',
-            value: 'xlsx',
-            key: 'xlsx',
-          },
-          {
-            label: 'html',
-            value: 'html',
-            key: 'html',
-          },
-          {
-            label: 'csv',
-            value: 'csv',
-            key: 'csv',
-          },
-          {
-            label: 'txt',
-            value: 'txt',
-            key: 'txt',
-          },
-        ],
       },
     },
     {
@@ -86,16 +71,6 @@
       },
       componentProps: {
         options: [
-          {
-            label: 'xlsx',
-            value: 'xlsx',
-            key: 'xlsx',
-          },
-          {
-            label: 'html',
-            value: 'html',
-            key: 'html',
-          },
           {
             label: 'csv',
             value: 'csv',
@@ -110,11 +85,12 @@
       },
     },
   ];
-  const { createMessage } = useMessage();
+  const route = useRoute();
+  const id = route.query.id;
 
   const { back } = useRouter();
 
-  const [register] = useForm({
+  const [register, methods] = useForm({
     labelWidth: 120,
     isNotRow: true,
     schemas,
@@ -128,9 +104,21 @@
     showSubmitButton: true,
   });
 
+  async function getData() {
+    const res = await detailWithdraw({ id });
+    if (res) {
+      methods.setFieldsValue(res);
+    }
+  }
+
+  onMounted(() => {
+    if (id) {
+      getData();
+    }
+  });
+
   function handleSubmit(values: any) {
-    console.log('submit values', values);
-    createMessage.success('click search,values:' + JSON.stringify(values));
+    addWithdraw(values);
   }
 </script>
 <style lang="less" scoped>

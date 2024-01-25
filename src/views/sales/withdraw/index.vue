@@ -31,7 +31,8 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { reactive } from 'vue';
-  import { getBasicColumns, getBasicData, getWithDrawFormConfig } from './tableData';
+  import { listWithdraw } from '@/api/withdraw';
+  import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const state = reactive<{
     selectedRowKeys: any;
@@ -46,7 +47,7 @@
   };
   const [registerTable] = useTable({
     title: '提现管理',
-    api: getBasicData,
+    api: listWithdraw,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),

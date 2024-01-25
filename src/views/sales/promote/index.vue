@@ -4,21 +4,21 @@
       <a-button type="primary" @click="addPromote"> 添加 </a-button>
       <a-button type="primary" @click="stopListing"> 批量停用 </a-button>
     </template>
-    <template #bodyCell="{ column }">
+    <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
         <TableAction
           stopButtonPropagation
           :actions="[
             {
-              label: '确认',
+              label: '编辑',
               onClick() {
-                confirm();
+                edit(record.id);
               },
             },
             {
-              label: '驳回',
+              label: '删除',
               onClick() {
-                reject();
+                del(record.id);
               },
             },
           ]"
@@ -31,7 +31,8 @@
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { useGo } from '@/hooks/web/usePage';
   import { reactive } from 'vue';
-  import { getBasicColumns, getBasicData, getPromoteFormConfig } from './tableData';
+  import { listWithdraw, delWithdraw } from '@/api/withdraw';
+  import { getBasicColumns, getPromoteFormConfig } from './tableData';
   import { PageEnum } from '@/enums/pageEnum';
 
   const state = reactive<{
@@ -47,7 +48,7 @@
   };
   const [registerTable] = useTable({
     title: '投放管理',
-    api: getBasicData,
+    api: listWithdraw,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getPromoteFormConfig(),
@@ -63,14 +64,18 @@
     pagination: { pageSize: 20 },
   });
   const go = useGo();
-  const confirm = () => {};
-  const reject = () => {};
+  const edit = (id) => {
+    go({
+      path: PageEnum.ADD_PROMOTE,
+      query: id,
+    });
+  };
+  const del = (id) => {
+    delWithdraw({ id });
+  };
   const addPromote = () => {
     go({
       path: PageEnum.ADD_PROMOTE,
-      query: {
-        id: 1,
-      },
     });
   };
   const stopListing = () => {};
