@@ -2,7 +2,7 @@
   <div>
     <BasicTable class="m-4" @register="registerTable">
       <template #toolbar>
-        <DiversityUpload />
+        <DiversityUpload @change="onUploaded" />
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -19,8 +19,11 @@
               {
                 label: '删除',
                 icon: 'ic:outline-delete-outline',
-                onClick() {
-                  deleteSeries(record.id);
+                popConfirm: {
+                  title: '确认删除？',
+                  confirm: () => {
+                    deleteSeries(record.id);
+                  },
                 },
               },
             ]"
@@ -38,11 +41,11 @@
   import * as api from '@/api/sys/series';
   import { DiversityUpload } from '@/components/Upload';
 
-  const { id } = useRoute().query;
+  const { id } = useRoute().query as { id: string };
 
-  const [registerTable, { setProps }] = useTable({
+  const [registerTable, { setProps, reload }] = useTable({
     api: async () => {
-      const data = await api.getDetail(id as string);
+      const data = await api.getDetail(id);
       setProps({ title: data.data.data.title });
       return data.data.data.subBlogs;
     },
@@ -56,5 +59,15 @@
 
   const deleteSeries = (id) => {
     console.log('id', id);
+  };
+
+  const onUploaded = (mediaId: string) => {
+    api
+      .createSerie({
+        fileId: mediaId,
+        title: '新的博客',
+        parentBlog: id,
+      })
+      .then(() => reload());
   };
 </script>

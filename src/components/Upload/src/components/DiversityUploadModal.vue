@@ -227,6 +227,7 @@
     // console.log(media_info.media_id);
     item.status = UploadResultStatus.SUCCESS;
     item.percent = 100;
+    emit('change', 1);
     return {
       success: true,
       error: null,

@@ -17,7 +17,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, unref, computed, useAttrs } from 'vue';
+  import { ref, watch, computed, useAttrs } from 'vue';
   import { Recordable } from '@vben/types';
   import { Space } from 'ant-design-vue';
   import { useModal } from '@/components/Modal';
@@ -54,10 +54,8 @@
   );
 
   // 上传modal保存操作
-  function handleChange(urls: string[]) {
-    fileList.value = [...unref(fileList), ...(urls || [])];
-    emit('update:value', fileList.value);
-    emit('change', fileList.value);
+  function handleChange(mediaId: string) {
+    emit('change', mediaId);
   }
 
   function handleDelete(record: Recordable<any>) {
