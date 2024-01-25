@@ -67,7 +67,12 @@
     pagination: { pageSize: 20 },
   });
   const update = (id: string) => {
-    console.log(id);
+    go({
+      path: PageEnum.ADD_CHARGE,
+      query: {
+        id,
+      },
+    });
   };
   const del = (id: string) => {
     delCharge({ priceRateId: id }).then(() => {
@@ -77,9 +82,6 @@
   const add = () => {
     go({
       path: PageEnum.ADD_CHARGE,
-      query: {
-        id: 1,
-      },
     });
   };
 </script>

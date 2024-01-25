@@ -4,8 +4,9 @@ import { Charge } from './model/charge';
 enum Api {
   addCharge = '/manage/addGoodsPriceRate',
   list = '/manage/goodsPriceRatePage',
-  del = 'manage/deleteGoodsPriceRate',
-  update = 'manage/updateGoodsPriceRate',
+  del = '/manage/deleteGoodsPriceRate',
+  update = '/manage/updateGoodsPriceRate',
+  detail = '/manage/goodsPriceRate',
 }
 
 /**
@@ -26,4 +27,8 @@ export const delCharge = (params) => {
 
 export const updateCharge = (params) => {
   return defHttp.get({ url: Api.update, params });
+};
+
+export const detailCharge = (params) => {
+  return defHttp.get({ url: Api.detail, params });
 };
