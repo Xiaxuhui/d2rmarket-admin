@@ -1,5 +1,7 @@
 import { BasicColumn, FormProps } from '@/components/Table';
+import { SelectValue } from 'ant-design-vue/es/select';
 import { tv } from 'tailwind-variants';
+import * as api from '@/api/sys/series';
 
 enum STATE_ENUM {
   END = 10,
@@ -17,7 +19,7 @@ const stateEnum = {
   [STATE_ENUM.END]: '已完结',
 };
 
-export const getFormConfig: () => Partial<FormProps> = () => {
+export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps> = ({ label }) => {
   return {
     labelWidth: 100,
     schemas: [
@@ -33,23 +35,13 @@ export const getFormConfig: () => Partial<FormProps> = () => {
       {
         field: `tag`,
         label: `标签：`,
-        component: 'Select',
+        component: 'LabelSelector',
+        componentProps: {
+          defaultValue: (label ? +label : null) as SelectValue,
+        },
         colProps: {
           xl: 12,
           xxl: 8,
-        },
-        componentProps: {
-          mode: 'multiple',
-          options: [
-            {
-              label: '言情',
-              value: 1,
-            },
-            {
-              label: '古装',
-              value: 2,
-            },
-          ],
         },
       },
       {
@@ -86,6 +78,26 @@ export const getFormConfig: () => Partial<FormProps> = () => {
   };
 };
 
+export const getSeriesColumns: () => BasicColumn[] = () => {
+  return [
+    {
+      title: '剧名',
+      dataIndex: 'name',
+      width: 150,
+      ellipsis: true,
+    },
+    {
+      title: '剧描述',
+      dataIndex: 'info',
+    },
+    {
+      title: '设置时间',
+      dataIndex: 'time',
+      width: 150,
+    },
+  ];
+};
+
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
@@ -95,8 +107,8 @@ export function getBasicColumns(): BasicColumn[] {
       width: 200,
     },
     {
-      title: '主剧信息',
-      dataIndex: 'info',
+      title: '标题',
+      dataIndex: 'title',
       ellipsis: true,
     },
     {
@@ -143,21 +155,77 @@ export function getBasicColumns(): BasicColumn[] {
   ];
 }
 
-export const getBasicData = async (params) => {
-  console.log('params', params);
+export function getDiversityColumns(): BasicColumn[] {
+  const stateMap = {
+    '-1': '删除',
+    0: '异常',
+    10: '等待中',
+    5: '正常',
+    200: '可公开',
+    300: '已完成',
+  };
+
+  return [
+    {
+      title: '片名',
+      dataIndex: 'title',
+      fixed: 'left',
+      edit: true,
+      editComponent: 'Input',
+    },
+    {
+      title: '小程序地址',
+      dataIndex: 'num',
+    },
+    {
+      title: '是否推荐',
+      dataIndex: 'f',
+      edit: true,
+      editComponent: 'Switch',
+      customRender() {
+        return '是';
+      },
+    },
+    {
+      title: '金豆价格',
+      width: 100,
+      dataIndex: 'state',
+    },
+    {
+      title: '点赞',
+      dataIndex: 'link',
+    },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      customRender({ value }) {
+        if (stateMap[value]) {
+          return stateMap[value];
+        } else {
+          return '未知的状态：' + value;
+        }
+      },
+    },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+    },
+  ];
+}
+
+export const getBasicData = async (params: PagegationType) => {
+  const { data } = await api.getSeriesList(params);
+  return data.data.list;
+};
+
+export const getSeriesList = async () => {
   const arr: any = [];
   for (let index = 0; index < 40; index++) {
     arr.push({
-      id: `${index}`,
-      info: '这是一条主剧信息的测试文案，这是一条主剧信息的测试文案，这是一条主剧信息的测试文案',
-      num: 10,
-      end: 9,
-      state: 10,
-      link: 'https://www.google.com',
-      weight: index,
-      producer: '半次元出品',
+      name: `仙剑奇侠传${index}`,
+      info: '古装神话',
+      time: '2023-12-12',
     });
   }
-
   return arr;
 };

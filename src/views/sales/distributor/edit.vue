@@ -21,6 +21,8 @@
   import { useRouter } from 'vue-router';
   import { useModal } from '@/components/Modal';
   import SeriesModal from './components/seriesModal.vue';
+  import FormTable from './components/formTable.vue';
+  import { onMounted } from 'vue';
 
   const schemas: FormSchema[] = [
     {
@@ -53,9 +55,6 @@
       label: '密码：',
       colProps: {
         span: 8,
-      },
-      componentProps: {
-        type: 'password',
       },
     },
     {
@@ -132,6 +131,90 @@
       },
       suffix: '%',
     },
+    {
+      field: 'field10',
+      component: 'Input',
+      label: '推广剧集：',
+      colProps: {
+        span: 16,
+      },
+      renderColContent({ model, field }) {
+        return (
+          <>
+            <FormTable
+              field="field10"
+              label="推广剧集："
+              v-model:value={model[field]}
+              columns={seriesColumns}
+              editProps={['price']}
+              actionOptions={{
+                text: '添加剧集',
+                api: () => {
+                  return Promise.resolve([{ id: '321', price: 11 }]);
+                },
+                props: {
+                  title: '选择剧集',
+                  columns: [
+                    {
+                      title: 'id',
+                      dataIndex: 'id',
+                      width: 100,
+                    },
+                    {
+                      title: 'price',
+                      dataIndex: 'price',
+                      width: 100,
+                    },
+                  ],
+                },
+              }}
+            />
+          </>
+        );
+      },
+    },
+    {
+      field: 'field11',
+      component: 'Input',
+      label: '推广道具：',
+      colProps: {
+        span: 16,
+      },
+      renderColContent({ model, field }) {
+        return (
+          <>
+            <FormTable
+              label="推广道具："
+              field="field11"
+              v-model:value={model[field]}
+              columns={seriesColumns}
+              editProps={['price']}
+              actionOptions={{
+                text: '添加道具',
+                api: () => {
+                  return Promise.resolve([{ id: '321', price: 11 }]);
+                },
+                props: {
+                  title: '选择道具',
+                  columns: [
+                    {
+                      title: 'id',
+                      dataIndex: 'id',
+                      width: 100,
+                    },
+                    {
+                      title: 'price',
+                      dataIndex: 'price',
+                      width: 100,
+                    },
+                  ],
+                },
+              }}
+            />
+          </>
+        );
+      },
+    },
   ];
   const { createMessage } = useMessage();
 
@@ -139,18 +222,51 @@
 
   const [registerModal, { openModal }] = useModal();
 
-  const [register] = useForm({
+  const [register, { setFieldsValue }] = useForm({
     labelWidth: 120,
     isNotRow: true,
     schemas,
     actionColOptions: {
-      span: 10,
+      span: 12,
     },
     submitButtonOptions: {
       text: '提交',
     },
     showResetButton: true,
     showSubmitButton: true,
+  });
+
+  const seriesColumns = [
+    {
+      title: 'id',
+      dataIndex: 'id',
+      width: 100,
+    },
+    {
+      title: 'price',
+      dataIndex: 'price',
+      width: 100,
+    },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+    },
+  ];
+
+  onMounted(() => {
+    setFieldsValue({
+      field1: '夏旭辉',
+      field2: '麻瓜',
+      field3: '123456',
+      field4: '半次元',
+      field5: true,
+      field6: true,
+      field7: 17,
+      field8: 17,
+      field9: 17,
+      field10: [{ id: 123, price: 10 }],
+      field11: [{ id: 321, price: 11 }],
+    });
   });
 
   function handleSubmit(values: any) {

@@ -89,6 +89,15 @@ declare global {
       [elem: string]: any;
     }
   }
+
+  type BeforeEditSubmit = (data: {
+    record: Recordable;
+    index: number;
+    key: Key;
+    value: any;
+  }) => Promise<any>;
+
+  type PagegationType<T = any> = { page: number; pageSize: number } & T;
 }
 
 declare module 'vue' {

@@ -1,7 +1,9 @@
 import { defineApplicationConfig } from '@vben/vite-config';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineApplicationConfig({
   overrides: {
+    plugins: [nodePolyfills()],
     optimizeDeps: {
       include: [
         'echarts/core',
@@ -29,6 +31,13 @@ export default defineApplicationConfig({
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/upload`), ''),
+        },
+        '/api': {
+          // 朝宇
+          target: 'http://192.168.50.193:9290',
+          changeOrigin: true,
+          ws: true,
+          rewrite: (path) => path.replace(new RegExp(`^/api`), ''),
         },
       },
       warmup: {

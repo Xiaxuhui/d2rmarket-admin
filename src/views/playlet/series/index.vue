@@ -1,7 +1,7 @@
 <template>
   <BasicTable @register="registerTable">
     <template #toolbar>
-      <a-button type="primary" @click="addSeries"> 添加 </a-button>
+      <a-button type="primary" @click="setSeries()"> 添加 </a-button>
       <a-button type="primary" @click="batchListing"> 批量上架 </a-button>
       <a-button type="primary" @click="bathDelist"> 批量下架 </a-button>
     </template>
@@ -14,7 +14,7 @@
               label: '编辑',
               icon: 'fe:edit',
               onClick() {
-                edit(record.id);
+                setSeries(record.id);
               },
             },
             {
@@ -25,10 +25,15 @@
               },
             },
             {
-              label: '分类管理',
+              label: '分集管理',
               icon: 'mingcute:classify-2-fill',
               onClick() {
-                manageSeries(record.id);
+                go({
+                  path: PageEnum.DIVERSITY,
+                  query: {
+                    id: record.id,
+                  },
+                });
               },
             },
           ]"
@@ -37,10 +42,18 @@
     </template>
   </BasicTable>
 </template>
+
 <script lang="ts" setup>
   import { reactive } from 'vue';
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getBasicColumns, getBasicData, getFormConfig } from './tableData';
+  import { getBasicColumns, getFormConfig } from './tableData';
+  import { useGo } from '@/hooks/web/usePage';
+  import { PageEnum } from '@/enums/pageEnum';
+  import { useRoute } from 'vue-router';
+  import * as api from '@/api/sys/series';
+
+  const go = useGo();
+  const { label } = useRoute().query;
 
   const state = reactive<{
     selectedRowKeys: any;
@@ -57,10 +70,16 @@
 
   const [registerTable] = useTable({
     title: '剧集管理',
-    api: getBasicData,
+    api: async (params: PagegationType) => {
+      const { data } = await api.getSeriesList(params);
+      return {
+        items: data.data.list,
+        total: data.data.totalRecords,
+      };
+    },
     columns: getBasicColumns(),
     useSearchForm: true,
-    formConfig: getFormConfig(),
+    formConfig: getFormConfig({ label: (label as string) || '' }),
     showTableSetting: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
@@ -69,11 +88,20 @@
       type: 'checkbox',
       onChange: onSelectChange,
     },
-    showSelectionBar: true, // 显示多选状态栏
-    pagination: { pageSize: 20 },
+    showSelectionBar: true,
+    pagination: {
+      pageSize: 20,
+    },
   });
 
-  const addSeries = () => {};
+  const setSeries = (id?: string) => {
+    go({
+      path: PageEnum.SET_SERIES,
+      query: {
+        id,
+      },
+    });
+  };
 
   const batchListing = () => {
     console.log('selectedRowKeys', state.selectedRowKeys);
@@ -83,15 +111,7 @@
     console.log('selectedRowKeys', state.selectedRowKeys);
   };
 
-  const edit = (id) => {
-    console.log('id', id);
-  };
-
   const deleteSeries = (id) => {
-    console.log('id', id);
-  };
-
-  const manageSeries = (id) => {
     console.log('id', id);
   };
 </script>

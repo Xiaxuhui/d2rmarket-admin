@@ -69,7 +69,6 @@
   import { Select, type SelectProps } from 'ant-design-vue';
   import { cloneDeep } from 'lodash-es';
   import { areaRecord } from '@/api/demo/cascader';
-  import { uploadApi } from '@/api/sys/upload';
 
   const valueSelectA = ref<string[]>([]);
   const valueSelectB = ref<string[]>([]);
@@ -190,18 +189,6 @@
         },
       },
       suffix: '天',
-    },
-    {
-      field: 'fieldsc',
-      component: 'Upload',
-      label: '上传',
-      colProps: {
-        span: 8,
-      },
-      rules: [{ required: true, message: '请选择上传文件' }],
-      componentProps: {
-        api: uploadApi,
-      },
     },
     {
       field: 'field3',
@@ -788,34 +775,6 @@
         disabled: false,
         allowHalf: true,
       },
-    },
-    {
-      field: 'field23',
-      component: 'ImageUpload',
-      label: '上传图片',
-      required: true,
-      defaultValue: [
-        'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      ],
-      componentProps: {
-        api: uploadApi,
-        accept: ['png', 'jpeg', 'jpg'],
-        maxSize: 2,
-        maxNumber: 1,
-      },
-      // rules: [
-      //   {
-      //     required: true,
-      //     trigger: 'change',
-      //     validator(_, value) {
-      //       if (isArray(value) && value.length > 0) {
-      //         return Promise.resolve();
-      //       } else {
-      //         return Promise.reject('请选择上传图片');
-      //       }
-      //     },
-      //   },
-      // ],
     },
   ];
 

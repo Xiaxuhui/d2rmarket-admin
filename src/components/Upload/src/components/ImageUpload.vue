@@ -30,13 +30,17 @@
   import { Modal, Upload } from 'ant-design-vue';
   import { UploadRequestOption } from 'ant-design-vue/lib/vc-upload/interface';
   import { useMessage } from '@/hooks/web/useMessage';
-  import { isArray, isFunction, isObject, isString } from '@/utils/is';
-  import { warn } from '@/utils/log';
+  import { isArray, isObject, isString } from '@/utils/is';
   import { useI18n } from '@/hooks/web/useI18n';
   import { useUploadType } from '../hooks/useUpload';
   import { uploadContainerProps } from '../props';
   import { isImgTypeByName } from '../helper';
   import { UploadResultStatus } from '@/components/Upload/src/types/typing';
+  import { getFileUploadAPI } from '@/api/sys/upload';
+  import { fileToSha256 } from '../../../../utils/index';
+  import { RcFile } from 'ant-design-vue/es/vc-upload/interface';
+  import mime from 'mime-types';
+  import axios from 'axios';
 
   defineOptions({ name: 'ImageUpload' });
 
@@ -132,6 +136,7 @@
   };
 
   const beforeUpload = (file: File) => {
+    console.log(file);
     const { maxSize, accept } = props;
     const { name } = file;
     const isAct = isImgTypeByName(name);
@@ -151,19 +156,39 @@
     return (isAct && !isLt) || Upload.LIST_IGNORE;
   };
 
-  async function customRequest(info: UploadRequestOption<any>) {
-    const { api } = props;
-    if (!api || !isFunction(api)) {
-      return warn('upload api must exist and be a function');
+  const getFileTypeValue = (file: RcFile): number => {
+    const mimeType = file.type || mime.lookup(file.name);
+
+    switch (mimeType) {
+      case 'image/png':
+        return 1;
+      case 'video/mp4':
+        return 2;
+      case 'video/quicktime': // MOV 文件的 MIME 类型
+        return 3;
+      case 'image/jpeg':
+        return 4;
+      default:
+        return -1;
     }
+  };
+
+  async function customRequest(info: UploadRequestOption<any>) {
+    const { file } = info;
+    const f = file as RcFile;
     try {
-      const res = await props.api?.({
-        data: {
-          ...(props.uploadParams || {}),
-        },
-        file: info.file,
-        name: props.name,
-        filename: props.filename,
+      const sha256 = await fileToSha256(f);
+      const type = getFileTypeValue(f);
+      if (type === -1) {
+        const e = new TypeError('未知的文件类型');
+        info.onError!(e);
+        return;
+      }
+      const { data } = await getFileUploadAPI({ sha256, size: f.size, type });
+      const res = await axios({
+        url: data.data as unknown as string,
+        method: 'PUT',
+        data: await f.arrayBuffer(),
       });
       info.onSuccess!(res.data);
       const value = getValue();
