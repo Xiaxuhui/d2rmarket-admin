@@ -20,6 +20,12 @@
                 del(record.id);
               },
             },
+            {
+              label: record.state === 1 ? '禁用' : '启用',
+              onClick() {
+                open(record);
+              },
+            },
           ]"
         />
       </template>
@@ -29,7 +35,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { PageEnum } from '@/enums/pageEnum';
-  import { chargeList, delCharge } from '@/api/playlet/charge';
+  import { chargeList, delCharge, updateCharge } from '@/api/playlet/charge';
   import { useGo } from '@/hooks/web/usePage';
   import { reactive } from 'vue';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
@@ -78,6 +84,10 @@
     delCharge({ priceRateId: id }).then(() => {
       methods.reload();
     });
+  };
+  const open = async (item) => {
+    const state = item.state === 0 ? 1 : 0;
+    await updateCharge(Object.assign(item, { state, priceRateId: item.id }));
   };
   const add = () => {
     go({

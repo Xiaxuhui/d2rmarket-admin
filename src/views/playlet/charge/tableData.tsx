@@ -2,19 +2,21 @@ import { BasicColumn, FormProps } from '@/components/Table';
 import { tv } from 'tailwind-variants';
 
 enum STATE_ENUM {
-  END = 10,
+  OPEN = 1,
+  CLOSE = 0,
 }
 
 const colorText = tv({
   variants: {
     color: {
-      [STATE_ENUM.END]: 'text-red',
+      [STATE_ENUM.OPEN]: 'text-red',
     },
   },
 });
 
 const stateEnum = {
-  [STATE_ENUM.END]: '已完结',
+  [STATE_ENUM.OPEN]: '启用',
+  [STATE_ENUM.CLOSE]: '禁用',
 };
 
 export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
@@ -80,9 +82,9 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '状态',
       dataIndex: 'state',
-      // format(state) {
-      //   return stateEnum[state];
-      // },
+      format(state) {
+        return stateEnum[state];
+      },
       customRender({ value }) {
         return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
       },
