@@ -64,6 +64,15 @@ const playlet: AppRouteModule = {
         title: t('routes.playlet.charge'),
       },
     },
+    {
+      path: 'addCharge',
+      name: 'addCharge',
+      component: () => import('@/views/playlet/charge/add.vue'),
+      meta: {
+        title: t('routes.playlet.charge'),
+        hideMenu: true,
+      },
+    },
   ] as const,
 };
 

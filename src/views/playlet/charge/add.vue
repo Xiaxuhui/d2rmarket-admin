@@ -9,9 +9,9 @@
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { addCharge } from '@/api/playlet/charge';
-  import { useRouter } from 'vue-router';
-  import { useMessage } from '@/hooks/web/useMessage';
+  import { addCharge, detailCharge, updateCharge } from '@/api/playlet/charge';
+  import { useRouter, useRoute } from 'vue-router';
+  import { onMounted } from 'vue';
 
   const schemas: FormSchema[] = [
     {
@@ -102,8 +102,9 @@
     },
   ];
   const { back } = useRouter();
-  const { createMessage } = useMessage();
-  const [register] = useForm({
+  const route = useRoute();
+  const id = route.query.id;
+  const [register, methods] = useForm({
     labelWidth: 120,
     isNotRow: true,
     schemas,
@@ -117,9 +118,25 @@
     showSubmitButton: true,
   });
 
+  async function getData() {
+    const res = await detailCharge({ id });
+    if (res) {
+      methods.setFieldsValue(res);
+    }
+  }
+
+  onMounted(() => {
+    if (id) {
+      getData();
+    }
+  });
+
   async function handleSubmit(values: any) {
+    if (id) {
+      await updateCharge(Object.assign(values, { priceRateId: id }));
+      return;
+    }
     await addCharge(Object.assign(values, { uid: 2 }));
-    createMessage.success('添加成功');
   }
 </script>
 <style lang="less" scoped>
