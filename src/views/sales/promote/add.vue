@@ -10,7 +10,7 @@
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { onMounted } from 'vue';
-  import { detailWithdraw, addWithdraw } from '@/api/withdraw';
+  import { detailPromote, addPromote } from '@/api/promote';
   import { useRouter, useRoute } from 'vue-router';
 
   const schemas: FormSchema[] = [
@@ -105,7 +105,7 @@
   });
 
   async function getData() {
-    const res = await detailWithdraw({ id });
+    const res = await detailPromote({ investId: id });
     if (res) {
       methods.setFieldsValue(res);
     }
@@ -118,7 +118,7 @@
   });
 
   function handleSubmit(values: any) {
-    addWithdraw(values);
+    addPromote(values);
   }
 </script>
 <style lang="less" scoped>

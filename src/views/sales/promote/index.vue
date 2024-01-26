@@ -21,6 +21,12 @@
                 del(record.id);
               },
             },
+            {
+              label: record.state === 1 ? '禁用' : '启用',
+              onClick() {
+                open(record);
+              },
+            },
           ]"
         />
       </template>
@@ -31,7 +37,7 @@
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { useGo } from '@/hooks/web/usePage';
   import { reactive } from 'vue';
-  import { listWithdraw, delWithdraw } from '@/api/withdraw';
+  import { listPromote, delPromote, updatePromote } from '@/api/promote';
   import { getBasicColumns, getPromoteFormConfig } from './tableData';
   import { PageEnum } from '@/enums/pageEnum';
 
@@ -48,9 +54,12 @@
   };
   const [registerTable] = useTable({
     title: '投放管理',
-    api: listWithdraw,
+    api: listPromote,
     columns: getBasicColumns(),
     useSearchForm: true,
+    fetchSetting: {
+      listField: 'list',
+    },
     formConfig: getPromoteFormConfig(),
     showTableSetting: true,
     tableSetting: { fullScreen: true },
@@ -67,16 +76,21 @@
   const edit = (id) => {
     go({
       path: PageEnum.ADD_PROMOTE,
-      query: id,
+      query: {
+        id,
+      },
     });
   };
   const del = (id) => {
-    delWithdraw({ id });
+    delPromote({ investId: id });
   };
   const addPromote = () => {
     go({
       path: PageEnum.ADD_PROMOTE,
     });
+  };
+  const open = (item) => {
+    updatePromote(Object.assign(item, { investId: item.id, state: item.state === 0 ? 1 : 0 }));
   };
   const stopListing = () => {};
 </script>

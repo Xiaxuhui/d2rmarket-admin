@@ -12,22 +12,22 @@ enum Api {
  * @description: Get user menu based on id
  */
 
-export const addWithdraw = (params) => {
+export const addPromote = (params) => {
   return defHttp.get({ url: Api.add, params });
 };
 
-export const listWithdraw = (params) => {
+export const listPromote = (params) => {
   return defHttp.get({ url: Api.list, params });
 };
 
-export const delWithdraw = (params) => {
+export const delPromote = (params) => {
   return defHttp.get({ url: Api.del, params });
 };
 
-export const updateWithdraw = (params) => {
+export const updatePromote = (params) => {
   return defHttp.get({ url: Api.update, params });
 };
 
-export const detailWithdraw = (params) => {
+export const detailPromote = (params) => {
   return defHttp.get({ url: Api.detail, params });
 };

@@ -1,20 +1,23 @@
 import { BasicColumn, FormProps } from '@/components/Table';
+import { formatToDateTime } from '@/utils/dateUtil';
 import { tv } from 'tailwind-variants';
 
 enum STATE_ENUM {
-  END = 10,
+  OPEN = 1,
+  CLOSE = 0,
 }
 
 const colorText = tv({
   variants: {
     color: {
-      [STATE_ENUM.END]: 'text-red',
+      [STATE_ENUM.OPEN]: 'text-red',
     },
   },
 });
 
 const stateEnum = {
-  [STATE_ENUM.END]: '已完结',
+  [STATE_ENUM.OPEN]: '启用',
+  [STATE_ENUM.CLOSE]: '禁用',
 };
 
 export const getPromoteFormConfig: () => Partial<FormProps> = () => {
@@ -22,18 +25,18 @@ export const getPromoteFormConfig: () => Partial<FormProps> = () => {
     labelWidth: 100,
     schemas: [
       {
-        field: `name`,
+        field: `investId`,
         label: `任务ID：`,
         component: 'Input',
       },
       {
-        field: `producer`,
+        field: `pf`,
         label: `平台：`,
         component: 'Input',
       },
       {
-        field: `producers`,
-        label: `分销商：`,
+        field: `channelId`,
+        label: `渠道：`,
         component: 'Input',
       },
     ],
@@ -46,33 +49,41 @@ export function getBasicColumns(): BasicColumn[] {
       title: '任务ID',
       dataIndex: 'id',
       fixed: 'left',
-      width: 200,
     },
     {
-      title: '分销商',
-      dataIndex: 'info',
+      title: '渠道名',
+      dataIndex: 'channelId',
       ellipsis: true,
     },
     {
-      title: '隶属',
-      dataIndex: 'num',
+      title: '内容',
+      dataIndex: 'data',
     },
     {
       title: '推广链接',
-      dataIndex: 'end',
+      dataIndex: 'link',
       ellipsis: true,
     },
     {
+      title: '内部链接',
+      dataIndex: 'link2',
+    },
+    {
       title: '平台',
-      dataIndex: 'num',
+      dataIndex: 'pf',
     },
     {
-      title: '小程序路径',
-      dataIndex: 'num',
+      title: '备注',
+      dataIndex: 'notes',
     },
     {
-      title: '对应剧集',
-      dataIndex: 'num',
+      title: '创建时间',
+      dataIndex: 'startTime',
+      width: 200,
+      customRender({ value }) {
+        const time = formatToDateTime(value);
+        return <div>{time}</div>;
+      },
     },
     {
       title: '状态',
