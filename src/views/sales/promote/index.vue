@@ -17,8 +17,12 @@
             },
             {
               label: '删除',
-              onClick() {
-                del(record.id);
+              icon: 'ic:outline-delete-outline',
+              popConfirm: {
+                title: '确认删除？',
+                confirm: () => {
+                  del(record.id);
+                },
               },
             },
             {
@@ -52,7 +56,7 @@
     console.log(ids);
     state.selectedRowKeys = ids;
   };
-  const [registerTable] = useTable({
+  const [registerTable, methods] = useTable({
     title: '投放管理',
     api: listPromote,
     columns: getBasicColumns(),
@@ -82,7 +86,9 @@
     });
   };
   const del = (id) => {
-    delPromote({ investId: id });
+    delPromote({ investId: id }).then(() => {
+      methods.reload();
+    });
   };
   const addPromote = () => {
     go({

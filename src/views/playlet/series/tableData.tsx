@@ -4,7 +4,8 @@ import { tv } from 'tailwind-variants';
 import * as api from '@/api/sys/series';
 
 enum STATE_ENUM {
-  END = 10,
+  END = 1,
+  UPDATE = 0,
 }
 
 const colorText = tv({
@@ -17,6 +18,7 @@ const colorText = tv({
 
 const stateEnum = {
   [STATE_ENUM.END]: '已完结',
+  [STATE_ENUM.UPDATE]: '更新中',
 };
 
 export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps> = ({ label }) => {
@@ -45,7 +47,7 @@ export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps>
         },
       },
       {
-        field: `state`,
+        field: `updateState`,
         label: `状态：`,
         component: 'Select',
         colProps: {
@@ -56,11 +58,11 @@ export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps>
           options: [
             {
               label: '已完结',
-              value: 10,
+              value: 1,
             },
             {
               label: '更新中',
-              value: 20,
+              value: 0,
             },
           ],
         },
@@ -104,7 +106,6 @@ export function getBasicColumns(): BasicColumn[] {
       title: 'ID',
       dataIndex: 'id',
       fixed: 'left',
-      width: 200,
     },
     {
       title: '标题',
@@ -113,39 +114,37 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: '集数',
-      dataIndex: 'num',
+      dataIndex: 'meta',
       width: 50,
+      customRender({ value }) {
+        let meta = [];
+        if (value) {
+          meta = JSON.parse(value) ?? [];
+        }
+        return <div>{meta.length}</div>;
+      },
     },
-    {
-      title: '更新至',
-      width: 50,
-      dataIndex: 'end',
-    },
+    // {
+    //   title: '更新至',
+    //   width: 50,
+    //   customRender({ value }) {
+    //     return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
+    //   },
+    // },
     {
       title: '是否完结',
-      width: 100,
-      dataIndex: 'state',
-      // format(state) {
-      //   return stateEnum[state];
-      // },
+      dataIndex: 'updateState',
       customRender({ value }) {
-        return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
+        return <div class={colorText({ color: value })}>{stateEnum[value] ?? ''}</div>;
       },
     },
     {
-      title: '链接',
-      width: 150,
-      dataIndex: 'link',
-    },
-    {
       title: '权重',
-      width: 50,
       dataIndex: 'weight',
     },
     {
       title: '片方',
-      width: 150,
-      dataIndex: 'producer',
+      dataIndex: 'uName',
     },
     {
       title: '操作',
@@ -214,8 +213,8 @@ export function getDiversityColumns(): BasicColumn[] {
 }
 
 export const getBasicData = async (params: PagegationType) => {
-  const { data } = await api.getSeriesList(params);
-  return data.data.list;
+  const res = await api.getSeriesList(params);
+  return res.list;
 };
 
 export const getSeriesList = async () => {

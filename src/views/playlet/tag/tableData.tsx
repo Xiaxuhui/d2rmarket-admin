@@ -1,4 +1,5 @@
 import { BasicColumn } from '@/components/Table';
+import { formatToDateTime } from '@/utils/dateUtil';
 
 export function getBasicColumns(): BasicColumn[] {
   return [
@@ -11,12 +12,27 @@ export function getBasicColumns(): BasicColumn[] {
         placeholder: '请输入新的标签名称',
       },
     },
-    // {
-    //   title: '权重',
-    //   dataIndex: 'w',
-    //   edit: true,
-    //   editComponent: 'InputNumber',
-    // },
+    {
+      title: '权重',
+      dataIndex: 'w',
+      edit: true,
+      editComponent: 'InputNumber',
+    },
+    {
+      title: '是否是父标签',
+      dataIndex: 'parent',
+      customRender({ value }) {
+        return <div>{value === 0 ? '否' : '是'}</div>;
+      },
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'time',
+      customRender({ value }) {
+        const time = formatToDateTime(value);
+        return <div>{time}</div>;
+      },
+    },
     {
       title: '操作',
       width: 300,

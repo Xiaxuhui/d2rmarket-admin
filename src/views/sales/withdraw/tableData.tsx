@@ -1,20 +1,20 @@
 import { BasicColumn, FormProps } from '@/components/Table';
-import { tv } from 'tailwind-variants';
+import { formatToDateTime } from '@/utils/dateUtil';
 
 enum STATE_ENUM {
-  END = 10,
+  DEL = -1,
+  WAIT = 1,
+  SUCCESS = 2,
+  REJECT = 3,
+  CANCEL = 4,
 }
 
-const colorText = tv({
-  variants: {
-    color: {
-      [STATE_ENUM.END]: 'text-red',
-    },
-  },
-});
-
 const stateEnum = {
-  [STATE_ENUM.END]: '已完结',
+  [STATE_ENUM.DEL]: '删除',
+  [STATE_ENUM.WAIT]: '等待处理',
+  [STATE_ENUM.SUCCESS]: '处理成功',
+  [STATE_ENUM.REJECT]: '驳回',
+  [STATE_ENUM.CANCEL]: '用户取消',
 };
 
 export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
@@ -47,46 +47,85 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
-      title: '时间',
+      title: '提现记录id',
       dataIndex: 'id',
-      fixed: 'left',
-      width: 200,
-    },
-    {
-      title: '分销商',
-      dataIndex: 'info',
       ellipsis: true,
     },
     {
-      title: '隶属',
-      dataIndex: 'num',
+      title: '用户id',
+      dataIndex: 'uid',
+    },
+    {
+      title: '用户名',
+      dataIndex: 'uName',
     },
     {
       title: '提现金额',
-      dataIndex: 'end',
+      dataIndex: 'money',
+      customRender({ value }) {
+        return <div>{value / 10000}</div>;
+      },
     },
     {
-      title: '当前余额',
-      dataIndex: 'num',
+      title: '银行卡账户姓名',
+      dataIndex: 'name',
     },
     {
-      title: '提现信息',
-      dataIndex: 'num',
+      title: '银行名称',
+      dataIndex: 'bankName',
+    },
+    {
+      title: '银行卡号',
+      dataIndex: 'bankCard',
+    },
+    {
+      title: '手机号',
+      dataIndex: 'phone',
+    },
+    {
+      title: '备注',
+      dataIndex: 'notes',
+    },
+    {
+      title: 'initiateTime',
+      dataIndex: '创建时间',
+      customRender({ value }) {
+        const time = formatToDateTime(value);
+        return <div>{time}</div>;
+      },
     },
     {
       title: '状态',
       dataIndex: 'state',
-      // format(state) {
-      //   return stateEnum[state];
-      // },
       customRender({ value }) {
-        return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
+        return <div>{stateEnum[value]}</div>;
+      },
+    },
+    {
+      title: 'dealUid',
+      dataIndex: '处理用户id',
+    },
+    {
+      title: 'dealUName',
+      dataIndex: '处理用户名',
+    },
+    {
+      title: 'dealNotes',
+      dataIndex: '处理用户备注',
+    },
+    {
+      title: 'dealTime',
+      dataIndex: '处理用户备注',
+      customRender({ value }) {
+        const time = formatToDateTime(value);
+        return <div>{time}</div>;
       },
     },
     {
       title: '操作',
-      width: 300,
+      width: 200,
       dataIndex: 'operation',
+      fixed: 'right',
     },
   ];
 }

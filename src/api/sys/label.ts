@@ -1,4 +1,4 @@
-import { defBusinessHttp } from '@/utils/http/axios';
+import { defBusinessHttp, defHttp } from '@/utils/http/axios';
 import { LabelModel } from './model/labelModel';
 import { AppResponse } from './model/model';
 
@@ -10,7 +10,7 @@ enum Api {
 }
 
 export const getLabelList = () => {
-  return defBusinessHttp.get<AppResponse<LabelModel[]>>(Api.LIST);
+  return defHttp.get<LabelModel[]>({ url: Api.LIST });
 };
 
 export const addLabel = (name: string, sort: number) => {

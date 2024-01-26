@@ -10,10 +10,12 @@
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { useMessage } from '@/hooks/web/useMessage';
   import { useRoute, useRouter } from 'vue-router';
   import { useModal } from '@/components/Modal';
+  import { createSerie, getDetail, getSeriesList, updateSeriesList } from '@/api/sys/series';
   import SeriesModal from './components/seriesModal.vue';
+  import { onMounted } from 'vue';
+  import { getLabelList } from '@/api/sys/label';
 
   const { id } = useRoute().query;
   const isEditStatus = Boolean(id);
@@ -28,7 +30,7 @@
       },
     },
     {
-      field: 'field1',
+      field: 'title',
       component: 'Input',
       label: '标题',
       colProps: {
@@ -36,47 +38,62 @@
       },
     },
     {
-      field: 'field1',
+      field: 'data',
       component: 'InputTextArea',
       label: '简介',
       colProps: {
         span: 8,
       },
     },
+    // {
+    //   field: 'field1',
+    //   component: 'Input',
+    //   label: '小程序地址',
+    //   colProps: {
+    //     span: 8,
+    //   },
+    // },
     {
-      field: 'field1',
-      component: 'Input',
-      label: '小程序地址',
-      colProps: {
-        span: 8,
-      },
-    },
-    {
-      field: 'field2',
+      field: 'state',
       component: 'Switch',
       label: '上架',
+      defaultValue: 0,
       colProps: {
         span: 8,
       },
     },
     {
-      field: 'field2',
-      component: 'Switch',
+      field: 'updateState',
+      component: 'Select',
       label: '已完结',
+      componentProps: {
+        options: [
+          {
+            label: '更新中',
+            value: '0',
+            key: '0',
+          },
+          {
+            label: '已完结',
+            value: '1',
+            key: '1',
+          },
+        ],
+      },
       colProps: {
         span: 8,
       },
     },
+    // {
+    //   field: 'field2',
+    //   component: 'InputNumber',
+    //   label: '总集数',
+    //   colProps: {
+    //     span: 8,
+    //   },
+    // },
     {
-      field: 'field2',
-      component: 'InputNumber',
-      label: '总集数',
-      colProps: {
-        span: 8,
-      },
-    },
-    {
-      field: 'field2',
+      field: 'ownerId',
       component: 'Input',
       label: '片方',
       colProps: {
@@ -84,21 +101,24 @@
       },
     },
     {
-      field: 'field2',
+      field: 'p_v',
       component: 'Input',
       label: '片方分成',
+      componentProps: {
+        type: 'number',
+      },
       colProps: {
         span: 8,
       },
     },
-    {
-      field: 'field1',
-      component: 'ImageUpload',
-      label: '封面',
-      colProps: {
-        span: 8,
-      },
-    },
+    // {
+    //   field: 'field1',
+    //   component: 'ImageUpload',
+    //   label: '封面',
+    //   colProps: {
+    //     span: 8,
+    //   },
+    // },
     {
       field: 'field1',
       component: 'Select',
@@ -108,15 +128,29 @@
       },
     },
     {
-      field: 'field1',
-      component: 'Select',
+      field: 'tags',
+      component: 'ApiSelect',
       label: '标签',
       colProps: {
         span: 8,
       },
+      componentProps: {
+        mode: 'multiple',
+        api: getLabelList,
+        params: {
+          id: 1,
+        },
+        resultField: 'list',
+        // use name as label
+        labelField: 'name',
+        // use id as value
+        valueField: 'id',
+        // not request untill to select
+        immediate: true,
+      },
     },
     {
-      field: 'field1',
+      field: 'weight',
       component: 'InputNumber',
       label: '权重',
       colProps: {
@@ -124,37 +158,42 @@
       },
     },
     {
-      field: 'field1',
+      field: 'price',
       component: 'InputNumber',
-      label: '单集价',
+      label: '价格',
       colProps: {
         span: 8,
       },
     },
     {
-      field: 'field1',
-      component: 'InputNumber',
-      label: '总价',
+      field: 'recommend',
+      component: 'ApiSelect',
+      label: '相关推荐剧',
       colProps: {
         span: 8,
       },
-    },
-    {
-      field: 'field1',
-      component: 'Select',
-      label: '相关推荐',
-      colProps: {
-        span: 8,
+      componentProps: {
+        mode: 'multiple',
+        api: getSeriesList,
+        params: {
+          pageNum: 1,
+          pageSize: 100,
+        },
+        resultField: 'list',
+        // use name as label
+        labelField: 'title',
+        // use id as value
+        valueField: 'id',
+        // not request untill to select
+        immediate: true,
       },
     },
   ];
-  const { createMessage } = useMessage();
-
   const { back } = useRouter();
 
   const [registerModal] = useModal();
 
-  const [register] = useForm({
+  const [register, methods] = useForm({
     labelWidth: 120,
     schemas,
     actionColOptions: {
@@ -167,9 +206,43 @@
     showSubmitButton: true,
   });
 
+  onMounted(() => {
+    if (id) {
+      getDetail(id as string).then((res) => {
+        res.updateState = res.updateState.toString();
+        res.p_v = res.p_v / 100;
+        res.tags = res.tags.map((x) => x.id);
+        res.ownerId = res.uid;
+        if (res.recommendItem.data) {
+          res.recommend = JSON.parse(res.recommendItem.data);
+        }
+        res.state = Boolean(res.state);
+        methods.setFieldsValue(res);
+      });
+    }
+  });
+
   function handleSubmit(values: any) {
-    console.log('submit values', values);
-    createMessage.success('click search,values:' + JSON.stringify(values));
+    const tags = Object.values(values.tags);
+    let price = -1;
+    if (values.price) {
+      price = Number(values.price);
+    }
+    if (values.p_v) {
+      values.p_v = Number(values.p_v) * 100;
+    }
+    if (values.recommend) {
+      values.recommend = {
+        type: 0,
+        list: Object.values(values.recommend),
+      };
+    }
+    const value = Object.assign(values, { tags, price, state: Number(values.state), type: 1 });
+    if (id) {
+      updateSeriesList(Object.assign(value, { blogId: id }));
+    } else {
+      createSerie(value);
+    }
   }
 </script>
 <style lang="less" scoped>

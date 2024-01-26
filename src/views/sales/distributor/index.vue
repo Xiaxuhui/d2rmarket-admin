@@ -20,8 +20,11 @@
               {
                 label: '删除',
                 icon: 'ic:outline-delete-outline',
-                onClick() {
-                  deleteSalesman(record.id);
+                popConfirm: {
+                  title: '确认删除？',
+                  confirm: () => {
+                    deleteSalesman(record.id);
+                  },
                 },
               },
               {

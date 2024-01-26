@@ -28,8 +28,8 @@ export const useLabelStore = defineStore({
   actions: {
     async loadLabel() {
       this.loading = true;
-      const { data } = await getLabelList();
-      this.list = data.data;
+      const data = await getLabelList();
+      this.list = data;
       this.loading = false;
     },
     async addLabel(name: string, sort: number = 1) {

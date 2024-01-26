@@ -12,6 +12,7 @@ export enum PageEnum {
   DISTRIBUTOR_EDIT = 'editDistributor',
   ADD_PROMOTE = 'addPromote',
   ADD_CHARGE = 'addCharge',
+  ADD_HOMEPAGE = 'addHomePage',
   // error page path
   ERROR_PAGE = '/exception',
   // error log page path

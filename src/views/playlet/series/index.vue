@@ -68,21 +68,18 @@
     state.selectedRowKeys = ids;
   };
 
-  const [registerTable] = useTable({
+  const [registerTable, { reload }] = useTable({
     title: '剧集管理',
-    api: async (params: PagegationType) => {
-      const { data } = await api.getSeriesList(params);
-      return {
-        items: data.data.list,
-        total: data.data.totalRecords,
-      };
-    },
+    api: api.getSeriesList,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getFormConfig({ label: (label as string) || '' }),
     showTableSetting: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
+    fetchSetting: {
+      listField: 'list',
+    },
     rowKey: 'id',
     rowSelection: {
       type: 'checkbox',
@@ -112,6 +109,8 @@
   };
 
   const deleteSeries = (id) => {
-    console.log('id', id);
+    api.deleteSeries(id).then(() => {
+      reload();
+    });
   };
 </script>

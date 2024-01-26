@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BasicTable class="m-4" @register="registerTable">
+    <BasicTable class="m-4" @register="registerTable" @edit-end="change">
       <template #toolbar>
         <DiversityUpload @change="onUploaded" />
       </template>
@@ -9,13 +9,6 @@
           <TableAction
             stopButtonPropagation
             :actions="[
-              {
-                label: '编辑',
-                icon: 'fe:edit',
-                onClick() {
-                  deleteSeries(record.id);
-                },
-              },
               {
                 label: '删除',
                 icon: 'ic:outline-delete-outline',
@@ -46,8 +39,8 @@
   const [registerTable, { setProps, reload }] = useTable({
     api: async () => {
       const data = await api.getDetail(id);
-      setProps({ title: data.data.data.title });
-      return data.data.data.subBlogs;
+      setProps({ title: data.title });
+      return data.subBlogs;
     },
     columns: getDiversityColumns(),
     showTableSetting: true,
@@ -58,7 +51,22 @@
   });
 
   const deleteSeries = (id) => {
-    console.log('id', id);
+    api.deleteSeries(id).then(() => {
+      reload();
+    });
+  };
+
+  const change = (item) => {
+    const data = {
+      blogId: item.record.id,
+      price: item.record.price,
+      state: item.record.state,
+      title: item.record.title,
+    };
+    data[item.key] = item.value;
+    api.updateSeriesList(data).then(() => {
+      reload();
+    });
   };
 
   const onUploaded = (mediaId: string) => {

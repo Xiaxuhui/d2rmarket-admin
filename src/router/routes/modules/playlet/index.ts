@@ -57,6 +57,15 @@ const playlet: AppRouteModule = {
       },
     },
     {
+      path: 'addHomePage',
+      name: 'addHomePage',
+      component: () => import('@/views/playlet/homePage/add.vue'),
+      meta: {
+        title: t('routes.playlet.homePage'),
+        hideMenu: true,
+      },
+    },
+    {
       path: 'charge',
       name: 'Charge',
       component: () => import('@/views/playlet/charge/index.vue'),
