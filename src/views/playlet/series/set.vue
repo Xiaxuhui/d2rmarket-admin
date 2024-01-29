@@ -12,7 +12,13 @@
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { useRoute, useRouter } from 'vue-router';
   import { useModal } from '@/components/Modal';
-  import { createSerie, getDetail, getSeriesList, updateSeriesList } from '@/api/sys/series';
+  import {
+    createSerie,
+    getDetail,
+    getSeriesList,
+    updateSeriesList,
+    listCategory,
+  } from '@/api/sys/series';
   import SeriesModal from './components/seriesModal.vue';
   import { onMounted } from 'vue';
   import { getLabelList } from '@/api/sys/label';
@@ -121,10 +127,20 @@
     // },
     {
       field: 'field1',
-      component: 'Select',
+      component: 'ApiSelect',
       label: '分类',
       colProps: {
         span: 8,
+      },
+      componentProps: {
+        api: listCategory,
+        resultField: 'list',
+        // use name as label
+        labelField: 'name',
+        // use id as value
+        valueField: 'id',
+        // not request untill to select
+        immediate: true,
       },
     },
     {
@@ -206,13 +222,16 @@
     showSubmitButton: true,
   });
 
-  onMounted(() => {
+  onMounted(async () => {
     if (id) {
       getDetail(id as string).then((res) => {
         res.updateState = res.updateState.toString();
         res.p_v = res.p_v / 100;
         res.tags = res.tags.map((x) => x.id);
         res.ownerId = res.uid;
+        if (res.category) {
+          res.field1 = res.category.id;
+        }
         if (res.recommendItem.data) {
           res.recommend = JSON.parse(res.recommendItem.data);
         }
@@ -223,13 +242,17 @@
   });
 
   function handleSubmit(values: any) {
-    const tags = Object.values(values.tags);
+    const tags = Object.values(values.tags) ?? [];
     let price = -1;
     if (values.price) {
       price = Number(values.price);
     }
     if (values.p_v) {
       values.p_v = Number(values.p_v) * 100;
+    }
+    if (values.field1) {
+      console.log(values.field1);
+      tags.push(values.field1);
     }
     if (values.recommend) {
       values.recommend = {
@@ -238,6 +261,7 @@
       };
     }
     const value = Object.assign(values, { tags, price, state: Number(values.state), type: 1 });
+    delete value.field1;
     if (id) {
       updateSeriesList(Object.assign(value, { blogId: id }));
     } else {

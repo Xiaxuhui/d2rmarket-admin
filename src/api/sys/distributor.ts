@@ -35,7 +35,7 @@ export const updateDistributor = (params) => {
 };
 
 export const addPriceRate = (params) => {
-  return defHttp.get({ url: Api.addPriceRate, params });
+  return defHttp.post({ url: Api.addPriceRate, params });
 };
 
 export const updatePriceRate = (params) => {

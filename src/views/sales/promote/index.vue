@@ -63,6 +63,7 @@
     useSearchForm: true,
     fetchSetting: {
       listField: 'list',
+      totalField: 'totalRecords',
     },
     formConfig: getPromoteFormConfig(),
     showTableSetting: true,

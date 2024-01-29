@@ -53,6 +53,7 @@
     columns: getBasicColumns(),
     fetchSetting: {
       listField: 'list',
+      totalField: 'totalRecords',
     },
     useSearchForm: true,
     formConfig: getFormConfig(),

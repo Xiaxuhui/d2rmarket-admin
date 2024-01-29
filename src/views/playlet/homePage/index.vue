@@ -74,6 +74,7 @@
     rowKey: 'id',
     fetchSetting: {
       listField: 'list',
+      totalField: 'totalRecords',
     },
     rowSelection: {
       type: 'checkbox',

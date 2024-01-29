@@ -14,14 +14,22 @@
   import { useModal } from '@/components/Modal';
   import SeriesModal from './components/seriesModal.vue';
   import FormTable from './components/formTable.vue';
-  import { updateDistributor, distributorDetail, addChild } from '@/api/sys/distributor';
-  import { onMounted } from 'vue';
+  import {
+    updateDistributor,
+    distributorDetail,
+    addChild,
+    addPriceRate,
+  } from '@/api/sys/distributor';
+  import { getSeriesList } from '@/api/sys/series';
+  import { onMounted, ref } from 'vue';
   import { chargeList } from '@/api/playlet/charge';
 
   const { back } = useRouter();
   const route = useRoute();
   const id = route.query.id;
   const type = route.query.type;
+  let charge = ref([]);
+  let blog = [];
 
   const schemas: FormSchema[] = [
     {
@@ -163,33 +171,42 @@
       },
     },
     {
-      field: 'field10',
+      field: 'vip',
       component: 'Input',
       show: type === 'edit',
-      label: '推广剧集：',
+      label: '推广道具：',
       colProps: {
         span: 16,
       },
-      renderColContent({ model, field }) {
+      renderColContent() {
         return (
           <>
             <FormTable
-              field="field10"
-              label="推广剧集："
-              v-model:value={model[field]}
-              columns={seriesColumns}
+              label="推广道具："
+              field="vip"
+              v-model:value={charge.value}
+              columns={seriesColumns('name')}
               editProps={['price']}
+              onUpdate:value={(val) => {
+                charge.value = val;
+              }}
               actionOptions={{
-                text: '添加剧集',
-                api: () => {
-                  return Promise.resolve([{ id: '321', price: 11 }]);
+                text: '添加道具',
+                api: async () => {
+                  const res = await chargeList({ pageNum: 1, pageSize: 20, channelId: id });
+                  if (res) {
+                    res.list.forEach((x, index) => {
+                      x.key = index.toString();
+                    });
+                    return res.list;
+                  }
                 },
                 props: {
-                  title: '选择剧集',
+                  title: '选择道具',
                   columns: [
                     {
-                      title: 'id',
-                      dataIndex: 'id',
+                      title: 'name',
+                      dataIndex: 'name',
                       width: 100,
                     },
                     {
@@ -206,42 +223,45 @@
       },
     },
     {
-      field: 'field11',
+      field: 'blog',
       component: 'Input',
       show: type === 'edit',
-      label: '推广道具：',
+      label: '推广剧集：',
       colProps: {
         span: 16,
       },
-      renderColContent({ model, field }) {
+      renderColContent({ model, field, values }) {
+        console.log(values);
         return (
           <>
             <FormTable
-              label="推广道具："
-              field="field11"
+              field="blog"
+              label="推广剧集："
+              showTable={true}
               v-model:value={model[field]}
-              columns={seriesColumns}
+              columns={seriesColumns('title')}
+              onUpdate:value={(val) => {
+                blog = val;
+              }}
               editProps={['price']}
               actionOptions={{
-                text: '添加道具',
+                text: '添加剧集',
                 api: async () => {
-                  const res = await chargeList({ pageNum: 1, pageSize: 20, channelId: id, a: 2 });
+                  const res = await getSeriesList({ pageNum: 1, pageSize: 20 });
                   if (res) {
                     return res.list;
                   }
                 },
                 props: {
-                  title: '选择道具',
+                  title: '选择剧集',
                   columns: [
                     {
-                      title: 'name',
-                      dataIndex: 'name',
-                      width: 100,
+                      title: 'title',
+                      dataIndex: 'title',
                     },
                     {
                       title: 'price',
                       dataIndex: 'price',
-                      width: 100,
                     },
                   ],
                 },
@@ -268,25 +288,35 @@
     showSubmitButton: true,
   });
 
-  const seriesColumns = [
-    {
-      title: 'id',
-      dataIndex: 'id',
-      width: 100,
-    },
-    {
-      title: 'price',
-      dataIndex: 'price',
-      width: 100,
-    },
-    {
-      title: '操作',
-      dataIndex: 'operation',
-    },
-  ];
+  const seriesColumns = (key = 'title') => {
+    return [
+      {
+        title: 'title',
+        dataIndex: key,
+        key: 'title',
+      },
+      {
+        title: 'price',
+        dataIndex: 'price',
+        key: 'price',
+        editRow: true,
+      },
+      {
+        title: '操作',
+        dataIndex: 'operation',
+      },
+    ];
+  };
 
   const getData = async (id) => {
     const res = await distributorDetail({ channelId: id });
+    const ret = await chargeList({ channelId: id, pageNum: 1, pageSize: 20 });
+    if (ret) {
+      ret.list.forEach((x, index) => {
+        x.key = index.toString();
+      });
+      charge.value = ret.list;
+    }
     if (res) {
       if (res.sellVipRate) {
         res.sellVipRate = res.sellVipRate / 100;
@@ -318,7 +348,29 @@
       values.blogOwnerRate = Number(values.blogOwnerRate) * 100;
     }
     if (type === 'edit') {
-      updateDistributor(Object.assign(values, { channelId: id })).then(console.log);
+      let list = [];
+      console.log(values.blog);
+      if (blog && blog.length) {
+        blog.forEach((x) => {
+          list.push({
+            googsId: x.id,
+            type: 3,
+            price: x.price,
+          });
+        });
+      }
+      if (charge.value && charge.value.length) {
+        charge.value.forEach((x) => {
+          list.push({
+            googsId: x.id,
+            price: x.price,
+            type: x.type,
+          });
+        });
+      }
+      console.log(list);
+      updateDistributor(Object.assign(values, { channelId: id }));
+      addPriceRate({ channelId: id, list });
     }
     if (type === 'add') {
       addChild(Object.assign(values, { parentId: id }));
