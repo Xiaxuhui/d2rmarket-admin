@@ -4,25 +4,24 @@
       <template #resetBefore>
         <a-button class="mr-2" @click="back">返回</a-button>
       </template>
-      <template #submitBefore>
-        <a-button type="primary" class="mr-2">添加下级</a-button>
-      </template>
-      <template #advanceBefore>
-        <a-button type="primary" danger class="mr-2">禁用</a-button>
-      </template>
     </BasicForm>
     <SeriesModal @register="registerModal" />
   </div>
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { Input } from 'ant-design-vue';
-  import { useRouter } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { useModal } from '@/components/Modal';
   import SeriesModal from './components/seriesModal.vue';
   import FormTable from './components/formTable.vue';
+  import { updateDistributor, distributorDetail, addChild } from '@/api/sys/distributor';
   import { onMounted } from 'vue';
+  import { chargeList } from '@/api/playlet/charge';
+
+  const { back } = useRouter();
+  const route = useRoute();
+  const id = route.query.id;
+  const type = route.query.type;
 
   const schemas: FormSchema[] = [
     {
@@ -34,23 +33,39 @@
       },
     },
     {
-      field: 'field1',
+      field: 'name',
       component: 'Input',
-      label: '用户名：',
+      label: '分销商名称：',
       colProps: {
         span: 8,
       },
     },
     {
-      field: 'field2',
+      field: 'parentName',
       component: 'Input',
-      label: '昵称：',
+      label: '上级分销商名称：',
       colProps: {
         span: 8,
       },
     },
     {
-      field: 'field3',
+      field: 'notes',
+      component: 'Input',
+      label: '备注：',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'account',
+      component: 'Input',
+      label: '账号：',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'pwd',
       component: 'Input',
       label: '密码：',
       colProps: {
@@ -58,82 +73,99 @@
       },
     },
     {
-      field: 'field4',
-      component: 'Input',
-      label: '隶属：',
+      field: 'state',
+      component: 'Select',
+      label: '状态：',
       colProps: {
         span: 8,
       },
       componentProps: {
-        disabled: true,
+        options: [
+          {
+            label: '正常',
+            value: 1,
+            key: 1,
+          },
+          {
+            label: '禁用',
+            value: 2,
+            key: 2,
+          },
+        ],
       },
     },
     {
-      field: 'field5',
-      component: 'Switch',
-      label: '可添加下级：',
+      field: 'canRemain',
+      component: 'Select',
+      label: '提现状态：',
       colProps: {
         span: 8,
       },
-      componentProps: {},
+      componentProps: {
+        options: [
+          {
+            label: '正常',
+            value: 1,
+            key: 1,
+          },
+          {
+            label: '禁用',
+            value: 2,
+            key: 2,
+          },
+        ],
+      },
     },
     {
-      field: 'field6',
-      component: 'Switch',
-      label: '可提现：',
+      field: 'canAdd',
+      component: 'Select',
+      label: '添加下级：',
       colProps: {
         span: 8,
       },
-      componentProps: {},
+      componentProps: {
+        options: [
+          {
+            label: '能',
+            value: 1,
+            key: 1,
+          },
+          {
+            label: '不能',
+            value: 0,
+            key: 0,
+          },
+        ],
+      },
     },
     {
-      field: 'field7',
+      field: 'sellVipRate',
       component: 'Input',
-      label: '分成：',
-      helpMessage: '与上级分成比例',
+      label: '销售vip分成比例：',
       colProps: {
         span: 8,
       },
-      suffix: '%',
     },
     {
-      field: 'field8',
+      field: 'channelRate',
       component: 'Input',
-      label: '抽成：',
-      helpMessage: '渠道总抽成比例',
+      label: '销售剧分成比例：',
       colProps: {
         span: 8,
       },
-      suffix: '%',
     },
     {
-      field: 'field9',
+      field: 'blogOwnerRate',
       component: 'Input',
-      label: '片方分成：',
-      helpMessage: '片方与上级分成比例',
-      render: ({ model, field }) => {
-        return (
-          <div class="relative">
-            <Input v-model:value={model[field]} placeholder="请输入" />
-            <a
-              class="absolute w-[60px] right-[-100px] top-1/2 translate-y-[-50%]"
-              onClick={() => {
-                openModal(true, { [field]: model[field] });
-              }}
-            >
-              相关短剧
-            </a>
-          </div>
-        );
-      },
+      label: '发剧方分成比例：',
       colProps: {
         span: 8,
       },
-      suffix: '%',
     },
     {
       field: 'field10',
       component: 'Input',
+      show: type === 'edit',
       label: '推广剧集：',
       colProps: {
         span: 16,
@@ -176,6 +208,7 @@
     {
       field: 'field11',
       component: 'Input',
+      show: type === 'edit',
       label: '推广道具：',
       colProps: {
         span: 16,
@@ -191,15 +224,18 @@
               editProps={['price']}
               actionOptions={{
                 text: '添加道具',
-                api: () => {
-                  return Promise.resolve([{ id: '321', price: 11 }]);
+                api: async () => {
+                  const res = await chargeList({ pageNum: 1, pageSize: 20, channelId: id, a: 2 });
+                  if (res) {
+                    return res.list;
+                  }
                 },
                 props: {
                   title: '选择道具',
                   columns: [
                     {
-                      title: 'id',
-                      dataIndex: 'id',
+                      title: 'name',
+                      dataIndex: 'name',
                       width: 100,
                     },
                     {
@@ -216,11 +252,7 @@
       },
     },
   ];
-  const { createMessage } = useMessage();
-
-  const { back } = useRouter();
-
-  const [registerModal, { openModal }] = useModal();
+  const [registerModal] = useModal();
 
   const [register, { setFieldsValue }] = useForm({
     labelWidth: 120,
@@ -253,25 +285,44 @@
     },
   ];
 
+  const getData = async (id) => {
+    const res = await distributorDetail({ channelId: id });
+    if (res) {
+      if (res.sellVipRate) {
+        res.sellVipRate = res.sellVipRate / 100;
+      }
+      if (res.channelRate) {
+        res.channelRate = res.channelRate / 100;
+      }
+      if (res.blogOwnerRate) {
+        res.blogOwnerRate = res.blogOwnerRate / 100;
+      }
+      setFieldsValue(res);
+    }
+  };
+
   onMounted(() => {
-    setFieldsValue({
-      field1: '夏旭辉',
-      field2: '麻瓜',
-      field3: '123456',
-      field4: '半次元',
-      field5: true,
-      field6: true,
-      field7: 17,
-      field8: 17,
-      field9: 17,
-      field10: [{ id: 123, price: 10 }],
-      field11: [{ id: 321, price: 11 }],
-    });
+    if (id && type === 'edit') {
+      getData(id);
+    }
   });
 
   function handleSubmit(values: any) {
-    console.log('submit values', values);
-    createMessage.success('click search,values:' + JSON.stringify(values));
+    if (values.sellVipRate) {
+      values.sellVipRate = Number(values.sellVipRate) * 100;
+    }
+    if (values.channelRate) {
+      values.channelRate = Number(values.channelRate) * 100;
+    }
+    if (values.blogOwnerRate) {
+      values.blogOwnerRate = Number(values.blogOwnerRate) * 100;
+    }
+    if (type === 'edit') {
+      updateDistributor(Object.assign(values, { channelId: id })).then(console.log);
+    }
+    if (type === 'add') {
+      addChild(Object.assign(values, { parentId: id }));
+    }
   }
 </script>
 <style lang="less" scoped>

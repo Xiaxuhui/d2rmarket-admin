@@ -2,7 +2,7 @@
   <div>
     <FormItem :name="field" :label="label" :labelCol="{ prefixCls: 'series-label' }">
       <a-button type="primary" @click="openModal(true, 1)">{{ actionOptions.text }}</a-button>
-      <Table class="mt-2" :columns="columns" :dataSource="value" :pagination="{ pageSize: 10 }">
+      <Table class="mt-2" :columns="columns" :dataSource="value" :pagination="{ pageSize: 20 }">
         <template #bodyCell="{ column, text, record }">
           <template v-if="editProps.includes(column.dataIndex || '')">
             <div>
@@ -147,7 +147,8 @@
   };
 
   const getSelectRowKeys = (rowKeys) => {
-    console.log('rowKeys', rowKeys);
+    state.dataSource.push(rowKeys);
+    // console.log('rowKeys1', rowKeys);
   };
 </script>
 <style lang="less">

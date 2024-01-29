@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="register" title="下级分销商" @open-change="handleShow">
+  <BasicModal v-bind="$attrs" @register="register" title="下级分销商">
     <Table
       :columns="columns"
       :dataSource="state.modalData"
@@ -47,8 +47,11 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { TableAction } from '@/components/Table';
   import { Table } from 'ant-design-vue';
+  import { distributorChildList } from '@/api/sys/distributor';
   import { ColumnType } from 'ant-design-vue/lib/table/interface';
-  import { getBasicColumns, getModalData } from '../tableData';
+  import { getBasicColumns } from '../tableData';
+  import { useGo } from '@/hooks/web/usePage';
+  import { PageEnum } from '@/enums/pageEnum';
 
   const lines = ref(10);
 
@@ -56,6 +59,7 @@
     loading: false,
     pagination: {
       pageSize: 10,
+      pageNum: 1,
     },
     modalData: [],
   });
@@ -64,11 +68,12 @@
 
   const [register, { setModalProps, redoModalHeight }] = useModalInner((data) => {
     console.log('data', data);
-    setModalProps({ width: 1000 });
-    getModalData().then((res) => {
-      state.modalData = res;
+    setModalProps({ width: 1200 });
+    distributorChildList(Object.assign({ channelId: data.id }, state.pagination)).then((res) => {
+      state.modalData = res.list;
     });
   });
+  const go = useGo();
 
   watch(
     () => lines.value,
@@ -77,20 +82,14 @@
     },
   );
 
-  function handleShow(open: boolean) {
-    if (open) {
-      state.loading = true;
-      setModalProps({ loading: true });
-      setTimeout(() => {
-        lines.value = Math.round(Math.random() * 30 + 5);
-        state.loading = false;
-        setModalProps({ loading: false });
-      }, 3000);
-    }
-  }
-
   const editSalesman = (id) => {
-    console.log(id);
+    go({
+      path: PageEnum.DISTRIBUTOR_EDIT,
+      query: {
+        id,
+        type: 'edit',
+      },
+    });
   };
 
   const deleteSalesman = (id) => {

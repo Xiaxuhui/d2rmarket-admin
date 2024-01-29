@@ -2,7 +2,6 @@
   <div>
     <BasicTable @register="register">
       <template #toolbar>
-        <a-button type="primary" @click="addSalesman">添加分销商</a-button>
         <a-button type="primary">导出数据</a-button>
       </template>
       <template #bodyCell="{ column, record }">
@@ -18,21 +17,17 @@
                 },
               },
               {
-                label: '删除',
-                icon: 'ic:outline-delete-outline',
-                popConfirm: {
-                  title: '确认删除？',
-                  confirm: () => {
-                    deleteSalesman(record.id);
-                  },
+                label: '下级',
+                icon: 'carbon:sales-ops',
+                onClick() {
+                  viewSalesman(record.id);
                 },
               },
               {
-                label: '下级',
-                icon: 'carbon:sales-ops',
-                ifShow: !!record.num,
+                label: '添加下级',
+                icon: 'fe:edit',
                 onClick() {
-                  viewSalesman(record.id);
+                  addNext(record.id);
                 },
               },
             ]"
@@ -45,7 +40,8 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getBasicColumns, getTreeTableData, getFormConfig } from './tableData';
+  import { getBasicColumns, getFormConfig } from './tableData';
+  import { distributorList } from '@/api/sys/distributor';
   import { useModal } from '@/components/Modal';
   import { useGo } from '@/hooks/web/usePage';
   import SalesModal from './components/salesModal.vue';
@@ -53,8 +49,11 @@
 
   const [register] = useTable({
     title: '分销商管理',
-    api: getTreeTableData,
+    api: distributorList,
     columns: getBasicColumns(),
+    fetchSetting: {
+      listField: 'list',
+    },
     useSearchForm: true,
     formConfig: getFormConfig(),
     rowKey: 'id',
@@ -64,26 +63,24 @@
 
   const go = useGo();
 
-  const addSalesman = () => {
-    go({
-      path: PageEnum.DISTRIBUTOR_EDIT,
-      query: {
-        id: 1,
-      },
-    });
-  };
-
   const editSalesman = (id) => {
     go({
       path: PageEnum.DISTRIBUTOR_EDIT,
       query: {
         id,
+        type: 'edit',
       },
     });
   };
 
-  const deleteSalesman = (id) => {
-    console.log(id);
+  const addNext = (id) => {
+    go({
+      path: PageEnum.DISTRIBUTOR_EDIT,
+      query: {
+        id,
+        type: 'add',
+      },
+    });
   };
 
   const viewSalesman = (id) => {

@@ -2,19 +2,24 @@ import { BasicColumn, FormProps } from '@/components/Table';
 import { tv } from 'tailwind-variants';
 
 enum STATE_ENUM {
-  END = 10,
+  del = -1,
+  normal = 1,
+  disabled = 2,
 }
 
 const colorText = tv({
   variants: {
     color: {
-      [STATE_ENUM.END]: 'text-red',
+      [STATE_ENUM.del]: 'text-red',
+      [STATE_ENUM.disabled]: 'text-red',
     },
   },
 });
 
 const stateEnum = {
-  [STATE_ENUM.END]: '下线',
+  [STATE_ENUM.del]: '删除',
+  [STATE_ENUM.normal]: '正常',
+  [STATE_ENUM.disabled]: '禁用',
 };
 
 export const getFormConfig: () => Partial<FormProps> = () => {
@@ -82,30 +87,34 @@ export const getSeriesColumns: () => BasicColumn[] = () => {
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
-      title: '等级',
-      dataIndex: 'level',
-      width: 100,
-      fixed: 'left',
-    },
-    {
       title: 'ID',
       dataIndex: 'id',
-      width: 100,
     },
     {
       title: '名称',
       dataIndex: 'name',
-      width: 130,
     },
     {
-      title: '佣金比例',
-      dataIndex: 'percent',
+      title: '上级分销商',
+      dataIndex: 'parentName',
+    },
+    {
+      title: '备注',
+      dataIndex: 'notes',
+    },
+    {
+      title: '账号',
+      dataIndex: 'account',
       align: 'center',
     },
     {
-      title: '账户余额',
-      dataIndex: 'amount',
+      title: '密码',
+      dataIndex: 'pwd',
       align: 'center',
+    },
+    {
+      title: '可提现金额',
+      dataIndex: 'remain_m',
     },
     {
       title: '状态',
@@ -116,35 +125,12 @@ export function getBasicColumns(): BasicColumn[] {
       },
     },
     {
-      title: '下级',
-      dataIndex: 'num',
-      width: 80,
-    },
-    {
       title: '操作',
-      width: 250,
+      width: 300,
       align: 'center',
       dataIndex: 'operation',
     },
   ];
-}
-
-export async function getTreeTableData() {
-  return (() => {
-    const arr: any = [];
-    for (let index = 0; index < 40; index++) {
-      arr.push({
-        level: 1,
-        id: `${index}`,
-        name: 'John Brown',
-        num: index === 5 ? 0 : 20,
-        state: 10,
-        percent: '50%',
-        amount: 20,
-      });
-    }
-    return arr;
-  })();
 }
 
 export const getModalData = async () => {
