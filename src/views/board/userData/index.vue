@@ -4,17 +4,16 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <TableAction
-            v-if="record.state === 1"
             stopButtonPropagation
             :actions="[
               {
-                label: '确认',
+                label: '详情',
                 onClick() {
                   confirm(record.id);
                 },
               },
               {
-                label: '驳回',
+                label: '禁用',
                 onClick() {
                   reject(record.id);
                 },
@@ -24,12 +23,15 @@
         </template>
       </template>
     </BasicTable>
+    <UserDetail @register="registerModal" />
   </div>
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { reactive } from 'vue';
-  import { list, update } from '@/api/withdraw';
+  import { list } from '@/api/withdraw';
+  import UserDetail from './detail.vue';
+  import { useModal } from '@/components/Modal';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const state = reactive<{
@@ -42,11 +44,13 @@
     reject: '',
   });
 
+  const [registerModal, { openModal }] = useModal();
+
   const onSelectChange = (ids) => {
     console.log(ids);
     state.selectedRowKeys = ids;
   };
-  const [registerTable, methods] = useTable({
+  const [registerTable] = useTable({
     title: '订单数据',
     api: list,
     columns: getBasicColumns(),
@@ -68,9 +72,7 @@
     pagination: { pageSize: 20 },
   });
   const confirm = (id: string) => {
-    update({ withdrawalId: id, state: 2 }).then(() => {
-      methods.reload();
-    });
+    openModal(true, { id });
   };
   const reject = (id: string) => {
     console.log(id);

@@ -4,7 +4,6 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <TableAction
-            v-if="record.state === 1"
             stopButtonPropagation
             :actions="[
               {

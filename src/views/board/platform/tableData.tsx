@@ -1,43 +1,44 @@
 import { BasicColumn, FormProps } from '@/components/Table';
 import { formatToDateTime } from '@/utils/dateUtil';
 
-enum STATE_ENUM {
-  DEL = -1,
-  WAIT = 1,
-  SUCCESS = 2,
-  REJECT = 3,
-  CANCEL = 4,
-}
-
-const stateEnum = {
-  [STATE_ENUM.DEL]: '删除',
-  [STATE_ENUM.WAIT]: '等待处理',
-  [STATE_ENUM.SUCCESS]: '处理成功',
-  [STATE_ENUM.REJECT]: '驳回',
-  [STATE_ENUM.CANCEL]: '用户取消',
-};
-
 export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
   return {
     labelWidth: 100,
     schemas: [
       {
-        field: `name`,
+        field: `time_gap`,
+        label: `统计间隔：`,
+        component: 'Select',
+        componentProps: {
+          options: [
+            {
+              label: '按月统计',
+              value: 1,
+            },
+            {
+              label: '按日统计',
+              value: 2,
+            },
+          ],
+        },
+      },
+      {
+        field: `channel`,
         label: `分销商：`,
         component: 'Input',
       },
       {
-        field: `producer`,
+        field: `parentChannel`,
         label: `隶属：`,
         component: 'Input',
       },
       {
-        field: `producer`,
-        label: `类型：`,
+        field: `adId`,
+        label: `任务ID：`,
         component: 'Input',
       },
       {
-        field: '[startDate, endDate]',
+        field: '[startTime, endTime]',
         label: '日期范围',
         component: 'RangePicker',
         componentProps: {
@@ -52,48 +53,61 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
-      title: '分销商',
-      dataIndex: 'uid',
-    },
-    {
-      title: '任务',
-      dataIndex: 'uName',
-    },
-    {
-      title: '提现金额',
-      dataIndex: 'money',
-      customRender({ value }) {
-        return <div>{value / 10000}</div>;
-      },
-    },
-    {
-      title: '类型',
-      dataIndex: 'name',
-    },
-    {
-      title: '次数',
-      dataIndex: 'bankName',
-    },
-    {
-      title: 'initiateTime',
-      dataIndex: '时间',
+      title: '时间',
+      dataIndex: 'time',
       customRender({ value }) {
         const time = formatToDateTime(value);
         return <div>{time}</div>;
       },
     },
     {
-      title: '状态',
-      dataIndex: 'state',
-      customRender({ value }) {
-        return <div>{stateEnum[value]}</div>;
-      },
+      title: '充值',
+      dataIndex: 'uid',
     },
     {
-      title: '操作',
-      width: 200,
-      dataIndex: 'operation',
-      fixed: 'right',
+      title: '消耗',
+      dataIndex: 'uName',
+    },
+    {
+      title: 'ROI',
+      dataIndex: 'uName',
+    },
+    {
+      title: '新用户',
+      dataIndex: 'uName',
+    },
+    {
+      title: '新用户充值',
+      dataIndex: 'uName',
+    },
+    {
+      title: '新用户付费率',
+      dataIndex: 'uName',
+    },
+
+    {
+      title: '充值笔数',
+      dataIndex: 'name',
+    },
+    {
+      title: '回传笔数',
+      dataIndex: 'bankName',
+    },
+    {
+      title: '回传金额',
+      dataIndex: 'bankName',
+    },
+    {
+      title: '登陆用户',
+      dataIndex: 'bankName',
+    },
+    {
+      title: '平均观看时长',
+      dataIndex: 'bankName',
+    },
+    {
+      title: '平均观看集数',
+      dataIndex: 'bankName',
     },
   ];
 }

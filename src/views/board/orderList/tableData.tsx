@@ -22,12 +22,12 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
     labelWidth: 100,
     schemas: [
       {
-        field: `name`,
+        field: `adId`,
         label: `用户ID：`,
         component: 'Input',
       },
       {
-        field: `producer`,
+        field: `parentChannel`,
         label: `隶属：`,
         component: 'Input',
       },
@@ -37,7 +37,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         component: 'Input',
       },
       {
-        field: '[startDate, endDate]',
+        field: '[startTime, endTime]',
         label: '日期范围',
         component: 'RangePicker',
         componentProps: {
@@ -53,11 +53,11 @@ export function getBasicColumns(): BasicColumn[] {
   return [
     {
       title: '订单号',
-      dataIndex: 'uid',
+      dataIndex: 'k1',
     },
     {
-      title: 'initiateTime',
-      dataIndex: '时间',
+      title: '时间',
+      dataIndex: 'time',
       customRender({ value }) {
         const time = formatToDateTime(value);
         return <div>{time}</div>;
@@ -65,38 +65,38 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: '用户',
-      dataIndex: 'name',
+      dataIndex: 'k3',
     },
     {
       title: '分销商',
-      dataIndex: 'bankName',
+      dataIndex: 'k4',
     },
     {
       title: '类型',
-      dataIndex: 'bankName',
+      dataIndex: 'k5',
     },
     {
       title: '提现金额',
-      dataIndex: 'money',
+      dataIndex: 'k6',
       customRender({ value }) {
         return <div>{value / 10000}</div>;
       },
     },
     {
       title: '商品',
-      dataIndex: 'bankName',
+      dataIndex: 'k7',
     },
     {
       title: '支付方式',
-      dataIndex: 'bankName',
+      dataIndex: 'k8',
     },
     {
       title: '平台单号',
-      dataIndex: 'bankName',
+      dataIndex: 'k9',
     },
     {
       title: '状态',
-      dataIndex: 'state',
+      dataIndex: 'k10',
       customRender({ value }) {
         return <div>{stateEnum[value]}</div>;
       },

@@ -4,7 +4,6 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <TableAction
-            v-if="record.state === 1"
             stopButtonPropagation
             :actions="[
               {
@@ -29,7 +28,8 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { reactive } from 'vue';
-  import { list, update } from '@/api/withdraw';
+  import { update } from '@/api/withdraw';
+  import { orderList } from '@/api/board';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const state = reactive<{
@@ -47,8 +47,8 @@
     state.selectedRowKeys = ids;
   };
   const [registerTable, methods] = useTable({
-    title: '订单数据',
-    api: list,
+    title: '投放管理',
+    api: orderList,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),
