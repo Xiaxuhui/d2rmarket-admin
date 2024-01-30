@@ -20,8 +20,12 @@
             {
               label: '删除',
               icon: 'ic:outline-delete-outline',
-              onClick() {
-                deleteSeries(record.id);
+              popConfirm: {
+                title: '是否确认删除',
+                placement: 'left',
+                confirm: () => {
+                  deleteSeries(record.id);
+                },
               },
             },
             {
@@ -79,6 +83,7 @@
     showIndexColumn: false,
     fetchSetting: {
       listField: 'list',
+      totalField: 'totalRecords',
     },
     rowKey: 'id',
     rowSelection: {

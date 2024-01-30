@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="register" :title="title" @open-change="handleShow">
+  <BasicModal v-bind="$attrs" @register="register" :title="title">
     <Table
       :columns="columns"
       :dataSource="state.modalData"
@@ -22,6 +22,7 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { Table } from 'ant-design-vue';
   import { ColumnType } from 'ant-design-vue/lib/table/interface';
+  import { getDetail } from '@/api/sys/series';
   import type { PropType } from 'vue';
 
   const props = defineProps({
@@ -36,6 +37,10 @@
     title: {
       type: String,
       default: null,
+    },
+    showTable: {
+      type: Boolean,
+      default: false,
     },
   });
 
@@ -66,24 +71,27 @@
     },
   );
 
-  function handleShow(open: boolean) {
-    if (open) {
-      state.loading = true;
-      setModalProps({ loading: true });
-      setTimeout(() => {
-        lines.value = Math.round(Math.random() * 30 + 5);
-        state.loading = false;
-        setModalProps({ loading: false });
-      }, 1000);
-    }
-  }
-
   const selectRows = (rowKeys) => {
     state.selectedRowKeys = rowKeys;
   };
-
-  const confirmSelectRowKeys = () => {
-    emit('change', state.selectedRowKeys);
+  const confirmSelectRowKeys = async () => {
+    const values = Object.values(state.selectedRowKeys);
+    let item = [];
+    for (let i = 0; i < state.modalData.length; i++) {
+      const element = state.modalData[i];
+      if (values.includes(element.id)) {
+        if (props.showTable && !element.innerData) {
+          const res = await getDetail(element.id as string);
+          if (res) {
+            element.innerData = res.subBlogs ?? [];
+            item.push(element);
+          }
+        } else {
+          item.push(element);
+        }
+      }
+    }
+    emit('change', item);
     closeModal();
   };
 </script>

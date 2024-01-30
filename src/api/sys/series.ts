@@ -10,6 +10,7 @@ enum API {
   ADD = '/manage/addBlog',
   UPDATE = '/manage/updateBlog',
   DELETE = '/manage/deleteBlog',
+  LIST_CATEGORY = '/manage/listCategory',
 }
 
 export const getSeriesList = (params: PagegationType) => {
@@ -30,4 +31,8 @@ export const deleteSeries = (id: string) => {
 
 export const createSerie = (params) => {
   return defHttp.post<SerieDetail>({ url: API.ADD, params });
+};
+
+export const listCategory = () => {
+  return defHttp.get({ url: API.LIST_CATEGORY });
 };
