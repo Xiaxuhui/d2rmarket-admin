@@ -7,6 +7,7 @@ enum Api {
   ADD = '/manage/addTVTag',
   REMOVE = '/manage/deleteTag',
   UPDATE = '/manage/updateTVTag',
+  SEARCH_CHANNEL = '/manage/searchChannel',
 }
 
 export const getLabelList = () => {
@@ -29,4 +30,8 @@ export const updateLabel = (params: LabelModel) => {
   return defBusinessHttp.get(Api.UPDATE, {
     params: { ...params, parent: 0 },
   });
+};
+
+export const searchChannel = (params) => {
+  return defHttp.get({ url: Api.SEARCH_CHANNEL, params });
 };

@@ -1,26 +1,10 @@
 <template>
   <div>
-    <BasicTable @register="registerTable">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'operation'">
-          <TableAction
-            stopButtonPropagation
-            :actions="[
-              {
-                label: '详细列表',
-                onClick() {
-                  confirm(record.id);
-                },
-              },
-            ]"
-          />
-        </template>
-      </template>
-    </BasicTable>
+    <BasicTable @register="registerTable" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import { BasicTable, useTable } from '@/components/Table';
   import { reactive } from 'vue';
   import { order } from '@/api/board';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
@@ -40,7 +24,7 @@
     state.selectedRowKeys = ids;
   };
   const [registerTable] = useTable({
-    title: '订单统计',
+    title: '详细列表',
     api: order,
     columns: getBasicColumns(),
     useSearchForm: true,
@@ -60,7 +44,4 @@
     showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20 },
   });
-  const confirm = (id: string) => {
-    console.log(id);
-  };
 </script>

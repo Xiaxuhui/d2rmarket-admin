@@ -33,6 +33,7 @@
   import { useRoute } from 'vue-router';
   import * as api from '@/api/sys/series';
   import { DiversityUpload } from '@/components/Upload';
+  import { updateRecommend } from '@/api/sys/blog';
 
   const { id } = useRoute().query as { id: string };
 
@@ -57,6 +58,10 @@
   };
 
   const change = (item) => {
+    if (item.key === 'f') {
+      updateRecommend({ blogId: item.record.id, state: Number(item.value) });
+      return;
+    }
     const data = {
       blogId: item.record.id,
       price: item.record.price,
@@ -69,12 +74,17 @@
     });
   };
 
-  const onUploaded = (mediaId: string) => {
+  const onUploaded = (mediaId: string, title: string) => {
     api
       .createSerie({
         fileId: mediaId,
-        title: '新的博客',
+        title: title,
         parentBlog: id,
+        data: '',
+        type: 0,
+        state: 1,
+        price: 0,
+        weight: 0,
       })
       .then(() => reload());
   };

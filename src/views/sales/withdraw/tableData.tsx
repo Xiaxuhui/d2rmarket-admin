@@ -21,25 +21,54 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
   return {
     labelWidth: 100,
     schemas: [
+      // {
+      //   field: `name`,
+      //   label: `分销商：`,
+      //   component: 'Input',
+      // },
       {
-        field: `name`,
-        label: `分销商：`,
+        field: `channelId`,
+        label: `渠道ID：`,
         component: 'Input',
       },
       {
-        field: `producer`,
-        label: `隶属：`,
-        component: 'Input',
-      },
-      {
-        field: '[startDate, endDate]',
-        label: '日期范围',
-        component: 'RangePicker',
+        field: `state`,
+        label: `状态：`,
+        component: 'Select',
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
         componentProps: {
-          format: 'YYYY-MM-DD',
-          placeholder: ['开始日期', '结束日期'],
+          options: [
+            {
+              label: '等待处理',
+              value: 1,
+            },
+            {
+              label: '处理完成',
+              value: 2,
+            },
+            {
+              label: '驳回',
+              value: 3,
+            },
+            {
+              label: '用户取消',
+              value: 4,
+            },
+          ],
         },
       },
+      // {
+      //   field: '[startDate, endDate]',
+      //   label: '日期范围',
+      //   component: 'RangePicker',
+      //   componentProps: {
+      //     format: 'YYYY-MM-DD',
+      //     placeholder: ['开始日期', '结束日期'],
+      //   },
+      // },
     ],
   };
 };

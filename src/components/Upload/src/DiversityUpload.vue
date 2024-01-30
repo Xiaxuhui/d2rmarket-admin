@@ -54,8 +54,8 @@
   );
 
   // 上传modal保存操作
-  function handleChange(mediaId: string) {
-    emit('change', mediaId);
+  function handleChange(mediaId: string, title: string) {
+    emit('change', mediaId, title);
   }
 
   function handleDelete(record: Recordable<any>) {

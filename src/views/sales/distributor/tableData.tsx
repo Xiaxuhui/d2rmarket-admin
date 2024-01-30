@@ -35,31 +35,31 @@ export const getFormConfig: () => Partial<FormProps> = () => {
           xxl: 8,
         },
       },
-      {
-        field: `level`,
-        label: `等级：`,
-        component: 'Select',
-        colProps: {
-          xl: 12,
-          xxl: 8,
-        },
-        componentProps: {
-          options: [
-            {
-              label: '一级',
-              value: 1,
-            },
-            {
-              label: '二级',
-              value: 2,
-            },
-            {
-              label: '三级',
-              value: 3,
-            },
-          ],
-        },
-      },
+      // {
+      //   field: `level`,
+      //   label: `等级：`,
+      //   component: 'Select',
+      //   colProps: {
+      //     xl: 12,
+      //     xxl: 8,
+      //   },
+      //   componentProps: {
+      //     options: [
+      //       {
+      //         label: '一级',
+      //         value: 1,
+      //       },
+      //       {
+      //         label: '二级',
+      //         value: 2,
+      //       },
+      //       {
+      //         label: '三级',
+      //         value: 3,
+      //       },
+      //     ],
+      //   },
+      // },
     ],
   };
 };

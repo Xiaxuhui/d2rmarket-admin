@@ -19,6 +19,7 @@ export default defineApplicationConfig({
     server: {
       proxy: {
         '/basic-api': {
+          // target: 'https://grpc.okyaya.com/bgapi',
           // target: 'http://192.168.50.159:9290',
           target: 'http://192.168.50.193:9290',
           changeOrigin: true,
@@ -28,13 +29,13 @@ export default defineApplicationConfig({
           // secure: false
         },
         '/upload': {
-          target: 'http://localhost:3300/upload',
+          target: 'http://192.168.50.193:9290',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/upload`), ''),
         },
         '/api': {
-          target: 'http://192.168.50.159:9290',
+          target: 'https://grpc.okyaya.com/bgapi',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/api`), ''),
@@ -52,7 +53,7 @@ export default defineApplicationConfig({
           rewrite: (path) => path.replace(new RegExp(`^/splitUpload`), ''),
         },
         '/getToken': {
-          target: 'http://192.168.50.104:9290/manage/getAccessToken',
+          target: 'https://grpc.okyaya.com/bgapi/manage/getAccessToken',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/getToken`), ''),
