@@ -67,7 +67,6 @@
       type: 1,
     },
     columns: getBasicColumns(),
-    useSearchForm: true,
     showTableSetting: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
