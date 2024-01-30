@@ -3,6 +3,7 @@
     <BasicTable class="m-4" @register="registerTable" @edit-end="change">
       <template #toolbar>
         <DiversityUpload @change="onUploaded" />
+        <button @click="add">模拟添加</button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -58,7 +59,7 @@
   };
 
   const change = (item) => {
-    if (item.key === 'f') {
+    if (item.key === 'recommendState') {
       updateRecommend({ blogId: item.record.id, state: Number(item.value) });
       return;
     }
@@ -79,6 +80,21 @@
       .createSerie({
         fileId: mediaId,
         title: title,
+        parentBlog: id,
+        data: '',
+        type: 0,
+        state: 1,
+        price: 0,
+        weight: 0,
+      })
+      .then(() => reload());
+  };
+
+  const add = () => {
+    api
+      .createSerie({
+        fileId: 104801,
+        title: `[${new Date()}]demo.mp4`,
         parentBlog: id,
         data: '',
         type: 0,

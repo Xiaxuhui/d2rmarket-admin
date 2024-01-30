@@ -175,7 +175,7 @@ export function getDiversityColumns(): BasicColumn[] {
       editComponent: 'Input',
     },
     {
-      title: '是否推荐',
+      title: '是否上架',
       dataIndex: 'f',
       edit: true,
       editComponent: 'Switch',
@@ -184,13 +184,24 @@ export function getDiversityColumns(): BasicColumn[] {
       },
     },
     {
+      title: '是否推荐',
+      dataIndex: 'recommendState',
+      edit: true,
+      editComponentProps(props) {
+        return { ...props, checked: true };
+      },
+      editComponent: 'Switch',
+      editRender({ currentValue }) {
+        return currentValue ? '是' : '否';
+      },
+    },
+    {
       title: '金豆价格',
-      width: 100,
       dataIndex: 'price',
     },
     {
-      title: '点赞',
-      dataIndex: 'link',
+      title: '权重',
+      dataIndex: 'hotLevel',
     },
     {
       title: '状态',
