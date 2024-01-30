@@ -25,6 +25,7 @@
         </template>
       </template>
     </BasicTable>
+    <FormDialog @register="registerModal" @submit="submit" />
   </div>
 </template>
 
@@ -34,9 +35,14 @@
   import { useRoute } from 'vue-router';
   import * as api from '@/api/sys/series';
   import { DiversityUpload } from '@/components/Upload';
+  import FormDialog from './components/uploadForm.vue';
   import { updateRecommend } from '@/api/sys/blog';
+  import { useModal } from '@/components/Modal';
 
   const { id } = useRoute().query as { id: string };
+
+  let detailTitle = '';
+  let metaId = '';
 
   const [registerTable, { setProps, reload }] = useTable({
     api: async () => {
@@ -75,33 +81,47 @@
     });
   };
 
+  const [registerModal, { openModal }] = useModal();
+
   const onUploaded = (mediaId: string, title: string) => {
+    detailTitle = title;
+    metaId = mediaId;
+    openModal(true, { mediaId, title });
+  };
+
+  const submit = (value) => {
+    if (value.price) {
+      value.price = Number(value.price) * 100;
+    }
     api
-      .createSerie({
-        fileId: mediaId,
-        title: title,
-        parentBlog: id,
-        data: '',
-        type: 0,
-        state: 1,
-        price: 0,
-        weight: 0,
-      })
+      .createSerie(
+        Object.assign(
+          {
+            fileId: metaId,
+            title: detailTitle,
+            parentBlog: id,
+            type: 0,
+            state: 1,
+          },
+          value,
+        ),
+      )
       .then(() => reload());
   };
 
   const add = () => {
-    api
-      .createSerie({
-        fileId: 104801,
-        title: `[${new Date()}]demo.mp4`,
-        parentBlog: id,
-        data: '',
-        type: 0,
-        state: 1,
-        price: 0,
-        weight: 0,
-      })
-      .then(() => reload());
+    openModal(true, { metaId: 1, title: 'title' });
+    // api
+    //   .createSerie({
+    //     fileId: 104801,
+    //     title: `[${new Date()}]demo.mp4`,
+    //     parentBlog: id,
+    //     data: '',
+    //     type: 0,
+    //     state: 1,
+    //     price: 0,
+    //     weight: 0,
+    //   })
+    //   .then(() => reload());
   };
 </script>

@@ -176,11 +176,11 @@ export function getDiversityColumns(): BasicColumn[] {
     },
     {
       title: '是否上架',
-      dataIndex: 'f',
+      dataIndex: 'state',
       edit: true,
       editComponent: 'Switch',
-      customRender() {
-        return '是';
+      customRender({ value }) {
+        return value > 0 ? '是' : '否';
       },
     },
     {
