@@ -22,7 +22,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { reactive } from 'vue';
-  import { order } from '@/api/board';
+  import { orderList } from '@/api/board';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const state = reactive<{
@@ -41,7 +41,7 @@
   };
   const [registerTable] = useTable({
     title: '订单统计',
-    api: order,
+    api: orderList,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),

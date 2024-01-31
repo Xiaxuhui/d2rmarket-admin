@@ -1,8 +1,8 @@
 import { defHttp } from '@/utils/http/axios';
 
 enum Api {
-  orderList = '/manage/DataView',
-  order = '/manage/order',
+  orderList = '/manage/statisticPurchaseRecordPage',
+  order = '/manage/purchaseRecordPage',
 }
 
 /**

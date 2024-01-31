@@ -1,27 +1,71 @@
 import { BasicColumn, FormProps } from '@/components/Table';
-import { formatToDateTime } from '@/utils/dateUtil';
+
+enum STATE_ENUM {
+  vip = 1,
+  dou = 2,
+  blogs = 3,
+  blog = 4,
+}
+
+const stateEnum = {
+  [STATE_ENUM.vip]: '花钱买VIP',
+  [STATE_ENUM.dou]: '花钱买豆子',
+  [STATE_ENUM.blogs]: '购买合集博客',
+  [STATE_ENUM.blog]: '购买单集博客',
+};
 
 export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
   return {
     labelWidth: 100,
     schemas: [
       {
-        field: `name`,
-        label: `分销商：`,
-        component: 'Input',
+        field: 'statisticType',
+        label: '统计类型',
+        component: 'Select',
+        componentProps: {
+          options: [
+            {
+              label: '按小时',
+              value: 1,
+            },
+            {
+              label: '按天',
+              value: 2,
+            },
+            {
+              label: '按周',
+              value: 3,
+            },
+          ],
+        },
       },
       {
-        field: `producer`,
-        label: `隶属：`,
-        component: 'Input',
+        field: 'type',
+        label: '类型',
+        component: 'Select',
+        componentProps: {
+          options: [
+            {
+              label: '买VIP',
+              value: 1,
+            },
+            {
+              label: '买豆子',
+              value: 2,
+            },
+            {
+              label: '买合集博客',
+              value: 3,
+            },
+            {
+              label: '买单集博客',
+              value: 4,
+            },
+          ],
+        },
       },
       {
-        field: `producer`,
-        label: `类型：`,
-        component: 'Input',
-      },
-      {
-        field: '[startDate, endDate]',
+        field: '[startTime, endTime]',
         label: '日期范围',
         component: 'RangePicker',
         componentProps: {
@@ -37,35 +81,38 @@ export function getBasicColumns(): BasicColumn[] {
   return [
     {
       title: '时间',
-      dataIndex: 'time',
-      customRender({ value }) {
-        const time = formatToDateTime(value);
-        return <div>{time}</div>;
-      },
+      dataIndex: 'dateTime',
+      // customRender({ value }) {
+      //   const time = formatToDateTime(value);
+      //   return <div>{time}</div>;
+      // },
     },
     {
-      title: '分销商',
-      dataIndex: 'k2',
+      title: '总计花豆子',
+      dataIndex: 'totalBean',
     },
     {
-      title: '任务',
-      dataIndex: 'k3',
+      title: '总计花钱',
+      dataIndex: 'totalMoney',
     },
     {
-      title: '金额',
-      dataIndex: 'k4',
-      customRender({ value }) {
-        return <div>{value / 10000}</div>;
-      },
+      title: '总计豆子价值钱',
+      dataIndex: 'equivalentMoney',
+      // customRender({ value }) {
+      //   return <div>{value / 10000}</div>;
+      // },
     },
     {
       title: '类型',
-      dataIndex: 'k5',
+      dataIndex: 'type',
+      customRender({ value }) {
+        return <div>{stateEnum[value]}</div>;
+      },
     },
-    {
-      title: '次数',
-      dataIndex: 'k6',
-    },
+    // {
+    //   title: '次数',
+    //   dataIndex: 'k6',
+    // },
     {
       title: '操作',
       width: 200,
