@@ -26,6 +26,12 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         },
       },
       {
+        field: 'type',
+        defaultValue: 3,
+        component: 'Input',
+        show: false,
+      },
+      {
         field: `channel`,
         label: `分销商：`,
         component: 'Input',
@@ -77,7 +83,7 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: '剧名',
-      dataIndex: 'k2',
+      dataIndex: 'name',
     },
     {
       title: '分销商',
