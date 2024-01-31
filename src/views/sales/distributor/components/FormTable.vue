@@ -1,19 +1,27 @@
 <template>
   <div>
     <FormItem :name="field" :label="label" :labelCol="{ prefixCls: 'series-label' }">
-      <a-button type="primary" v-if="showTable" @click="openModal(true, 1)">{{
+      <a-button type="primary" v-if="actionOptions.api" @click="openModal(true, 1)">{{
         actionOptions.text
       }}</a-button>
-      <Table class="mt-2" :columns="columns" :dataSource="value" :pagination="{ pageSize: 20 }">
+      <Table
+        class="mt-2"
+        :columns="columns"
+        :dataSource="value"
+        :pagination="state.pagination"
+        :row-key="rowKey"
+      >
         <template #bodyCell="{ column, text, record }">
           <template v-if="editProps.includes(column.dataIndex || '')">
             <div>
               <a-input
-                v-if="state.editableData[record.key]"
-                v-model:value="state.editableData[record.key][column.dataIndex]"
+                v-if="state.editableData[record[rowKey]]"
+                v-model:value="state.editableData[record[rowKey]][column.dataIndex]"
                 style="margin: -5px 0"
               />
-              <template v-else> {{ text }} </template>
+              <template v-else>
+                {{ text }}
+              </template>
             </div>
           </template>
           <template v-else-if="column.dataIndex === 'operation'">
@@ -23,108 +31,76 @@
                 {
                   label: '编辑',
                   icon: 'fe:edit',
+                  ifShow: Boolean(!state.editableData[record[rowKey]]),
                   onClick() {
-                    edit(record.key);
-                  },
-                },
-                {
-                  label: '删除',
-                  icon: 'ic:outline-delete-outline',
-                  onClick() {
-                    del(record.id);
+                    edit(record[props.rowKey]);
                   },
                 },
                 {
                   label: '取消',
                   icon: 'material-symbols:cancel-outline',
-                  ifShow: Boolean(state.editableData[record.key]),
+                  ifShow: Boolean(state.editableData[record[rowKey]]),
                   onClick() {
-                    cancel(record.key);
+                    cancel(record[props.rowKey]);
                   },
                 },
                 {
                   label: '保存',
                   icon: 'material-symbols:save-outline',
-                  ifShow: Boolean(state.editableData[record.key]),
+                  ifShow: Boolean(state.editableData[record[rowKey]]),
                   onClick() {
-                    save(record.key);
+                    save(record[props.rowKey]);
+                    if (props.isItem) {
+                      const { price, channelId, goodsId, type, id } = record;
+                      if (channelId === salesStore.userId) {
+                        if (
+                          price !==
+                          state.dataSource.filter((item) => record.goodsId === item.goodsId)[0]
+                            .price
+                        ) {
+                          updatePriceRate({
+                            channelId: salesStore.userId,
+                            list: [{ priceRateId: id, price }],
+                          }).then(() => {
+                            emit('value-change');
+                          });
+                        }
+                      } else {
+                        addPriceRate({
+                          channelId: salesStore.userId,
+                          list: [{ goodsId, type, price }],
+                        }).then(() => {
+                          emit('value-change');
+                        });
+                      }
+                    }
+                  },
+                },
+                {
+                  label: '恢复',
+                  icon: 'ri:device-recover-line',
+                  ifShow: isItem && record.channelId === salesStore.userId && !salesStore.isRoot,
+                  onClick() {
+                    deletePriceRate([record.id]).then(() => {
+                      emit('value-change');
+                    });
                   },
                 },
               ]"
             />
           </template>
         </template>
-        <template #expandedRowRender="{ record, index }" v-if="showTable">
-          <Table
-            :columns="innerColumns"
-            :data-source="record.innerData"
-            :key="record.key"
-            :pagination="false"
-          >
-            <template #bodyCell="{ column, text, record: records }">
-              <template v-if="editProps.includes(column.dataIndex || '')">
-                <div>
-                  <a-input
-                    v-if="state.editableData[records.id]"
-                    v-model:value="state.editableData[records.id][column.dataIndex]"
-                    style="margin: -5px 0"
-                  />
-                  <template v-else>
-                    {{ text }}
-                  </template>
-                </div>
-              </template>
-              <template v-else-if="column.dataIndex === 'operation'">
-                <TableAction
-                  stopButtonPropagation
-                  :actions="[
-                    {
-                      label: '编辑',
-                      icon: 'fe:edit',
-                      ifShow: Boolean(!state.editableData[records.id]),
-                      onClick() {
-                        edit(records.id, index);
-                      },
-                    },
-                    {
-                      label: '删除',
-                      icon: 'ic:outline-delete-outline',
-                      onClick() {
-                        del(records.id);
-                      },
-                    },
-                    {
-                      label: '取消',
-                      icon: 'material-symbols:cancel-outline',
-                      ifShow: Boolean(state.editableData[records.id]),
-                      onClick() {
-                        cancel(records.id);
-                      },
-                    },
-                    {
-                      label: '保存',
-                      icon: 'material-symbols:save-outline',
-                      ifShow: Boolean(state.editableData[records.id]),
-                      onClick() {
-                        save(records.id, index);
-                      },
-                    },
-                  ]"
-                />
-              </template>
-            </template>
-          </Table>
-        </template>
       </Table>
     </FormItem>
 
     <FormModal
+      v-if="actionOptions.api"
       @register="registerModal"
       @change="getSelectRowKeys"
-      :columns="actionOptions.props.columns"
+      :columns="actionOptions.props?.columns"
       :api="actionOptions.api"
-      :title="actionOptions.props.title"
-      :showTable="props.showTable"
+      :title="actionOptions.props?.title"
+      :selectedRows="state.dataSource"
     />
   </div>
 </template>
@@ -138,18 +114,15 @@
   import { cloneDeep } from 'lodash-es';
   import { TableAction } from '@/components/Table';
   import { useModal } from '@/components/Modal';
+  import { useSalesStore } from '@/store/modules/sales';
+  import { addPriceRate, updatePriceRate, deletePriceRate } from '@/api/sys/distributor';
   import FormModal from './formModal.vue';
-  import { deletePriceRate } from '@/api/sys/distributor';
 
   defineOptions({
     name: 'FormTable',
   });
 
-  const innerColumns = [
-    { title: 'title', dataIndex: 'title', key: 'title' },
-    { title: 'price', dataIndex: 'price', key: 'price' },
-    { title: 'operation', dataIndex: 'operation', key: 'operation' },
-  ];
+  const salesStore = useSalesStore();
 
   const props = defineProps({
     label: {
@@ -159,14 +132,6 @@
     field: {
       type: String,
       default: null,
-    },
-    showTable: {
-      type: Boolean,
-      default: false,
-    },
-    api: {
-      type: Function as PropType<PromiseFn>,
-      default: () => Promise.resolve(),
     },
     actionOptions: {
       type: Object as PropType<{
@@ -191,15 +156,28 @@
       type: Array as PropType<DataIndex[]>,
       default: () => [],
     },
+    rowKey: {
+      type: String,
+      default: null,
+    },
+    isItem: {
+      type: Boolean,
+      default: false,
+    },
   });
 
-  const emit = defineEmits(['update:value']);
+  const emit = defineEmits(['update:value', 'value-change']);
 
   const [registerModal, { openModal }] = useModal();
 
   const state = reactive({
     editableData: {},
     dataSource: [] as Record<string, any>[],
+    listDataSource: [] as Record<string, any>[],
+    pagination: {
+      current: 1,
+      pageSize: 5,
+    },
   });
 
   watch(
@@ -211,21 +189,9 @@
     },
   );
 
-  const edit = (key: string, index) => {
-    if (typeof index === 'number') {
-      state.editableData[key] = cloneDeep(
-        props.value[index].innerData.filter((item) => key === item.id)[0],
-      );
-    } else {
-      state.editableData[key] = cloneDeep(props.value.filter((item) => key === item.key)[0]);
-    }
-  };
-
-  const del = async (key: string) => {
-    await deletePriceRate({ priceRateId: key });
-    emit(
-      'update:value',
-      state.dataSource.filter((item) => key !== item.id),
+  const edit = (key: string) => {
+    state.editableData[key] = cloneDeep(
+      props.value.filter((item) => key === item[props.rowKey])[0],
     );
   };
 
@@ -233,25 +199,19 @@
     delete state.editableData[key];
   };
 
-  const save = (key: string, index) => {
-    if (typeof index === 'number') {
-      Object.assign(
-        state.dataSource[index].innerData.filter((item) => key === item.id)[0],
-        state.editableData[key],
-      );
-    } else {
-      Object.assign(
-        state.dataSource.filter((item) => key === item.key)[0],
-        state.editableData[key],
-      );
-    }
+  const save = (key: string) => {
+    Object.assign(
+      state.dataSource.filter((item) => key === item[props.rowKey])[0],
+      state.editableData[key],
+    );
     delete state.editableData[key];
-    emit('update:value', state.dataSource);
+    if (!props.isItem) {
+      emit('update:value', state.dataSource);
+    }
   };
 
-  const getSelectRowKeys = (rowKeys) => {
-    state.dataSource.push(rowKeys);
-    emit('update:value', rowKeys);
+  const getSelectRowKeys = (rowKs) => {
+    emit('update:value', rowKs);
   };
 </script>
 <style lang="less">

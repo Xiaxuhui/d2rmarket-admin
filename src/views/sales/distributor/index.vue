@@ -25,7 +25,7 @@
               },
               {
                 label: '添加下级',
-                icon: 'fe:edit',
+                icon: 'fluent:people-add-16-regular',
                 onClick() {
                   addNext(record.id);
                 },

@@ -19,17 +19,25 @@
     distributorDetail,
     addChild,
     addPriceRate,
+    updatePriceRate,
+    deletePriceRate,
   } from '@/api/sys/distributor';
-  import { getSeriesList } from '@/api/sys/series';
-  import { onMounted, ref } from 'vue';
+  import { onMounted, reactive } from 'vue';
   import { chargeList } from '@/api/playlet/charge';
+  import { omit } from 'lodash-es';
+  import { useSalesStore } from '@/store/modules/sales';
+
+  const salesStore = useSalesStore();
 
   const { back } = useRouter();
   const route = useRoute();
   const id = route.query.id;
   const type = route.query.type;
-  let charge = ref([]);
-  let blog = [];
+
+  const state = reactive({
+    originItems: [],
+    originSeries: [],
+  });
 
   const schemas: FormSchema[] = [
     {
@@ -43,7 +51,16 @@
     {
       field: 'name',
       component: 'Input',
+      show: type === 'edit',
       label: '分销商名称：',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'userId',
+      component: 'Input',
+      label: '用户id：',
       colProps: {
         span: 8,
       },
@@ -51,9 +68,12 @@
     {
       field: 'parentName',
       component: 'Input',
-      label: '上级分销商名称：',
+      label: '上级名称：',
       colProps: {
         span: 8,
+      },
+      componentProps: {
+        disabled: true,
       },
     },
     {
@@ -67,7 +87,8 @@
     {
       field: 'account',
       component: 'Input',
-      label: '账号：',
+      helpMessage: '登录管理后台的账号名',
+      label: '账号名：',
       colProps: {
         span: 8,
       },
@@ -153,6 +174,7 @@
       colProps: {
         span: 8,
       },
+      suffix: '%',
     },
     {
       field: 'channelRate',
@@ -161,6 +183,7 @@
       colProps: {
         span: 8,
       },
+      suffix: '%',
     },
     {
       field: 'blogOwnerRate',
@@ -169,6 +192,7 @@
       colProps: {
         span: 8,
       },
+      suffix: '%',
     },
     {
       field: 'vip',
@@ -176,47 +200,43 @@
       show: type === 'edit',
       label: '推广道具：',
       colProps: {
-        span: 16,
+        span: 20,
       },
-      renderColContent() {
+      renderColContent({ model, field }) {
         return (
           <>
             <FormTable
               label="推广道具："
               field="vip"
-              v-model:value={charge.value}
-              columns={seriesColumns('name')}
+              rowKey="goodsId"
+              isItem={true}
+              v-model:value={model[field]}
+              onValueChange={refreshItemList}
+              columns={[
+                {
+                  title: '道具名称',
+                  dataIndex: 'name',
+                  key: 'title',
+                },
+                {
+                  title: '价格',
+                  dataIndex: 'price',
+                  key: 'price',
+                  width: 150,
+                },
+                {
+                  title: '隶属',
+                  dataIndex: 'channelName',
+                  key: 'channelName',
+                  width: 150,
+                },
+                {
+                  title: '操作',
+                  dataIndex: 'operation',
+                  width: 200,
+                },
+              ]}
               editProps={['price']}
-              onUpdate:value={(val) => {
-                charge.value = val;
-              }}
-              actionOptions={{
-                text: '添加道具',
-                api: async () => {
-                  const res = await chargeList({ pageNum: 1, pageSize: 20, channelId: id });
-                  if (res) {
-                    res.list.forEach((x, index) => {
-                      x.key = index.toString();
-                    });
-                    return res.list;
-                  }
-                },
-                props: {
-                  title: '选择道具',
-                  columns: [
-                    {
-                      title: 'name',
-                      dataIndex: 'name',
-                      width: 100,
-                    },
-                    {
-                      title: 'price',
-                      dataIndex: 'price',
-                      width: 100,
-                    },
-                  ],
-                },
-              }}
             />
           </>
         );
@@ -228,10 +248,9 @@
       show: type === 'edit',
       label: '推广剧集：',
       colProps: {
-        span: 16,
+        span: 20,
       },
-      renderColContent({ model, field, values }) {
-        console.log(values);
+      renderColContent({ model, field }) {
         return (
           <>
             <FormTable
@@ -239,18 +258,30 @@
               label="推广剧集："
               showTable={true}
               v-model:value={model[field]}
-              columns={seriesColumns('title')}
-              onUpdate:value={(val) => {
-                blog = val;
-              }}
+              columns={[
+                {
+                  title: 'title',
+                  dataIndex: 'title',
+                  key: 'title',
+                },
+                {
+                  title: 'price',
+                  dataIndex: 'price',
+                  key: 'price',
+                  width: 150,
+                },
+                {
+                  title: '操作',
+                  dataIndex: 'operation',
+                  width: 200,
+                },
+              ]}
               editProps={['price']}
+              rowKey="goodsId"
               actionOptions={{
                 text: '添加剧集',
-                api: async () => {
-                  const res = await getSeriesList({ pageNum: 1, pageSize: 20 });
-                  if (res) {
-                    return res.list;
-                  }
+                api: async (params) => {
+                  return chargeList({ ...params, type: 3 });
                 },
                 props: {
                   title: '选择剧集',
@@ -272,10 +303,11 @@
       },
     },
   ];
+
   const [registerModal] = useModal();
 
   const [register, { setFieldsValue }] = useForm({
-    labelWidth: 120,
+    labelWidth: 160,
     isNotRow: true,
     schemas,
     actionColOptions: {
@@ -288,92 +320,142 @@
     showSubmitButton: true,
   });
 
-  const seriesColumns = (key = 'title') => {
-    return [
-      {
-        title: 'title',
-        dataIndex: key,
-        key: 'title',
-      },
-      {
-        title: 'price',
-        dataIndex: 'price',
-        key: 'price',
-        editRow: true,
-      },
-      {
-        title: '操作',
-        dataIndex: 'operation',
-      },
-    ];
+  const getChosenItems = async (pageNum, topList) => {
+    const data = await chargeList({ channelId: id, pageNum, pageSize: 20, type: 12 });
+    const { nextPage, list } = data;
+    if (nextPage) {
+      return getChosenItems(pageNum + 1, topList.concat(list));
+    }
+    return list;
+  };
+
+  const getChosenSeries = async (pageNum, topList) => {
+    const data = await chargeList({ channelId: id, pageNum, pageSize: 20, type: 3 });
+    const { nextPage, list } = data;
+    if (nextPage) {
+      return getChosenSeries(pageNum + 1, topList.concat(list));
+    }
+    return list;
+  };
+
+  const refreshItemList = async () => {
+    const chosenItems = await getChosenItems(1, []);
+    setFieldsValue({ vip: chosenItems });
   };
 
   const getData = async (id) => {
+    const chosenItems = await getChosenItems(1, []);
+    const chosenSeries = await getChosenSeries(1, []);
+    state.originSeries = chosenSeries;
     const res = await distributorDetail({ channelId: id });
-    const ret = await chargeList({ channelId: id, pageNum: 1, pageSize: 20 });
-    if (ret) {
-      ret.list.forEach((x, index) => {
-        x.key = index.toString();
-      });
-      charge.value = ret.list;
-    }
-    if (res) {
-      if (res.sellVipRate) {
-        res.sellVipRate = res.sellVipRate / 100;
-      }
-      if (res.channelRate) {
-        res.channelRate = res.channelRate / 100;
-      }
-      if (res.blogOwnerRate) {
-        res.blogOwnerRate = res.blogOwnerRate / 100;
-      }
-      setFieldsValue(res);
-    }
+    const { sellVipRate, channelRate, blogOwnerRate, id: userId, top_c } = res;
+    salesStore.updateUserId(userId);
+    salesStore.updateRoot(top_c === 1);
+    setFieldsValue({
+      ...res,
+      userId,
+      sellVipRate: sellVipRate / 100,
+      channelRate: channelRate / 100,
+      blogOwnerRate: blogOwnerRate / 100,
+      vip: chosenItems,
+    });
   };
 
-  onMounted(() => {
-    if (id && type === 'edit') {
+  onMounted(async () => {
+    if (type === 'edit') {
       getData(id);
+    } else {
+      const res = await distributorDetail({ channelId: id });
+      const { name } = res;
+      setFieldsValue({ parentName: name });
     }
   });
 
+  const getDiffParams = (originData, currentData) => {
+    if (!currentData) {
+      return {
+        add: [],
+        update: [],
+        deleteData: [],
+      };
+    }
+    const update: Record<'priceRateId' | 'price', string>[] = [];
+    const add: Record<'price' | 'goodsId' | 'type', string | number>[] = [];
+    const originMap = new Map();
+    const deleteSet = new Set();
+    for (let data of originData) {
+      originMap[data.goodsId] = data;
+      deleteSet.add(data.id);
+    }
+    for (let current of currentData) {
+      if (deleteSet.has(current.id)) {
+        deleteSet.delete(current.id);
+      }
+      if (originMap.has(current.goodsId)) {
+        const origin = originMap.get(current.goodsId);
+        if (origin.price !== current.price) {
+          update.push({ priceRateId: current.priceRateId, price: current.price });
+        }
+      } else {
+        add.push({ price: current.price, goodsId: current.goodsId, type: current.type });
+      }
+    }
+    return {
+      add,
+      update,
+      deleteData: Array.from(deleteSet),
+    };
+  };
+
+  const getPlanParams = (values: Record<string, any>) => {
+    const { blog } = values;
+    const {
+      add: blogAdd,
+      update: blogUpdate,
+      deleteData: blogDelete,
+    } = getDiffParams(state.originSeries, blog);
+
+    return {
+      add: blogAdd,
+      update: blogUpdate,
+      deleteData: blogDelete,
+    };
+  };
+
   function handleSubmit(values: any) {
-    if (values.sellVipRate) {
-      values.sellVipRate = Number(values.sellVipRate) * 100;
-    }
-    if (values.channelRate) {
-      values.channelRate = Number(values.channelRate) * 100;
-    }
-    if (values.blogOwnerRate) {
-      values.blogOwnerRate = Number(values.blogOwnerRate) * 100;
-    }
+    const { sellVipRate, channelRate, blogOwnerRate } = values;
+
     if (type === 'edit') {
-      let list = [];
-      console.log(values.blog);
-      if (blog && blog.length) {
-        blog.forEach((x) => {
-          list.push({
-            googsId: x.id,
-            type: 3,
-            price: x.price,
-          });
-        });
+      const { add, update, deleteData } = getPlanParams(values);
+
+      let updateRatePromise: (() => Promise<any>)[] = [];
+
+      if (add.length > 0) {
+        updateRatePromise.push(() => addPriceRate({ channelId: id, list: add }));
       }
-      if (charge.value && charge.value.length) {
-        charge.value.forEach((x) => {
-          list.push({
-            googsId: x.id,
-            price: x.price,
-            type: x.type,
-          });
-        });
+      if (update.length > 0) {
+        updateRatePromise.push(() => updatePriceRate({ channelId: id, list: update }));
       }
-      console.log(list);
-      updateDistributor(Object.assign(values, { channelId: id }));
-      addPriceRate({ channelId: id, list });
-    }
-    if (type === 'add') {
-      addChild(Object.assign(values, { parentId: id }));
+      if (deleteData.length > 0) {
+        updateRatePromise.push(() => deletePriceRate(deleteData));
+      }
+
+      Promise.all([
+        updateDistributor({
+          ...omit(values, 'blog', 'vip'),
+          sellVipRate: sellVipRate * 100,
+          channelRate: channelRate * 100,
+          blogOwnerRate: blogOwnerRate * 100,
+          channelId: id,
+        }),
+        ...updateRatePromise.map((fn) => fn()),
+      ]).then(() => {
+        back();
+      });
+    } else {
+      addChild({ ...omit(values, 'blog', 'vip'), parentId: id }).then(() => {
+        back();
+      });
     }
   }
 </script>

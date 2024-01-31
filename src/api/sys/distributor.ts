@@ -39,8 +39,9 @@ export const addPriceRate = (params) => {
 };
 
 export const updatePriceRate = (params) => {
-  return defHttp.get({ url: Api.updatePriceRate, params });
+  return defHttp.post({ url: Api.updatePriceRate, params });
 };
+
 export const deletePriceRate = (params) => {
-  return defHttp.get({ url: Api.deletePriceRate, params });
+  return defHttp.post({ url: Api.deletePriceRate, params });
 };
