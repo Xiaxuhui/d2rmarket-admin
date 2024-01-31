@@ -22,7 +22,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { reactive } from 'vue';
-  import { orderList } from '@/api/board';
+  import { promote } from '@/api/board';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const state = reactive<{
@@ -40,8 +40,8 @@
     state.selectedRowKeys = ids;
   };
   const [registerTable] = useTable({
-    title: '订单统计',
-    api: orderList,
+    title: '用户列表',
+    api: promote,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),

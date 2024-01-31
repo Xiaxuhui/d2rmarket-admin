@@ -24,7 +24,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
     labelWidth: 100,
     schemas: [
       {
-        field: `producer`,
+        field: `type`,
         label: `充值类型：`,
         component: 'Select',
         colProps: {

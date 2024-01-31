@@ -6,48 +6,31 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
     labelWidth: 100,
     schemas: [
       {
-        field: `time_gap`,
+        field: `timeGap`,
         label: `统计间隔：`,
         component: 'Select',
+        defaultValue: 3600000,
         colProps: {
           xl: 8,
         },
         componentProps: {
           options: [
             {
-              label: '按月统计',
-              value: 1,
+              label: '按小时统计',
+              value: 3600000,
             },
             {
               label: '按日统计',
-              value: 2,
+              value: 360000 * 24,
             },
           ],
         },
       },
       {
-        field: `channel`,
-        label: `分销商：`,
+        field: 'type',
+        defaultValue: 5,
         component: 'Input',
-        colProps: {
-          xl: 8,
-        },
-      },
-      {
-        field: `parentChannel`,
-        label: `隶属：`,
-        component: 'Input',
-        colProps: {
-          xl: 8,
-        },
-      },
-      {
-        field: `adId`,
-        label: `任务ID：`,
-        component: 'Input',
-        colProps: {
-          xl: 8,
-        },
+        show: false,
       },
       {
         field: '[startTime, endTime]',
@@ -77,52 +60,55 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: '充值',
-      dataIndex: 'uid',
+      dataIndex: 'v1',
     },
     {
       title: '消耗',
-      dataIndex: 'uName',
+      dataIndex: 'v2',
     },
     {
       title: 'ROI',
-      dataIndex: 'uName',
+      dataIndex: 'v4',
     },
     {
       title: '新用户',
-      dataIndex: 'uName',
+      dataIndex: 'v4',
     },
     {
       title: '新用户充值',
-      dataIndex: 'uName',
+      dataIndex: 'v5',
     },
     {
       title: '新用户付费率',
-      dataIndex: 'uName',
+      dataIndex: 'v6',
+      customRender({ value }) {
+        return <div>{{ value }}%</div>;
+      },
     },
 
     {
       title: '充值笔数',
-      dataIndex: 'name',
+      dataIndex: 'v7',
     },
     {
       title: '回传笔数',
-      dataIndex: 'bankName',
+      dataIndex: 'v8',
     },
     {
       title: '回传金额',
-      dataIndex: 'bankName',
+      dataIndex: 'v9',
     },
     {
       title: '登陆用户',
-      dataIndex: 'bankName',
+      dataIndex: 'v10',
     },
     {
       title: '平均观看时长',
-      dataIndex: 'bankName',
+      dataIndex: 'v11',
     },
     {
       title: '平均观看集数',
-      dataIndex: 'bankName',
+      dataIndex: 'v12',
     },
   ];
 }

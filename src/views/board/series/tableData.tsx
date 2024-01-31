@@ -6,18 +6,19 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
     labelWidth: 100,
     schemas: [
       {
-        field: `time_gap`,
+        field: `timeGap`,
         label: `统计间隔：`,
         component: 'Select',
+        defaultValue: 3600000,
         componentProps: {
           options: [
             {
-              label: '按月统计',
-              value: 1,
+              label: '按小时统计',
+              value: 3600000,
             },
             {
               label: '按日统计',
-              value: 2,
+              value: 360000 * 24,
             },
           ],
         },
@@ -86,36 +87,28 @@ export function getBasicColumns(): BasicColumn[] {
       dataIndex: 'name',
     },
     {
-      title: '分销商',
-      dataIndex: 'uName',
-    },
-    {
-      title: '任务',
-      dataIndex: 'name',
-    },
-    {
       title: '观看次数',
-      dataIndex: 'bankName',
+      dataIndex: 'v1',
     },
     {
       title: '会员人数',
-      dataIndex: 'bankName',
+      dataIndex: 'v2',
     },
     {
       title: '平均时长',
-      dataIndex: 'bankName',
+      dataIndex: 'v3',
     },
     {
-      title: '平均集数',
-      dataIndex: 'bankName',
+      title: '平均次数',
+      dataIndex: 'v4',
     },
     {
       title: '消费人数',
-      dataIndex: 'bankName',
+      dataIndex: 'v5',
     },
     {
       title: '人均金额',
-      dataIndex: 'bankName',
+      dataIndex: 'v6',
     },
   ];
 }
