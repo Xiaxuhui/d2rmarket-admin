@@ -6,7 +6,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
     labelWidth: 100,
     schemas: [
       {
-        field: `time_gap`,
+        field: `timeGap`,
         label: `统计间隔：`,
         component: 'Select',
         componentProps: {
@@ -72,7 +72,7 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: '平台',
-      dataIndex: 'channel',
+      dataIndex: 'platform',
     },
     {
       title: '任务ID',

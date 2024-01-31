@@ -3,6 +3,7 @@ import { defHttp } from '@/utils/http/axios';
 enum Api {
   orderList = '/manage/statisticPurchaseRecordPage',
   order = '/manage/purchaseRecordPage',
+  promote = '/manage/DataView',
 }
 
 /**
@@ -15,4 +16,8 @@ export const orderList = (params) => {
 
 export const order = (params) => {
   return defHttp.get({ url: Api.order, params });
+};
+
+export const promote = (params) => {
+  return defHttp.get({ url: Api.promote, params });
 };

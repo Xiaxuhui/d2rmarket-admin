@@ -9,7 +9,7 @@
               {
                 label: '详细列表',
                 onClick() {
-                  confirm(record.id);
+                  confirm(record);
                 },
               },
             ]"
@@ -60,7 +60,7 @@
     showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20 },
   });
-  const confirm = (id: string) => {
-    console.log(id);
+  const confirm = (item) => {
+    console.log(item);
   };
 </script>
