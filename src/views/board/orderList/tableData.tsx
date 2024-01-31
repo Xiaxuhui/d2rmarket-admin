@@ -52,41 +52,65 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
             },
           ],
         },
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: 'userId',
         label: '用户id',
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: 'userName',
         label: '用户名',
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: 'purchaseRecordId',
         label: '订单号',
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: 'channelId',
         label: '分销商',
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: 'parentId',
         label: '隶属的分销商',
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: 'investId',
         label: '投流任务',
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: 'orderId',
         label: '平台订单',
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: '[startTime, endTime]',
@@ -95,6 +119,9 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         componentProps: {
           format: 'YYYY-MM-DD',
           placeholder: ['开始日期', '结束日期'],
+        },
+        colProps: {
+          xl: 8,
         },
       },
     ],

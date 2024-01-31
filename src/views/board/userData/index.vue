@@ -1,6 +1,9 @@
 <template>
   <div>
     <BasicTable @register="registerTable">
+      <template #toolbar>
+        <a-button type="primary">导出数据</a-button>
+      </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <TableAction
@@ -29,7 +32,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { reactive } from 'vue';
-  import { list } from '@/api/withdraw';
+  import { promote } from '@/api/board';
   import UserDetail from './detail.vue';
   import { useModal } from '@/components/Modal';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
@@ -50,9 +53,15 @@
     console.log(ids);
     state.selectedRowKeys = ids;
   };
+
+  // const getUserDataList = (params) => {
+  //   const { startTime, endTime } = params;
+
+  // }
+
   const [registerTable] = useTable({
-    title: '订单数据',
-    api: list,
+    title: '用户数据',
+    api: promote,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),

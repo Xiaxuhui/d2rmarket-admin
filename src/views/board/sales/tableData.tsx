@@ -20,27 +20,42 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
             },
           ],
         },
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: 'type',
         defaultValue: 2,
         component: 'Input',
         show: false,
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: `channel`,
         label: `分销商：`,
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: `parentChannel`,
         label: `隶属：`,
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: `adId`,
         label: `任务ID：`,
         component: 'Input',
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: '[startTime, endTime]',
@@ -49,6 +64,9 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         componentProps: {
           format: 'YYYY-MM-DD',
           placeholder: ['开始日期', '结束日期'],
+        },
+        colProps: {
+          xl: 8,
         },
       },
     ],

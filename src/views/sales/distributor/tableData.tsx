@@ -148,15 +148,3 @@ export const getModalData = async () => {
   }
   return arr;
 };
-
-export const getSeriesList = async () => {
-  const arr: any = [];
-  for (let index = 0; index < 40; index++) {
-    arr.push({
-      name: `仙剑奇侠传${index}`,
-      info: '古装神话',
-      time: '2023-12-12',
-    });
-  }
-  return arr;
-};

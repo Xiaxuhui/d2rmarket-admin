@@ -38,6 +38,9 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
             },
           ],
         },
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: 'type',
@@ -63,6 +66,9 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
             },
           ],
         },
+        colProps: {
+          xl: 8,
+        },
       },
       {
         field: '[startTime, endTime]',
@@ -71,6 +77,9 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         componentProps: {
           format: 'YYYY-MM-DD',
           placeholder: ['开始日期', '结束日期'],
+        },
+        colProps: {
+          xl: 8,
         },
       },
     ],
