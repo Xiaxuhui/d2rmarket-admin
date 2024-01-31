@@ -21,7 +21,7 @@
   } from '@/api/sys/series';
   import SeriesModal from './components/seriesModal.vue';
   import { onMounted } from 'vue';
-  import { getLabelList } from '@/api/sys/label';
+  import { getLabelList, searchChannel } from '@/api/sys/label';
 
   const { id } = useRoute().query;
   const isEditStatus = Boolean(id);
@@ -100,10 +100,20 @@
     // },
     {
       field: 'ownerId',
-      component: 'Input',
+      component: 'ApiSelect',
       label: '片方',
       colProps: {
         span: 8,
+      },
+      componentProps: {
+        api: searchChannel,
+        resultField: 'list',
+        // use name as label
+        labelField: 'name',
+        // use id as value
+        valueField: 'id',
+        // not request untill to select
+        immediate: true,
       },
     },
     {

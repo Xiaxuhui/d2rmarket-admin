@@ -29,13 +29,13 @@ export default defineApplicationConfig({
           // secure: false
         },
         '/upload': {
-          target: 'http://localhost:3300/upload',
+          target: 'http://192.168.50.104:9290',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/upload`), ''),
         },
         '/api': {
-          target: 'http://192.168.50.159:9290',
+          target: 'https://grpc.okyaya.com/bgapi',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/api`), ''),

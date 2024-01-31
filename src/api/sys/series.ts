@@ -1,4 +1,4 @@
-import { defBusinessHttp, defHttp } from '@/utils/http/axios';
+import { defHttp } from '@/utils/http/axios';
 import { SerieDetail } from './model/seriesModel';
 
 enum API {
@@ -26,7 +26,7 @@ export const getDetail = (id: string) => {
 };
 
 export const deleteSeries = (id: string) => {
-  return defBusinessHttp.get<SerieDetail>(API.DELETE, { params: { blogId: id } });
+  return defHttp.get({ url: API.DELETE, params: { blogId: id } });
 };
 
 export const createSerie = (params) => {

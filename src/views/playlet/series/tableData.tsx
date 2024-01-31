@@ -2,6 +2,7 @@ import { BasicColumn, FormProps } from '@/components/Table';
 import { SelectValue } from 'ant-design-vue/es/select';
 import { tv } from 'tailwind-variants';
 import * as api from '@/api/sys/series';
+import { searchChannel } from '@/api/sys/label';
 
 enum STATE_ENUM {
   END = 1,
@@ -26,7 +27,7 @@ export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps>
     labelWidth: 100,
     schemas: [
       {
-        field: `name`,
+        field: `title`,
         label: `剧名：`,
         component: 'Input',
         colProps: {
@@ -35,7 +36,7 @@ export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps>
         },
       },
       {
-        field: `tag`,
+        field: `tagId`,
         label: `标签：`,
         component: 'LabelSelector',
         componentProps: {
@@ -68,12 +69,22 @@ export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps>
         },
       },
       {
-        field: `producer`,
+        field: `dealerId`,
         label: `片方：`,
-        component: 'Input',
+        component: 'ApiSelect',
         colProps: {
           xl: 12,
           xxl: 8,
+        },
+        componentProps: {
+          api: searchChannel,
+          resultField: 'list',
+          // use name as label
+          labelField: 'name',
+          // use id as value
+          valueField: 'id',
+          // not request untill to select
+          immediate: true,
         },
       },
     ],
@@ -155,15 +166,6 @@ export function getBasicColumns(): BasicColumn[] {
 }
 
 export function getDiversityColumns(): BasicColumn[] {
-  const stateMap = {
-    '-1': '删除',
-    0: '异常',
-    10: '等待中',
-    5: '正常',
-    200: '可公开',
-    300: '已完成',
-  };
-
   return [
     {
       title: '片名',
@@ -173,35 +175,42 @@ export function getDiversityColumns(): BasicColumn[] {
       editComponent: 'Input',
     },
     {
-      title: '小程序地址',
-      dataIndex: 'num',
+      title: '是否上架',
+      dataIndex: 'state',
+      edit: true,
+      editComponent: 'Switch',
+      customRender({ value }) {
+        return value > 0 ? '是' : '否';
+      },
     },
     {
       title: '是否推荐',
-      dataIndex: 'f',
+      dataIndex: 'recommendState',
       edit: true,
+      editComponentProps(props) {
+        return { ...props, checked: true };
+      },
       editComponent: 'Switch',
-      customRender() {
-        return '是';
+      editRender({ currentValue }) {
+        return currentValue ? '是' : '否';
       },
     },
     {
       title: '金豆价格',
-      width: 100,
-      dataIndex: 'state',
+      dataIndex: 'price',
     },
     {
-      title: '点赞',
-      dataIndex: 'link',
+      title: '权重',
+      dataIndex: 'hotLevel',
     },
     {
       title: '状态',
       dataIndex: 'state',
       customRender({ value }) {
-        if (stateMap[value]) {
-          return stateMap[value];
+        if (value > 0) {
+          return '正常';
         } else {
-          return '未知的状态：' + value;
+          return '删除';
         }
       },
     },
