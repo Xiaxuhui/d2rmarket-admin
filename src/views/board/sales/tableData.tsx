@@ -8,15 +8,16 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         field: `timeGap`,
         label: `统计间隔：`,
         component: 'Select',
+        defaultValue: 3600000,
         componentProps: {
           options: [
             {
-              label: '按月统计',
-              value: 1,
+              label: '按小时统计',
+              value: 3600000,
             },
             {
               label: '按日统计',
-              value: 2,
+              value: 360000 * 24,
             },
           ],
         },
@@ -29,29 +30,10 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         defaultValue: 2,
         component: 'Input',
         show: false,
-        colProps: {
-          xl: 8,
-        },
       },
       {
         field: `channel`,
         label: `分销商：`,
-        component: 'Input',
-        colProps: {
-          xl: 8,
-        },
-      },
-      {
-        field: `parentChannel`,
-        label: `隶属：`,
-        component: 'Input',
-        colProps: {
-          xl: 8,
-        },
-      },
-      {
-        field: `adId`,
-        label: `任务ID：`,
         component: 'Input',
         colProps: {
           xl: 8,

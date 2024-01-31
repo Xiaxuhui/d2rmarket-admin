@@ -22,7 +22,7 @@ export default defineApplicationConfig({
           target: 'http://192.168.50.190:9290',
           // target: 'http://192.168.50.159:9290',
           // target: 'http://192.168.50.193:9290',
-          // target: 'http://192.168.50.104:9290',
+          //  target: 'http://192.168.50.104:9290',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/basic-api`), ''),
@@ -36,7 +36,7 @@ export default defineApplicationConfig({
           rewrite: (path) => path.replace(new RegExp(`^/upload`), ''),
         },
         '/api': {
-          target: 'https://grpc.okyaya.com/bgapi',
+          target: 'http://192.168.50.104:9290',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/api`), ''),

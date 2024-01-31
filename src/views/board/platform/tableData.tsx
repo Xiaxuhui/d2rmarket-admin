@@ -9,6 +9,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         field: `timeGap`,
         label: `统计间隔：`,
         component: 'Select',
+        defaultValue: 3600000,
         colProps: {
           xl: 8,
         },
@@ -25,6 +26,12 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
             },
           ],
         },
+      },
+      {
+        field: 'type',
+        defaultValue: 5,
+        component: 'Input',
+        show: false,
       },
       {
         field: '[startTime, endTime]',
@@ -76,7 +83,7 @@ export function getBasicColumns(): BasicColumn[] {
       title: '新用户付费率',
       dataIndex: 'v6',
       customRender({ value }) {
-        return `${value}%`;
+        return <div>{{ value }}%</div>;
       },
     },
 
