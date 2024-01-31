@@ -785,6 +785,7 @@
   });
 
   function onSearch(value: string) {
+    console.log('value', value);
     keyword.value = value;
   }
 

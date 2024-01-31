@@ -20,18 +20,17 @@
                 },
               },
               {
-                label: '删除',
-                icon: 'ic:outline-delete-outline',
+                label: '下级',
+                icon: 'carbon:sales-ops',
                 onClick() {
-                  deleteSalesman(record.id);
+                  viewSalesman(record.id);
                 },
               },
               {
-                label: '下级',
-                icon: 'carbon:sales-ops',
-                ifShow: !!record.num,
+                label: '添加下级',
+                icon: 'fluent:people-add-16-regular',
                 onClick() {
-                  viewSalesman(record.id);
+                  addNext(record.id);
                 },
               },
             ]"
@@ -67,7 +66,6 @@
   const columns = getBasicColumns() as ColumnType[];
 
   const [register, { setModalProps, redoModalHeight }] = useModalInner((data) => {
-    console.log('data', data);
     setModalProps({ width: 1200 });
     distributorChildList(Object.assign({ channelId: data.id }, state.pagination)).then((res) => {
       state.modalData = res.list;
@@ -92,11 +90,20 @@
     });
   };
 
-  const deleteSalesman = (id) => {
-    console.log(id);
+  const viewSalesman = (id) => {
+    distributorChildList({ channelId: id, pageNum: 1, pageSize: 10 }).then((res) => {
+      state.pagination = { pageNum: 1, pageSize: 10 };
+      state.modalData = res.list;
+    });
   };
 
-  const viewSalesman = (id) => {
-    console.log(id);
+  const addNext = (id) => {
+    go({
+      path: PageEnum.DISTRIBUTOR_EDIT,
+      query: {
+        id,
+        type: 'add',
+      },
+    });
   };
 </script>

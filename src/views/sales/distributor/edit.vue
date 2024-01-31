@@ -22,12 +22,10 @@
     updatePriceRate,
     deletePriceRate,
   } from '@/api/sys/distributor';
-  import { onMounted, reactive } from 'vue';
+  import { onMounted, reactive, computed } from 'vue';
   import { chargeList } from '@/api/playlet/charge';
   import { omit } from 'lodash-es';
-  import { useSalesStore } from '@/store/modules/sales';
-
-  const salesStore = useSalesStore();
+  import { getSeriesList, getDetail } from '@/api/sys/series';
 
   const { back } = useRouter();
   const route = useRoute();
@@ -37,272 +35,277 @@
   const state = reactive({
     originItems: [],
     originSeries: [],
+    isRoot: false,
   });
 
-  const schemas: FormSchema[] = [
-    {
-      field: 'divider-basic',
-      component: 'Divider',
-      label: '添加分销商',
-      colProps: {
-        span: 24,
+  const schemas = computed(() => {
+    return [
+      {
+        field: 'divider-basic',
+        component: 'Divider',
+        label: '添加分销商',
+        colProps: {
+          span: 24,
+        },
       },
-    },
-    {
-      field: 'name',
-      component: 'Input',
-      show: type === 'edit',
-      label: '分销商名称：',
-      colProps: {
-        span: 8,
+      {
+        field: 'name',
+        component: 'Input',
+        show: type === 'edit',
+        label: '分销商名称：',
+        colProps: {
+          span: 8,
+        },
       },
-    },
-    {
-      field: 'userId',
-      component: 'Input',
-      label: '用户id：',
-      colProps: {
-        span: 8,
+      {
+        field: 'userId',
+        component: 'Input',
+        label: '用户id：',
+        colProps: {
+          span: 8,
+        },
       },
-    },
-    {
-      field: 'parentName',
-      component: 'Input',
-      label: '上级名称：',
-      colProps: {
-        span: 8,
+      {
+        field: 'parentName',
+        component: 'Input',
+        label: '上级名称：',
+        colProps: {
+          span: 8,
+        },
+        componentProps: {
+          disabled: true,
+        },
       },
-      componentProps: {
-        disabled: true,
+      {
+        field: 'notes',
+        component: 'Input',
+        label: '备注：',
+        colProps: {
+          span: 8,
+        },
       },
-    },
-    {
-      field: 'notes',
-      component: 'Input',
-      label: '备注：',
-      colProps: {
-        span: 8,
+      {
+        field: 'account',
+        component: 'Input',
+        helpMessage: '登录管理后台的账号名',
+        label: '账号名：',
+        colProps: {
+          span: 8,
+        },
       },
-    },
-    {
-      field: 'account',
-      component: 'Input',
-      helpMessage: '登录管理后台的账号名',
-      label: '账号名：',
-      colProps: {
-        span: 8,
+      {
+        field: 'pwd',
+        component: 'Input',
+        label: '密码：',
+        colProps: {
+          span: 8,
+        },
       },
-    },
-    {
-      field: 'pwd',
-      component: 'Input',
-      label: '密码：',
-      colProps: {
-        span: 8,
+      {
+        field: 'state',
+        component: 'Select',
+        label: '状态：',
+        colProps: {
+          span: 8,
+        },
+        componentProps: {
+          options: [
+            {
+              label: '正常',
+              value: 1,
+              key: 1,
+            },
+            {
+              label: '禁用',
+              value: 2,
+              key: 2,
+            },
+          ],
+        },
       },
-    },
-    {
-      field: 'state',
-      component: 'Select',
-      label: '状态：',
-      colProps: {
-        span: 8,
+      {
+        field: 'canRemain',
+        component: 'Select',
+        label: '提现状态：',
+        colProps: {
+          span: 8,
+        },
+        componentProps: {
+          options: [
+            {
+              label: '正常',
+              value: 1,
+              key: 1,
+            },
+            {
+              label: '禁用',
+              value: 2,
+              key: 2,
+            },
+          ],
+        },
       },
-      componentProps: {
-        options: [
-          {
-            label: '正常',
-            value: 1,
-            key: 1,
-          },
-          {
-            label: '禁用',
-            value: 2,
-            key: 2,
-          },
-        ],
+      {
+        field: 'canAdd',
+        component: 'Select',
+        label: '添加下级：',
+        colProps: {
+          span: 8,
+        },
+        componentProps: {
+          options: [
+            {
+              label: '能',
+              value: 1,
+              key: 1,
+            },
+            {
+              label: '不能',
+              value: 0,
+              key: 0,
+            },
+          ],
+        },
       },
-    },
-    {
-      field: 'canRemain',
-      component: 'Select',
-      label: '提现状态：',
-      colProps: {
-        span: 8,
+      {
+        field: 'sellVipRate',
+        component: 'Input',
+        label: '销售vip分成比例：',
+        colProps: {
+          span: 8,
+        },
+        suffix: '%',
       },
-      componentProps: {
-        options: [
-          {
-            label: '正常',
-            value: 1,
-            key: 1,
-          },
-          {
-            label: '禁用',
-            value: 2,
-            key: 2,
-          },
-        ],
+      {
+        field: 'channelRate',
+        component: 'Input',
+        label: '销售剧分成比例：',
+        colProps: {
+          span: 8,
+        },
+        suffix: '%',
       },
-    },
-    {
-      field: 'canAdd',
-      component: 'Select',
-      label: '添加下级：',
-      colProps: {
-        span: 8,
+      {
+        field: 'blogOwnerRate',
+        component: 'Input',
+        label: '发剧方分成比例：',
+        colProps: {
+          span: 8,
+        },
+        suffix: '%',
       },
-      componentProps: {
-        options: [
-          {
-            label: '能',
-            value: 1,
-            key: 1,
-          },
-          {
-            label: '不能',
-            value: 0,
-            key: 0,
-          },
-        ],
+      {
+        field: 'vip',
+        component: 'Input',
+        show: type === 'edit' && !state.isRoot,
+        label: '推广道具：',
+        colProps: {
+          span: 20,
+        },
+        renderColContent({ model, field }) {
+          return (
+            <>
+              <FormTable
+                label="推广道具："
+                field="vip"
+                userId={+id!}
+                rowKey="goodsId"
+                isItem={true}
+                v-model:value={model[field]}
+                onValueChange={refreshItemList}
+                columns={[
+                  {
+                    title: '道具名称',
+                    dataIndex: 'name',
+                    key: 'title',
+                  },
+                  {
+                    title: '价格',
+                    dataIndex: 'price',
+                    key: 'price',
+                    width: 150,
+                  },
+                  {
+                    title: '隶属',
+                    dataIndex: 'channelName',
+                    key: 'channelName',
+                    width: 150,
+                  },
+                  {
+                    title: '操作',
+                    dataIndex: 'operation',
+                    width: 200,
+                  },
+                ]}
+                editProps={['price']}
+              />
+            </>
+          );
+        },
       },
-    },
-    {
-      field: 'sellVipRate',
-      component: 'Input',
-      label: '销售vip分成比例：',
-      colProps: {
-        span: 8,
+      {
+        field: 'blog',
+        component: 'Input',
+        show: type === 'edit' && !state.isRoot,
+        label: '推广剧集：',
+        colProps: {
+          span: 20,
+        },
+        renderColContent({ model, field }) {
+          return (
+            <>
+              <FormTable
+                userId={+id!}
+                field="blog"
+                label="推广剧集："
+                showTable={true}
+                v-model:value={model[field]}
+                columns={[
+                  {
+                    title: 'title',
+                    dataIndex: 'title',
+                    key: 'title',
+                  },
+                  {
+                    title: 'price',
+                    dataIndex: 'price',
+                    key: 'price',
+                    width: 150,
+                  },
+                  {
+                    title: '操作',
+                    dataIndex: 'operation',
+                    width: 200,
+                  },
+                ]}
+                editProps={['price']}
+                rowKey="goodsId"
+                actionOptions={{
+                  text: '添加剧集',
+                  api: (params) => getSeriesList({ ...params, pageSize: 10, pageNum: 1 }),
+                  detailApi: getDetail,
+                  optionField: ['title', 'id', 'list'],
+                  props: {
+                    title: '选择剧集',
+                    columns: [
+                      {
+                        title: 'title',
+                        dataIndex: 'title',
+                      },
+                      {
+                        title: 'price',
+                        dataIndex: 'price',
+                      },
+                    ],
+                  },
+                }}
+              />
+            </>
+          );
+        },
       },
-      suffix: '%',
-    },
-    {
-      field: 'channelRate',
-      component: 'Input',
-      label: '销售剧分成比例：',
-      colProps: {
-        span: 8,
-      },
-      suffix: '%',
-    },
-    {
-      field: 'blogOwnerRate',
-      component: 'Input',
-      label: '发剧方分成比例：',
-      colProps: {
-        span: 8,
-      },
-      suffix: '%',
-    },
-    {
-      field: 'vip',
-      component: 'Input',
-      show: type === 'edit',
-      label: '推广道具：',
-      colProps: {
-        span: 20,
-      },
-      renderColContent({ model, field }) {
-        return (
-          <>
-            <FormTable
-              label="推广道具："
-              field="vip"
-              rowKey="goodsId"
-              isItem={true}
-              v-model:value={model[field]}
-              onValueChange={refreshItemList}
-              columns={[
-                {
-                  title: '道具名称',
-                  dataIndex: 'name',
-                  key: 'title',
-                },
-                {
-                  title: '价格',
-                  dataIndex: 'price',
-                  key: 'price',
-                  width: 150,
-                },
-                {
-                  title: '隶属',
-                  dataIndex: 'channelName',
-                  key: 'channelName',
-                  width: 150,
-                },
-                {
-                  title: '操作',
-                  dataIndex: 'operation',
-                  width: 200,
-                },
-              ]}
-              editProps={['price']}
-            />
-          </>
-        );
-      },
-    },
-    {
-      field: 'blog',
-      component: 'Input',
-      show: type === 'edit',
-      label: '推广剧集：',
-      colProps: {
-        span: 20,
-      },
-      renderColContent({ model, field }) {
-        return (
-          <>
-            <FormTable
-              field="blog"
-              label="推广剧集："
-              showTable={true}
-              v-model:value={model[field]}
-              columns={[
-                {
-                  title: 'title',
-                  dataIndex: 'title',
-                  key: 'title',
-                },
-                {
-                  title: 'price',
-                  dataIndex: 'price',
-                  key: 'price',
-                  width: 150,
-                },
-                {
-                  title: '操作',
-                  dataIndex: 'operation',
-                  width: 200,
-                },
-              ]}
-              editProps={['price']}
-              rowKey="goodsId"
-              actionOptions={{
-                text: '添加剧集',
-                api: async (params) => {
-                  return chargeList({ ...params, type: 3 });
-                },
-                props: {
-                  title: '选择剧集',
-                  columns: [
-                    {
-                      title: 'title',
-                      dataIndex: 'title',
-                    },
-                    {
-                      title: 'price',
-                      dataIndex: 'price',
-                    },
-                  ],
-                },
-              }}
-            />
-          </>
-        );
-      },
-    },
-  ];
+    ] as FormSchema[];
+  });
 
   const [registerModal] = useModal();
 
@@ -320,37 +323,31 @@
     showSubmitButton: true,
   });
 
-  const getChosenItems = async (pageNum, topList) => {
-    const data = await chargeList({ channelId: id, pageNum, pageSize: 20, type: 12 });
+  const getChosenList = async (pageNum, topList, type) => {
+    const data = await chargeList({ channelId: id, pageNum, pageSize: 20, type });
     const { nextPage, list } = data;
     if (nextPage) {
-      return getChosenItems(pageNum + 1, topList.concat(list));
-    }
-    return list;
-  };
-
-  const getChosenSeries = async (pageNum, topList) => {
-    const data = await chargeList({ channelId: id, pageNum, pageSize: 20, type: 3 });
-    const { nextPage, list } = data;
-    if (nextPage) {
-      return getChosenSeries(pageNum + 1, topList.concat(list));
+      return getChosenList(
+        pageNum + 1,
+        topList.concat(list.map((item) => ({ ...item, goodsId: +item.goodsId }))),
+        type,
+      );
     }
     return list;
   };
 
   const refreshItemList = async () => {
-    const chosenItems = await getChosenItems(1, []);
+    const chosenItems = await getChosenList(1, [], 12);
     setFieldsValue({ vip: chosenItems });
   };
 
   const getData = async (id) => {
-    const chosenItems = await getChosenItems(1, []);
-    const chosenSeries = await getChosenSeries(1, []);
+    const chosenItems = await getChosenList(1, [], 12);
+    const chosenSeries = await getChosenList(1, [], 3);
     state.originSeries = chosenSeries;
     const res = await distributorDetail({ channelId: id });
     const { sellVipRate, channelRate, blogOwnerRate, id: userId, top_c } = res;
-    salesStore.updateUserId(userId);
-    salesStore.updateRoot(top_c === 1);
+    state.isRoot = Boolean(+top_c);
     setFieldsValue({
       ...res,
       userId,
@@ -358,6 +355,7 @@
       channelRate: channelRate / 100,
       blogOwnerRate: blogOwnerRate / 100,
       vip: chosenItems,
+      blog: chosenSeries,
     });
   };
 
@@ -397,7 +395,7 @@
           update.push({ priceRateId: current.priceRateId, price: current.price });
         }
       } else {
-        add.push({ price: current.price, goodsId: current.goodsId, type: current.type });
+        add.push({ price: current.price, goodsId: current.goodsId, type: 3 });
       }
     }
     return {

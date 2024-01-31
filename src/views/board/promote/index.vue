@@ -6,7 +6,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable } from '@/components/Table';
   import { reactive } from 'vue';
-  import { promote } from '@/api/board';
+  import { allList } from '@/api/board';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const state = reactive<{
@@ -25,7 +25,7 @@
   };
   const [registerTable] = useTable({
     title: '投放管理',
-    api: promote,
+    api: allList,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),

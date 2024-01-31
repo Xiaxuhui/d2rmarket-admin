@@ -30,6 +30,7 @@
         <BasicTree
           title="懒加载异步树"
           ref="asyncTreeRef"
+          :checkable="true"
           :treeData="tree"
           :load-data="onLoadData"
         />

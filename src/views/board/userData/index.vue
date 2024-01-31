@@ -32,7 +32,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { reactive } from 'vue';
-  import { promote } from '@/api/board';
+  import { allList } from '@/api/board';
   import UserDetail from './detail.vue';
   import { useModal } from '@/components/Modal';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
@@ -61,7 +61,7 @@
 
   const [registerTable] = useTable({
     title: '用户数据',
-    api: promote,
+    api: allList,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),

@@ -52,14 +52,14 @@
                     save(record[props.rowKey]);
                     if (props.isItem) {
                       const { price, channelId, goodsId, type, id } = record;
-                      if (channelId === salesStore.userId) {
+                      if (channelId === props.userId) {
                         if (
                           price !==
                           state.dataSource.filter((item) => record.goodsId === item.goodsId)[0]
                             .price
                         ) {
                           updatePriceRate({
-                            channelId: salesStore.userId,
+                            channelId: props.userId,
                             list: [{ priceRateId: id, price }],
                           }).then(() => {
                             emit('value-change');
@@ -67,7 +67,7 @@
                         }
                       } else {
                         addPriceRate({
-                          channelId: salesStore.userId,
+                          channelId: props.userId,
                           list: [{ goodsId, type, price }],
                         }).then(() => {
                           emit('value-change');
@@ -79,7 +79,7 @@
                 {
                   label: '恢复',
                   icon: 'ri:device-recover-line',
-                  ifShow: isItem && record.channelId === salesStore.userId && !salesStore.isRoot,
+                  ifShow: isItem && record.channelId === userId,
                   onClick() {
                     deletePriceRate([record.id]).then(() => {
                       emit('value-change');
@@ -93,14 +93,16 @@
       </Table>
     </FormItem>
 
-    <FormModal
+    <SeriesModal
       v-if="actionOptions.api"
       @register="registerModal"
-      @change="getSelectRowKeys"
       :columns="actionOptions.props?.columns"
       :api="actionOptions.api"
+      :optionField="actionOptions.optionField"
+      :detailApi="actionOptions.detailApi"
       :title="actionOptions.props?.title"
       :selectedRows="state.dataSource"
+      @change="getSelectRowKeys"
     />
   </div>
 </template>
@@ -114,17 +116,16 @@
   import { cloneDeep } from 'lodash-es';
   import { TableAction } from '@/components/Table';
   import { useModal } from '@/components/Modal';
-  import { useSalesStore } from '@/store/modules/sales';
   import { addPriceRate, updatePriceRate, deletePriceRate } from '@/api/sys/distributor';
-  import FormModal from './formModal.vue';
+  // import FormModal from './formModal.vue';
+  import SeriesModal from './seriesModal.vue';
 
   defineOptions({
     name: 'FormTable',
   });
 
-  const salesStore = useSalesStore();
-
   const props = defineProps({
+    userId: Number,
     label: {
       type: String,
       default: null,
@@ -137,6 +138,8 @@
       type: Object as PropType<{
         text: string;
         api: PromiseFn;
+        detailApi: PromiseFn;
+        optionField: string[];
         props: {
           title: string;
           columns: Record<string, any>[];

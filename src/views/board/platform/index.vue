@@ -1,53 +1,43 @@
 <template>
   <div>
     <BasicTable @register="registerTable">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'operation'">
-          <TableAction
-            stopButtonPropagation
-            :actions="[
-              {
-                label: '确认',
-                onClick() {
-                  confirm(record.id);
-                },
-              },
-              {
-                label: '驳回',
-                onClick() {
-                  reject(record.id);
-                },
-              },
-            ]"
-          />
-        </template>
+      <template #toolbar>
+        <a-button type="primary">导出数据</a-button>
       </template>
     </BasicTable>
   </div>
 </template>
 <script lang="ts" setup>
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import { BasicTable, useTable } from '@/components/Table';
   import { reactive } from 'vue';
-  import { list, update } from '@/api/withdraw';
+  import { allList } from '@/api/board';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const state = reactive<{
     selectedRowKeys: any;
-    reject: string;
-    pagination: Record<string, any>;
   }>({
     selectedRowKeys: [], // Check here to configure the default column
-    pagination: { pageSize: 20 },
-    reject: '',
   });
 
   const onSelectChange = (ids) => {
     console.log(ids);
     state.selectedRowKeys = ids;
   };
-  const [registerTable, methods] = useTable({
-    title: '订单数据',
-    api: list,
+  const [registerTable] = useTable({
+    title: '平台统计',
+    api: (params) => {
+      const { timeGap = 3600000, startTime, endTime, pageNum, pageSize } = params;
+      const param: Record<string, any> = {
+        timeGap,
+        pageNum,
+        pageSize,
+      };
+      if (startTime && endTime) {
+        param.startTime = new Date(startTime).getTime();
+        param.endTime = new Date(endTime).getTime();
+      }
+      return allList({ ...param, type: 5 });
+    },
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),
@@ -66,12 +56,4 @@
     showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20 },
   });
-  const confirm = (id: string) => {
-    update({ withdrawalId: id, state: 2 }).then(() => {
-      methods.reload();
-    });
-  };
-  const reject = (id: string) => {
-    console.log(id);
-  };
 </script>
