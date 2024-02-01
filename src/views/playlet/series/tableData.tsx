@@ -204,6 +204,11 @@ export function getDiversityColumns(): BasicColumn[] {
       dataIndex: 'hotLevel',
     },
     {
+      title: '剧集ID',
+      dataIndex: 'fileId',
+      edit: true,
+    },
+    {
       title: '状态',
       dataIndex: 'state',
       customRender({ value }) {
