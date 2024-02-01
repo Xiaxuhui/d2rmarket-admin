@@ -51,14 +51,6 @@
         span: 8,
       },
     },
-    // {
-    //   field: 'field1',
-    //   component: 'Input',
-    //   label: '小程序地址',
-    //   colProps: {
-    //     span: 8,
-    //   },
-    // },
     {
       field: 'state',
       component: 'Switch',
@@ -76,12 +68,12 @@
         options: [
           {
             label: '更新中',
-            value: '0',
+            value: 0,
             key: '0',
           },
           {
             label: '已完结',
-            value: '1',
+            value: 1,
             key: '1',
           },
         ],
@@ -90,14 +82,6 @@
         span: 8,
       },
     },
-    // {
-    //   field: 'field2',
-    //   component: 'InputNumber',
-    //   label: '总集数',
-    //   colProps: {
-    //     span: 8,
-    //   },
-    // },
     {
       field: 'ownerId',
       component: 'ApiSelect',
@@ -214,6 +198,14 @@
         immediate: true,
       },
     },
+    {
+      field: 'picId',
+      component: 'Input',
+      label: '剧目ID',
+      colProps: {
+        span: 8,
+      },
+    },
   ];
   const { back } = useRouter();
 
@@ -242,7 +234,7 @@
         if (res.category) {
           res.field1 = res.category.id;
         }
-        if (res.recommendItem.data) {
+        if (res?.recommendItem?.data) {
           res.recommend = JSON.parse(res.recommendItem.data);
         }
         res.state = Boolean(res.state);
@@ -252,7 +244,7 @@
   });
 
   function handleSubmit(values: any) {
-    const tags = Object.values(values.tags) ?? [];
+    const tags = values.tags ? Object.values(values.tags) ?? [] : [];
     let price = -1;
     if (values.price) {
       price = Number(values.price);
@@ -261,7 +253,6 @@
       values.p_v = Number(values.p_v) * 100;
     }
     if (values.field1) {
-      console.log(values.field1);
       tags.push(values.field1);
     }
     if (values.recommend) {
