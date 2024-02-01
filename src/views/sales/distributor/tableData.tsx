@@ -120,7 +120,10 @@ export function getBasicColumns(): BasicColumn[] {
       title: '状态',
       width: 80,
       dataIndex: 'state',
-      customRender({ value }) {
+      customRender({ value, text }) {
+        if (!text) {
+          return stateEnum[value];
+        }
         return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
       },
     },

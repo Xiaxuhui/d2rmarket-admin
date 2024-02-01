@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="register">
       <template #toolbar>
-        <a-button type="primary">导出数据</a-button>
+        <a-button type="primary" @click="exportCsv">导出数据</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -44,10 +44,11 @@
   import { distributorList } from '@/api/sys/distributor';
   import { useModal } from '@/components/Modal';
   import { useGo } from '@/hooks/web/usePage';
+  import { exportExcel } from '@/utils/exportCsv';
   import SalesModal from './components/salesModal.vue';
   import { PageEnum } from '@/enums/pageEnum';
 
-  const [register] = useTable({
+  const [register, methods] = useTable({
     title: '分销商管理',
     api: distributorList,
     columns: getBasicColumns(),
@@ -86,5 +87,9 @@
 
   const viewSalesman = (id) => {
     openModal(true, { id });
+  };
+
+  const exportCsv = () => {
+    exportExcel(methods.getDataSource(), '分销商列表', getBasicColumns());
   };
 </script>
