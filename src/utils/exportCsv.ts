@@ -1,37 +1,42 @@
-const tableToExcel = () => {
-  const jsonData = [
-    {
-      name: '路人甲',
-      phone: '123456789',
-      email: '000@123456.com',
-    },
-    {
-      name: '炮灰乙',
-      phone: '123456789',
-      email: '000@123456.com',
-    },
-    {
-      name: '土匪丙',
-      phone: '123456789',
-      email: '000@123456.com',
-    },
-    {
-      name: '流氓丁',
-      phone: '123456789',
-      email: '000@123456.com',
-    },
-  ];
-  let str = `姓名,电话,邮箱`;
-  for (let i = 0; i < jsonData.length; i++) {
-    for (const key in jsonData[i]) {
-      str += `${jsonData[i][key] + '	'},`;
-    }
-  }
-  const uri = 'data:text/csv;charset=utf-8,ufeff' + encodeURIComponent(str);
-  const link = document.createElement('a');
-  link.href = uri;
-  link.download = 'json数据表.csv';
-  link.click();
-};
+import { pick } from 'lodash-es';
+import XLSX from 'xlsx';
+import file from 'file-saver';
 
-export default tableToExcel;
+export const exportExcel = (data, name, columConfig) => {
+  if (data.length === 0) {
+    return;
+  }
+  const columnEnum = {};
+  const res = columConfig.map((item) => {
+    const customRender = item.customRender;
+    columnEnum[item.dataIndex] = {
+      label: item.title,
+      formatter: customRender
+        ? (val) => customRender.bind(null, { value: val }, null)
+        : (val) => val,
+    };
+    return item.dataIndex;
+  });
+  const handledData = data.map((item) => {
+    const pickItem = pick(item, ...res);
+    const handledItem = {};
+    for (const key in pickItem) {
+      const col = columnEnum[key];
+      handledItem[col.label] = col.formatter(item[key]);
+    }
+    return handledItem;
+  });
+  const ws = XLSX.utils.json_to_sheet(handledData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, name);
+  const wbout = XLSX.write(wb, {
+    bookType: 'xlsx',
+    bookSST: true,
+    type: 'array',
+  });
+  try {
+    file.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), `${name}.xlsx`);
+  } catch (error) {
+    console.log(error);
+  }
+};

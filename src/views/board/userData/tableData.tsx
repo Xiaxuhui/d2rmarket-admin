@@ -110,14 +110,14 @@ export function detailColumns(): BasicColumn[] {
       dataIndex: 'time',
       customRender({ value }) {
         const time = formatToDateTime(value);
-        return <div>{time}</div>;
+        return time;
       },
     },
     {
       title: '类型',
       dataIndex: 'type',
       customRender({ value }) {
-        return <div>{stateEnum[value]}</div>;
+        return stateEnum[value];
       },
     },
     {
@@ -136,7 +136,7 @@ export function detailColumns(): BasicColumn[] {
       title: '支付方式',
       dataIndex: 'platform',
       customRender({ value }) {
-        return <div>{platformEnum[value]}</div>;
+        return platformEnum[value];
       },
     },
     {

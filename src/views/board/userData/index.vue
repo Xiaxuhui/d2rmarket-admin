@@ -30,7 +30,7 @@
   import UserDetail from './detail.vue';
   import { useModal } from '@/components/Modal';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
-  import tableToExcel from '@/utils/exportCsv';
+  import { exportExcel } from '@/utils/exportCsv';
 
   const state = reactive<{
     selectedRowKeys: any;
@@ -54,7 +54,7 @@
 
   // }
 
-  const [registerTable] = useTable({
+  const [registerTable, methods] = useTable({
     title: '用户数据',
     api: (params) => {
       const { startTime, endTime } = params;
@@ -87,6 +87,7 @@
     openModal(true, { id });
   };
   const exportCsv = () => {
-    tableToExcel();
+    console.log(methods.getDataSource());
+    exportExcel(methods.getDataSource(), '用户数据', getBasicColumns());
   };
 </script>
