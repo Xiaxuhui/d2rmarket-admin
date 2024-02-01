@@ -2,7 +2,7 @@ import { BasicColumn, FormProps } from '@/components/Table';
 import { SelectValue } from 'ant-design-vue/es/select';
 import { tv } from 'tailwind-variants';
 import * as api from '@/api/sys/series';
-import { searchChannel } from '@/api/sys/label';
+import { getLabelList, searchChannel } from '@/api/sys/label';
 
 enum STATE_ENUM {
   END = 1,
@@ -23,6 +23,7 @@ const stateEnum = {
 };
 
 export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps> = ({ label }) => {
+  console.log('label', label);
   return {
     labelWidth: 100,
     schemas: [
@@ -38,8 +39,11 @@ export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps>
       {
         field: `tagId`,
         label: `标签：`,
-        component: 'LabelSelector',
+        component: 'ApiSelect',
         componentProps: {
+          api: getLabelList,
+          labelField: 'name',
+          valueField: 'id',
           defaultValue: (label ? +label : null) as SelectValue,
         },
         colProps: {
@@ -129,19 +133,18 @@ export function getBasicColumns(): BasicColumn[] {
       width: 50,
       customRender({ value }) {
         let meta = [];
-        if (value) {
-          meta = JSON.parse(value) ?? [];
+
+        try {
+          if (value) {
+            meta = JSON.parse(value) ?? [];
+          }
+        } catch (e) {
+          meta = value.split(',');
         }
+
         return <div>{meta.length}</div>;
       },
     },
-    // {
-    //   title: '更新至',
-    //   width: 50,
-    //   customRender({ value }) {
-    //     return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
-    //   },
-    // },
     {
       title: '是否完结',
       dataIndex: 'updateState',
@@ -198,10 +201,12 @@ export function getDiversityColumns(): BasicColumn[] {
     {
       title: '金豆价格',
       dataIndex: 'price',
+      edit: true,
     },
     {
       title: '权重',
       dataIndex: 'hotLevel',
+      edit: true,
     },
     {
       title: '剧集ID',

@@ -9,20 +9,9 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable } from '@/components/Table';
-  import { reactive } from 'vue';
   import { allList } from '@/api/board';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
-  const state = reactive<{
-    selectedRowKeys: any;
-  }>({
-    selectedRowKeys: [], // Check here to configure the default column
-  });
-
-  const onSelectChange = (ids) => {
-    console.log(ids);
-    state.selectedRowKeys = ids;
-  };
   const [registerTable] = useTable({
     title: '平台统计',
     api: (params) => {
@@ -41,14 +30,6 @@
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
     rowKey: 'id',
-    fetchSetting: {
-      listField: 'list',
-      totalField: 'totalRecords',
-    },
-    rowSelection: {
-      type: 'checkbox',
-      onChange: onSelectChange,
-    },
     showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20 },
   });

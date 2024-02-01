@@ -69,6 +69,9 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '价格',
       dataIndex: 'price',
+      format(state) {
+        return Number(state) / 10000;
+      },
     },
     {
       title: '权重',
