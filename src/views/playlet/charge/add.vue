@@ -49,12 +49,12 @@
         options: [
           {
             label: 'vip',
-            value: '1',
+            value: 1,
             key: 'vip',
           },
           {
             label: '豆子',
-            value: '2',
+            value: 2,
             key: '豆子',
           },
         ],
@@ -121,6 +121,9 @@
   async function getData() {
     const res = await detailCharge({ id });
     if (res) {
+      if (res.price) {
+        res.price = Number(res.price) / 10000;
+      }
       methods.setFieldsValue(res);
     }
   }
@@ -132,6 +135,9 @@
   });
 
   async function handleSubmit(values: any) {
+    if (values.price) {
+      values.price = Number(values.price) * 10000;
+    }
     if (id) {
       await updateCharge(Object.assign(values, { priceRateId: id }));
       return;

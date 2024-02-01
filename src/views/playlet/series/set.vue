@@ -12,13 +12,7 @@
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { useRoute, useRouter } from 'vue-router';
   import { useModal } from '@/components/Modal';
-  import {
-    createSerie,
-    getDetail,
-    getSeriesList,
-    updateSeriesList,
-    listCategory,
-  } from '@/api/sys/series';
+  import { createSerie, getDetail, updateSeriesList, listCategory } from '@/api/sys/series';
   import SeriesModal from './components/seriesModal.vue';
   import { onMounted } from 'vue';
   import { getLabelList, searchChannel } from '@/api/sys/label';
@@ -175,29 +169,29 @@
         span: 8,
       },
     },
-    {
-      field: 'recommend',
-      component: 'ApiSelect',
-      label: '相关推荐剧',
-      colProps: {
-        span: 8,
-      },
-      componentProps: {
-        mode: 'multiple',
-        api: getSeriesList,
-        params: {
-          pageNum: 1,
-          pageSize: 100,
-        },
-        resultField: 'list',
-        // use name as label
-        labelField: 'title',
-        // use id as value
-        valueField: 'id',
-        // not request untill to select
-        immediate: true,
-      },
-    },
+    // {
+    //   field: 'recommend',
+    //   component: 'ApiSelect',
+    //   label: '相关推荐剧',
+    //   colProps: {
+    //     span: 8,
+    //   },
+    //   componentProps: {
+    //     mode: 'multiple',
+    //     api: getSeriesList,
+    //     params: {
+    //       pageNum: 1,
+    //       pageSize: 100,
+    //     },
+    //     resultField: 'list',
+    //     // use name as label
+    //     labelField: 'title',
+    //     // use id as value
+    //     valueField: 'id',
+    //     // not request untill to select
+    //     immediate: true,
+    //   },
+    // },
     {
       field: 'picId',
       component: 'Input',
@@ -227,7 +221,6 @@
   onMounted(async () => {
     if (id) {
       getDetail(id as string).then((res) => {
-        res.updateState = res.updateState.toString();
         res.p_v = res.p_v / 100;
         res.tags = res.tags.map((x) => x.id);
         res.ownerId = res.uid;
