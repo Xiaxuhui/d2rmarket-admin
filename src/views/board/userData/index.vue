@@ -45,7 +45,6 @@
   const [registerModal, { openModal }] = useModal();
 
   const onSelectChange = (ids) => {
-    console.log(ids);
     state.selectedRowKeys = ids;
   };
 
@@ -87,7 +86,6 @@
     openModal(true, { id });
   };
   const exportCsv = () => {
-    console.log(methods.getDataSource());
     exportExcel(methods.getDataSource(), '用户数据', getBasicColumns());
   };
 </script>

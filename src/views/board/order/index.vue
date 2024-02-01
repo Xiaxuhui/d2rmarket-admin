@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary">导出数据</a-button>
+        <a-button type="primary" @click="exportCsv">导出数据</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -28,6 +28,7 @@
   import { orderList } from '@/api/board';
   import { useGo } from '@/hooks/web/usePage';
   import { PageEnum } from '@/enums/pageEnum';
+  import { exportExcel } from '@/utils/exportCsv';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const go = useGo();
@@ -41,10 +42,9 @@
   });
 
   const onSelectChange = (ids) => {
-    console.log(ids);
     state.selectedRowKeys = ids;
   };
-  const [registerTable] = useTable({
+  const [registerTable, methods] = useTable({
     title: '订单统计',
     api: (params) => {
       const { startTime, endTime } = params;
@@ -83,5 +83,9 @@
         endTime,
       },
     });
+  };
+
+  const exportCsv = () => {
+    exportExcel(methods.getDataSource(), '订单统计', getBasicColumns());
   };
 </script>

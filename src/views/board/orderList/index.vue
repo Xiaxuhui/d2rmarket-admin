@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary">导出数据</a-button>
+        <a-button type="primary" @click="exportCsv">导出数据</a-button>
       </template>
     </BasicTable>
   </div>
@@ -12,6 +12,7 @@
   import { reactive } from 'vue';
   import { order } from '@/api/board';
   import { useRoute } from 'vue-router';
+  import { exportExcel } from '@/utils/exportCsv';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const route = useRoute();
@@ -23,10 +24,9 @@
   });
 
   const onSelectChange = (ids) => {
-    console.log(ids);
     state.selectedRowKeys = ids;
   };
-  const [registerTable] = useTable({
+  const [registerTable, methods] = useTable({
     title: '订单查询',
     api: (params) => {
       const { startTime, endTime } = params;
@@ -55,4 +55,8 @@
     showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20 },
   });
+
+  const exportCsv = () => {
+    exportExcel(methods.getDataSource(), '订单查询', getBasicColumns());
+  };
 </script>

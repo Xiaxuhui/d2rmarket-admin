@@ -63,8 +63,7 @@ export function getBasicColumns(): BasicColumn[] {
       title: '时间',
       dataIndex: 'time',
       customRender({ value }) {
-        const time = formatToDateTime(value);
-        return <div>{time}</div>;
+        return formatToDateTime(value);
       },
     },
     {

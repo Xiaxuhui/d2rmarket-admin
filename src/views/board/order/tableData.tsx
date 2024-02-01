@@ -116,7 +116,7 @@ export function getBasicColumns(): BasicColumn[] {
       title: '类型',
       dataIndex: 'type',
       customRender({ value }) {
-        return <div>{stateEnum[value]}</div>;
+        return stateEnum[value];
       },
     },
     // {
