@@ -122,7 +122,7 @@ export const getWithDrawFormConfig: (query: Record<string, any>) => Partial<Form
         label: '日期范围',
         component: 'RangePicker',
         valueFormat: 'YYYY-MM-DD',
-        defaultValue: [+startTime, +endTime],
+        defaultValue: startTime ? [+startTime, +endTime] : [],
         colProps: {
           xl: 8,
         },

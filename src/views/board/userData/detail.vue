@@ -5,7 +5,9 @@
         <template v-for="(detailKey, i) in Object.keys(detailTest)" :key="`detail${i}`">
           <Col span="6" v-if="i >= index && i < index + 4">
             {{ detailTest[detailKey] }}：
-            <span class="font-bold">{{ formatText(state.detail[detailKey], detailKey) }}</span>
+            <span class="font-bold">{{
+              formatText((state.detail[detailKey] = 0), detailKey)
+            }}</span>
           </Col>
         </template>
       </Row>
@@ -102,8 +104,7 @@
       allList({ type: 4, value: id }),
       order({ pageNum: state.pagination.current, pageSize: state.pagination.pageSize, userId: id }),
     ]).then(([detail, data]) => {
-      state.detail = detail[0];
-      console.log(' state.detail', state.detail);
+      state.detail = detail[0] || {};
       state.modalData = data.list;
       state.pagination.total = data.totalRecords;
     });

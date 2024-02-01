@@ -45,7 +45,7 @@ export const getGrowCardList: (
   },
   {
     title: '充值金额',
-    icon: 'gold-bean|svg',
+    icon: 'money|svg',
     value: data.v5,
     color: 'blue',
     action: '日',
