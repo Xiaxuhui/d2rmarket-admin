@@ -6,7 +6,8 @@ export interface GrowCardItem {
   color?: string;
   action?: string;
   prefix?: string;
-  actionFn?(): void;
+  actionFn?: boolean | (() => void);
+  recordFn?: () => void;
 }
 
 export const getGrowCardList: (data: any) => GrowCardItem[] = (data) => [
@@ -55,10 +56,13 @@ export const getGrowCardList: (data: any) => GrowCardItem[] = (data) => [
   {
     title: '我的余额',
     icon: 'cash|svg',
-    value: 20000,
-    actionFn() {
-      console.log('提现');
-    },
+    value: data.remain_m / 10000,
+    actionFn: data.canRemain
+      ? () => {
+          console.log('提现');
+        }
+      : false,
+    recordFn() {},
   },
   {
     title: 'VIP数量',

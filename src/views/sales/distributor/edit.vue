@@ -216,7 +216,7 @@
                 columns={[
                   {
                     title: '道具名称',
-                    dataIndex: 'name',
+                    dataIndex: 'title',
                     key: 'title',
                   },
                   {
@@ -234,7 +234,7 @@
                   {
                     title: '操作',
                     dataIndex: 'operation',
-                    width: 200,
+                    width: 300,
                   },
                 ]}
                 editProps={['price']}
@@ -275,7 +275,7 @@
                   {
                     title: '操作',
                     dataIndex: 'operation',
-                    width: 200,
+                    width: 300,
                   },
                 ]}
                 editProps={['price']}
@@ -327,13 +327,14 @@
     const data = await chargeList({ channelId: id, pageNum, pageSize: 20, type });
     const { nextPage, list } = data;
     if (nextPage) {
-      return getChosenList(
-        pageNum + 1,
-        topList.concat(list.map((item) => ({ ...item, goodsId: +item.goodsId }))),
-        type,
-      );
+      return getChosenList(pageNum + 1, topList.concat(list), type);
     }
-    return list;
+    return list.map((item) => ({
+      ...item,
+      goodsId: +item.goodsId,
+      title: item.name,
+      price: type === 3 ? item.p_v : item.p_v / 10000,
+    }));
   };
 
   const refreshItemList = async () => {
@@ -382,7 +383,7 @@
     const originMap = new Map();
     const deleteSet = new Set();
     for (let data of originData) {
-      originMap[data.goodsId] = data;
+      originMap.set(data.goodsId, data);
       deleteSet.add(data.id);
     }
     for (let current of currentData) {
@@ -392,7 +393,8 @@
       if (originMap.has(current.goodsId)) {
         const origin = originMap.get(current.goodsId);
         if (origin.price !== current.price) {
-          update.push({ priceRateId: current.priceRateId, price: current.price });
+          // 已有的剧集包含销售方案id
+          update.push({ priceRateId: current.id, price: current.price });
         }
       } else {
         add.push({ price: current.price, goodsId: current.goodsId, type: 3 });

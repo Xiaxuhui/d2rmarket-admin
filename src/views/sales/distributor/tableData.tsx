@@ -132,19 +132,3 @@ export function getBasicColumns(): BasicColumn[] {
     },
   ];
 }
-
-export const getModalData = async () => {
-  const arr: any = [];
-  for (let index = 0; index < 40; index++) {
-    arr.push({
-      level: 1,
-      id: `${index}`,
-      name: 'John Brown',
-      num: index === 5 ? 0 : 20,
-      state: 10,
-      percent: '50%',
-      amount: 20,
-    });
-  }
-  return arr;
-};

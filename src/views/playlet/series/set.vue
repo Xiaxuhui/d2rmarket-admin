@@ -5,15 +5,12 @@
         <a-button class="mr-2" @click="back">返回</a-button>
       </template>
     </BasicForm>
-    <SeriesModal @register="registerModal" />
   </div>
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { useRoute, useRouter } from 'vue-router';
-  import { useModal } from '@/components/Modal';
   import { createSerie, getDetail, updateSeriesList, listCategory } from '@/api/sys/series';
-  import SeriesModal from './components/seriesModal.vue';
   import { onMounted } from 'vue';
   import { getLabelList, searchChannel } from '@/api/sys/label';
 
@@ -202,8 +199,6 @@
     },
   ];
   const { back } = useRouter();
-
-  const [registerModal] = useModal();
 
   const [register, methods] = useForm({
     labelWidth: 120,

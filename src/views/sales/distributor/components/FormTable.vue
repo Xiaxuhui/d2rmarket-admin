@@ -60,7 +60,7 @@
                         ) {
                           updatePriceRate({
                             channelId: props.userId,
-                            list: [{ priceRateId: id, price }],
+                            list: [{ priceRateId: id, price: price * 10000 }],
                           }).then(() => {
                             emit('value-change');
                           });
@@ -68,7 +68,7 @@
                       } else {
                         addPriceRate({
                           channelId: props.userId,
-                          list: [{ goodsId, type, price }],
+                          list: [{ goodsId, type, price: price * 10000 }],
                         }).then(() => {
                           emit('value-change');
                         });
@@ -84,6 +84,15 @@
                     deletePriceRate([record.id]).then(() => {
                       emit('value-change');
                     });
+                  },
+                },
+                {
+                  label: '删除',
+                  icon: 'ic:outline-delete-outline',
+                  color: 'error',
+                  ifShow: !isItem,
+                  onClick() {
+                    deleteData(record[props.rowKey]);
                   },
                 },
               ]"
@@ -192,17 +201,17 @@
     },
   );
 
-  const edit = (key: string) => {
+  const edit = (key: number) => {
     state.editableData[key] = cloneDeep(
       props.value.filter((item) => key === item[props.rowKey])[0],
     );
   };
 
-  const cancel = (key: string) => {
+  const cancel = (key: number) => {
     delete state.editableData[key];
   };
 
-  const save = (key: string) => {
+  const save = (key: number) => {
     Object.assign(
       state.dataSource.filter((item) => key === item[props.rowKey])[0],
       state.editableData[key],
@@ -211,6 +220,13 @@
     if (!props.isItem) {
       emit('update:value', state.dataSource);
     }
+  };
+
+  const deleteData = (key) => {
+    emit(
+      'update:value',
+      state.dataSource.filter((item) => item[props.rowKey] !== key),
+    );
   };
 
   const getSelectRowKeys = (rowKs) => {

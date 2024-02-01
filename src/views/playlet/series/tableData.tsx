@@ -23,7 +23,6 @@ const stateEnum = {
 };
 
 export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps> = ({ label }) => {
-  console.log('label', label);
   return {
     labelWidth: 100,
     schemas: [
@@ -40,6 +39,7 @@ export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps>
         field: `tagId`,
         label: `标签：`,
         component: 'ApiSelect',
+        defaultValue: (label ? +label : null) as SelectValue,
         componentProps: {
           api: getLabelList,
           labelField: 'name',
@@ -133,7 +133,6 @@ export function getBasicColumns(): BasicColumn[] {
       width: 50,
       customRender({ value }) {
         let meta = [];
-
         try {
           if (value) {
             meta = JSON.parse(value) ?? [];
@@ -141,7 +140,6 @@ export function getBasicColumns(): BasicColumn[] {
         } catch (e) {
           meta = value.split(',');
         }
-
         return <div>{meta.length}</div>;
       },
     },

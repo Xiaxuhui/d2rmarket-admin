@@ -14,8 +14,8 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         },
       },
       {
-        field: `id`,
-        label: `userId：`,
+        field: `userId`,
+        label: `用户Id：`,
         component: 'Input',
         colProps: {
           xl: 8,

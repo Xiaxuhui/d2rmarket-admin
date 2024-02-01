@@ -13,7 +13,6 @@ const modules = import.meta.glob(
     './modules/playlet/index.ts',
     './modules/sales/index.ts',
     './modules/dashboard.ts',
-    './modules/demo/comp.ts',
   ],
   { eager: true },
 ); // './modules/**/*.ts'
