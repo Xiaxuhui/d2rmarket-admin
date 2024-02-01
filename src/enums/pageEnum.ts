@@ -7,6 +7,7 @@ export enum PageEnum {
   SERIES = 'series',
   SET_SERIES = 'setSeries',
   DIVERSITY = 'diversity',
+  ORDER_LIST = 'orderList',
   // distributor
   DISTRIBUTOR_LIST = 'distributor',
   DISTRIBUTOR_EDIT = 'editDistributor',

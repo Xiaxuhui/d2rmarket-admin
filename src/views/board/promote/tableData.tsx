@@ -17,7 +17,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
             },
             {
               label: '按日统计',
-              value: 360000 * 24,
+              value: 3600000 * 24,
             },
           ],
         },
@@ -35,7 +35,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         },
       },
       {
-        field: `adId`,
+        field: `value`,
         label: `任务ID：`,
         component: 'Input',
         colProps: {
@@ -103,6 +103,9 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '注册率',
       dataIndex: 'v7',
+      customRender({ value }) {
+        return `${value}%`;
+      },
     },
     {
       title: '充值人数',
@@ -110,11 +113,14 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: '充值率',
-      dataIndex: 'v8',
+      dataIndex: 'v9',
+      customRender({ value }) {
+        return `${value}%`;
+      },
     },
     {
       title: '平均观看时长',
-      dataIndex: 'v9',
+      dataIndex: 'v10',
     },
   ];
 }

@@ -1,4 +1,5 @@
 import { BasicColumn, FormProps } from '@/components/Table';
+import { formatToDateTime } from '@/utils/dateUtil';
 
 enum STATE_ENUM {
   vip = 1,
@@ -8,8 +9,8 @@ enum STATE_ENUM {
 }
 
 const stateEnum = {
-  [STATE_ENUM.vip]: '花钱买VIP',
-  [STATE_ENUM.dou]: '花钱买豆子',
+  [STATE_ENUM.vip]: '钱买VIP',
+  [STATE_ENUM.dou]: '钱买豆子',
   [STATE_ENUM.blogs]: '购买合集博客',
   [STATE_ENUM.blog]: '购买单集博客',
 };
@@ -24,7 +25,11 @@ const platformEnum = {
   [PLATFORM_ENUM.pay]: '支付宝',
 };
 
-export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
+export const getWithDrawFormConfig: (query: Record<string, any>) => Partial<FormProps> = ({
+  startTime,
+  endTime,
+}) => {
+  console.log('startTime,endTime,', startTime, endTime);
   return {
     labelWidth: 100,
     schemas: [
@@ -116,10 +121,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         field: '[startTime, endTime]',
         label: '日期范围',
         component: 'RangePicker',
-        componentProps: {
-          format: 'YYYY-MM-DD',
-          placeholder: ['开始日期', '结束日期'],
-        },
+        defaultValue: [+startTime, +endTime],
         colProps: {
           xl: 8,
         },
@@ -133,6 +135,15 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '订单号',
       dataIndex: 'id',
+      fixed: true,
+    },
+    {
+      title: '时间',
+      dataIndex: 'time',
+      customRender({ value }) {
+        const time = formatToDateTime(value);
+        return <div>{time}</div>;
+      },
     },
     {
       title: '订单用户',
@@ -158,12 +169,16 @@ export function getBasicColumns(): BasicColumn[] {
       },
     },
     {
-      title: '豆子',
+      title: '金豆',
       dataIndex: 'beanCost',
     },
     {
-      title: '钱',
+      title: '金额',
       dataIndex: 'moneyCost',
+    },
+    {
+      title: '商品名称',
+      dataIndex: 'goodsName',
     },
     {
       title: '获得的豆子',
@@ -174,27 +189,26 @@ export function getBasicColumns(): BasicColumn[] {
       dataIndex: 'blog',
     },
     {
-      title: '平台号id',
+      title: '平台单号',
       dataIndex: 'orderId',
     },
     {
-      title: '平台方式',
+      title: '支付方式',
       dataIndex: 'platform',
       customRender({ value }) {
         return <div>{platformEnum[value]}</div>;
       },
     },
     {
-      title: '商品名称',
-      dataIndex: 'goodsName',
-    },
-    {
       title: 'vip天数',
       dataIndex: 'vipDays',
     },
     {
-      title: '时间',
-      dataIndex: 'time',
+      title: '状态',
+      dataIndex: 'state',
+      customRender() {
+        return '完成';
+      },
     },
   ];
 }

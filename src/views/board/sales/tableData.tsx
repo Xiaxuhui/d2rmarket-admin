@@ -1,4 +1,5 @@
 import { BasicColumn, FormProps } from '@/components/Table';
+import { formatToDateTime } from '@/utils/dateUtil';
 
 export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
   return {
@@ -17,7 +18,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
             },
             {
               label: '按日统计',
-              value: 360000 * 24,
+              value: 3600000 * 24,
             },
           ],
         },
@@ -32,7 +33,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         show: false,
       },
       {
-        field: `channel`,
+        field: `value`,
         label: `分销商：`,
         component: 'Input',
         colProps: {
@@ -60,10 +61,10 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '时间',
       dataIndex: 'time',
-      // customRender({ value }) {
-      //   const time = formatToDateTime(value);
-      //   return <div>{time}</div>;
-      // },
+      customRender({ value }) {
+        const time = formatToDateTime(value);
+        return <div>{time}</div>;
+      },
     },
     {
       title: '分销商',

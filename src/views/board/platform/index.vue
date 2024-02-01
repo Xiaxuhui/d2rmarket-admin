@@ -26,17 +26,13 @@
   const [registerTable] = useTable({
     title: '平台统计',
     api: (params) => {
-      const { timeGap = 3600000, startTime, endTime, pageNum, pageSize } = params;
-      const param: Record<string, any> = {
-        timeGap,
-        pageNum,
-        pageSize,
-      };
+      const { startTime, endTime } = params;
+      const param: Record<string, any> = {};
       if (startTime && endTime) {
         param.startTime = new Date(startTime).getTime();
         param.endTime = new Date(endTime).getTime();
       }
-      return allList({ ...param, type: 5 });
+      return allList({ ...params, ...param });
     },
     columns: getBasicColumns(),
     useSearchForm: true,

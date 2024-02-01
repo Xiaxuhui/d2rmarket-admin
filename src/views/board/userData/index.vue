@@ -15,12 +15,6 @@
                   confirm(record.id);
                 },
               },
-              {
-                label: '禁用',
-                onClick() {
-                  reject(record.id);
-                },
-              },
             ]"
           />
         </template>
@@ -32,7 +26,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { reactive } from 'vue';
-  import { allList } from '@/api/board';
+  import { getUserList } from '@/api/board';
   import UserDetail from './detail.vue';
   import { useModal } from '@/components/Modal';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
@@ -61,7 +55,15 @@
 
   const [registerTable] = useTable({
     title: '用户数据',
-    api: allList,
+    api: (params) => {
+      const { startTime, endTime } = params;
+      const param: Record<string, any> = {};
+      if (startTime && endTime) {
+        param.startTime = new Date(startTime).getTime();
+        param.endTime = new Date(endTime).getTime();
+      }
+      return getUserList({ ...params, ...param });
+    },
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),
@@ -82,8 +84,5 @@
   });
   const confirm = (id: string) => {
     openModal(true, { id });
-  };
-  const reject = (id: string) => {
-    console.log(id);
   };
 </script>

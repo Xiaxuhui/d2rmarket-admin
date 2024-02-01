@@ -6,7 +6,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable } from '@/components/Table';
   import { reactive } from 'vue';
-  import { promote } from '@/api/board';
+  import { allList } from '@/api/board';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
 
   const state = reactive<{
@@ -24,8 +24,16 @@
     state.selectedRowKeys = ids;
   };
   const [registerTable] = useTable({
-    title: '订单数据',
-    api: promote,
+    title: '剧集数据',
+    api: (params) => {
+      const { startTime, endTime } = params;
+      const param: Record<string, any> = {};
+      if (startTime && endTime) {
+        param.startTime = new Date(startTime).getTime();
+        param.endTime = new Date(endTime).getTime();
+      }
+      return allList({ ...params, ...param });
+    },
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(),

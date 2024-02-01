@@ -63,20 +63,12 @@ const board: AppRouteModule = {
       },
     },
     {
-      path: 'orderDetail',
-      name: 'orderDetail',
-      component: () => import('@/views/board/order/detailList.vue'),
-      meta: {
-        title: t('routes.board.order'),
-        hideMenu: true,
-      },
-    },
-    {
       path: 'orderList',
       name: 'OrderList',
       component: () => import('@/views/board/orderList/index.vue'),
       meta: {
         title: t('routes.board.orderList'),
+        ignoreKeepAlive: true,
       },
     },
   ],

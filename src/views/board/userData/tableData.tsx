@@ -6,8 +6,32 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
     labelWidth: 100,
     schemas: [
       {
-        field: `timeGap`,
-        label: `统计间隔：`,
+        field: `investId`,
+        label: `投流id：`,
+        component: 'Input',
+        colProps: {
+          xl: 8,
+        },
+      },
+      {
+        field: `id`,
+        label: `userId：`,
+        component: 'Input',
+        colProps: {
+          xl: 8,
+        },
+      },
+      {
+        field: `userName`,
+        label: `用户名：`,
+        component: 'Input',
+        colProps: {
+          xl: 8,
+        },
+      },
+      {
+        field: `isVip`,
+        label: `会员类型：`,
         colProps: {
           xl: 8,
         },
@@ -15,35 +39,19 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         componentProps: {
           options: [
             {
-              label: '按小时统计',
-              value: 3600000,
+              label: '是',
+              value: 1,
             },
             {
-              label: '按日统计',
-              value: 360000 * 24,
+              label: '否',
+              value: 0,
             },
           ],
         },
       },
       {
-        field: `channel`,
-        label: `分销商：`,
-        component: 'Input',
-        colProps: {
-          xl: 8,
-        },
-      },
-      {
-        field: `parentChannel`,
-        label: `隶属：`,
-        component: 'Input',
-        colProps: {
-          xl: 8,
-        },
-      },
-      {
-        field: `adId`,
-        label: `任务ID：`,
+        field: `channelId`,
+        label: `渠道商id`,
         component: 'Input',
         colProps: {
           xl: 8,
@@ -65,11 +73,36 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
   };
 };
 
+enum STATE_ENUM {
+  vip = 1,
+  dou = 2,
+  blogs = 3,
+  blog = 4,
+}
+
+const stateEnum = {
+  [STATE_ENUM.vip]: '花钱买VIP',
+  [STATE_ENUM.dou]: '花钱买豆子',
+  [STATE_ENUM.blogs]: '购买合集博客',
+  [STATE_ENUM.blog]: '购买单集博客',
+};
+
+enum PLATFORM_ENUM {
+  weChat = 101,
+  pay = 401,
+}
+
+const platformEnum = {
+  [PLATFORM_ENUM.weChat]: '微信',
+  [PLATFORM_ENUM.pay]: '支付宝',
+};
+
 export function detailColumns(): BasicColumn[] {
   return [
     {
       title: '订单号',
-      dataIndex: 'k1',
+      dataIndex: 'id',
+      fixed: true,
     },
     {
       title: '时间',
@@ -81,27 +114,36 @@ export function detailColumns(): BasicColumn[] {
     },
     {
       title: '类型',
-      dataIndex: 'k3',
+      dataIndex: 'type',
+      customRender({ value }) {
+        return <div>{stateEnum[value]}</div>;
+      },
     },
     {
       title: '金额',
-      dataIndex: 'k4',
+      dataIndex: 'moneyCost',
     },
     {
-      title: '商品',
-      dataIndex: 'k5',
-    },
-    {
-      title: '支付方式',
-      dataIndex: 'k6',
+      title: '商品名称',
+      dataIndex: 'goodsName',
     },
     {
       title: '平台单号',
-      dataIndex: 'k7',
+      dataIndex: 'orderId',
+    },
+    {
+      title: '支付方式',
+      dataIndex: 'platform',
+      customRender({ value }) {
+        return <div>{platformEnum[value]}</div>;
+      },
     },
     {
       title: '状态',
-      dataIndex: 'k8',
+      dataIndex: 'state',
+      customRender() {
+        return '完成';
+      },
     },
   ];
 }
@@ -109,44 +151,45 @@ export function detailColumns(): BasicColumn[] {
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
-      title: 'ID',
-      dataIndex: 'uid',
+      title: '用户id',
+      dataIndex: 'id',
+      fixed: 'left',
     },
     {
       title: '昵称',
-      dataIndex: 'uName',
-    },
-    {
-      title: '会员',
       dataIndex: 'name',
     },
     {
-      title: '账户余额',
-      dataIndex: 'bankName',
+      title: '会员',
+      dataIndex: 'vipEndTime',
+      customRender({ value }) {
+        return Date.now() > value ? '否' : '是';
+      },
     },
     {
-      title: '分销商',
-      dataIndex: 'bankName',
+      title: '账户余额',
+      dataIndex: 'bean',
+    },
+    {
+      title: '分销商id',
+      dataIndex: 'channel',
     },
     {
       title: '投放任务ID',
-      dataIndex: 'bankName',
+      dataIndex: 'ad',
     },
     {
       title: '注册时间',
-      dataIndex: 'bankName',
-    },
-    {
-      title: '最近登陆',
-      dataIndex: 'bankName',
-    },
-    {
-      title: '观看时长',
-      dataIndex: 'bankName',
+      dataIndex: 'time',
+      width: 200,
+      customRender({ value }) {
+        const time = formatToDateTime(value);
+        return <div>{time}</div>;
+      },
     },
     {
       title: '操作',
-      width: 200,
+      width: 80,
       dataIndex: 'operation',
       fixed: 'right',
     },

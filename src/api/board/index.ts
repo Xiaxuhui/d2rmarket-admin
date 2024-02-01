@@ -4,6 +4,7 @@ enum Api {
   orderList = '/manage/statisticPurchaseRecordPage',
   order = '/manage/purchaseRecordPage',
   allList = '/manage/DataView',
+  userList = '/manage/searchUserPage',
 }
 
 /**
@@ -20,4 +21,8 @@ export const order = (params) => {
 
 export const allList = (params) => {
   return defHttp.get({ url: Api.allList, params });
+};
+
+export const getUserList = (params) => {
+  return defHttp.get({ url: Api.userList, params });
 };

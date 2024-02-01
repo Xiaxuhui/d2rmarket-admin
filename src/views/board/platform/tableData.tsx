@@ -83,7 +83,7 @@ export function getBasicColumns(): BasicColumn[] {
       title: '新用户付费率',
       dataIndex: 'v6',
       customRender({ value }) {
-        return <div>{{ value }}%</div>;
+        return `${value}%`;
       },
     },
 

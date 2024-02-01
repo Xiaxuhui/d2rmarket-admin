@@ -124,9 +124,9 @@ export function getBasicColumns(): BasicColumn[] {
     // },
     {
       title: '操作',
-      width: 200,
+      width: 100,
       dataIndex: 'operation',
-      fixed: 'right',
+      align: 'center',
     },
   ];
 }
