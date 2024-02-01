@@ -5,7 +5,7 @@
         <template v-for="(detailKey, i) in Object.keys(detailTest)" :key="`detail${i}`">
           <Col span="6" v-if="i >= index && i < index + 4">
             {{ detailTest[detailKey] }}：
-            <span class="font-bold">{{ state.detail[detailKey] || 0 }}</span>
+            <span class="font-bold">{{ formatText(state.detail[detailKey], detailKey) }}</span>
           </Col>
         </template>
       </Row>
@@ -26,8 +26,9 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { Table, Row, Col } from 'ant-design-vue';
   import { ColumnType } from 'ant-design-vue/lib/table/interface';
-  import { detailColumns } from './tableData';
   import { allList, order } from '@/api/board';
+  import { formatToDateTime, formatToMin } from '@/utils/dateUtil';
+  import { detailColumns } from './tableData';
 
   enum DETAIL_ENUM {
     v1 = 'v1',
@@ -63,7 +64,7 @@
     detail: {} as Record<DETAIL_ENUM, any>,
   });
 
-  const detailTest = {
+  const detailTest: Record<DETAIL_ENUM, string> = {
     [DETAIL_ENUM.v1]: '消费金额',
     [DETAIL_ENUM.v2]: '订单数量',
     [DETAIL_ENUM.v3]: '金豆余额',
@@ -80,14 +81,29 @@
 
   const columns = detailColumns() as ColumnType[];
 
+  const formatText = (val: number, key: string) => {
+    if (!val) {
+      return 0;
+    }
+    switch (key as DETAIL_ENUM) {
+      case DETAIL_ENUM.v9:
+        return formatToMin(val);
+      case DETAIL_ENUM.v12:
+        return formatToDateTime(val);
+      default:
+        return val;
+    }
+  };
+
   const [register, { setModalProps }] = useModalInner(({ id }) => {
     state.userId = id;
     setModalProps({ width: 1200 });
     Promise.all([
-      allList({ type: 4, value: 2 }),
+      allList({ type: 4, value: id }),
       order({ pageNum: state.pagination.current, pageSize: state.pagination.pageSize, userId: id }),
     ]).then(([detail, data]) => {
-      state.detail = detail;
+      state.detail = detail[0];
+      console.log(' state.detail', state.detail);
       state.modalData = data.list;
       state.pagination.total = data.totalRecords;
     });

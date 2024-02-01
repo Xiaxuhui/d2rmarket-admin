@@ -13,17 +13,26 @@
       </div>
     </div>
     <GrowCard :loading="loading" :grow-card-list="growCardList" class="enter-y" />
+    <WithdrawModal @register="registerModal" />
+    <DetailModal @register="registerDetailModal" />
   </div>
 </template>
 <script lang="ts" setup>
   import { ref, reactive, computed } from 'vue';
   import GrowCard from './components/GrowCard.vue';
+  import WithdrawModal from './components/WithdrawModal.vue';
+  import DetailModal from './components/DetailModal.vue';
   import headerImg from '@/assets/images/header.jpg';
   import { allList } from '@/api/board';
   import { distributorDetail } from '@/api/sys/distributor';
+  import { useModal } from '@/components/Modal';
   import { getGrowCardList } from './data';
 
   const loading = ref(true);
+
+  const [registerModal, { openModal }] = useModal();
+
+  const [registerDetailModal, { openModal: openDetailModal }] = useModal();
 
   const state = reactive({
     data: {
@@ -41,7 +50,7 @@
   });
 
   const growCardList = computed(() => {
-    return getGrowCardList(state.data);
+    return getGrowCardList(state.data, openModal, openDetailModal.bind(null, true, 1));
   });
 
   Promise.all([

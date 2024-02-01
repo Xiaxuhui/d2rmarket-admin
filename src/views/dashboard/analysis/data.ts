@@ -10,7 +10,11 @@ export interface GrowCardItem {
   recordFn?: () => void;
 }
 
-export const getGrowCardList: (data: any) => GrowCardItem[] = (data) => [
+export const getGrowCardList: (
+  data: any,
+  openWithdraw?: () => void,
+  openDetail?: () => void,
+) => GrowCardItem[] = (data, openWithdraw, openDetail) => [
   {
     title: '点击数',
     icon: 'click-volume|svg',
@@ -59,10 +63,12 @@ export const getGrowCardList: (data: any) => GrowCardItem[] = (data) => [
     value: data.remain_m / 10000,
     actionFn: data.canRemain
       ? () => {
-          console.log('提现');
+          openWithdraw?.();
         }
       : false,
-    recordFn() {},
+    recordFn() {
+      openDetail?.();
+    },
   },
   {
     title: 'VIP数量',

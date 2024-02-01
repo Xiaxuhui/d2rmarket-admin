@@ -19,10 +19,12 @@
       </div>
 
       <div class="p-2 px-4 flex flex-row-reverse">
+        <a-button v-if="item.recordFn" size="small" @click="item.recordFn">提现记录</a-button>
         &nbsp;
         <a-button v-if="item.actionFn" size="small" @click="item.actionFn" type="primary"
           >提现</a-button
         >
+
         <!-- <span>总{{ item.title }}</span> -->
         <!-- <CountTo :prefix="item.prefix" :startVal="1" :endVal="item.total" /> -->
       </div>
