@@ -1,5 +1,5 @@
 import { BasicColumn, FormProps } from '@/components/Table';
-import { formatToDateTime } from '@/utils/dateUtil';
+import { formatToDateTime, formatToMin } from '@/utils/dateUtil';
 
 export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
   return {
@@ -81,6 +81,9 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '平均时长',
       dataIndex: 'v3',
+      customRender({ value }) {
+        return formatToMin(value);
+      },
     },
     {
       title: '平均次数',
