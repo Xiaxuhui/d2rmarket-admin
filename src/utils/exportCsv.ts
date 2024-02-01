@@ -11,9 +11,7 @@ export const exportExcel = (data, name, columConfig) => {
     const customRender = item.customRender;
     columnEnum[item.dataIndex] = {
       label: item.title,
-      formatter: customRender
-        ? (val) => customRender.bind(null, { value: val }, null)
-        : (val) => val,
+      formatter: customRender ? (val) => customRender({ value: val }) : (val) => val,
     };
     return item.dataIndex;
   });

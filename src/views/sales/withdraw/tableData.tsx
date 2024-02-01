@@ -30,6 +30,9 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         field: `channelId`,
         label: `渠道ID：`,
         component: 'Input',
+        colProps: {
+          xl: 12,
+        },
       },
       {
         field: `state`,
@@ -37,7 +40,6 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         component: 'Select',
         colProps: {
           xl: 12,
-          xxl: 8,
         },
         componentProps: {
           options: [

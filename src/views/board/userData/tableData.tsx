@@ -184,8 +184,7 @@ export function getBasicColumns(): BasicColumn[] {
       dataIndex: 'time',
       width: 200,
       customRender({ value }) {
-        const time = formatToDateTime(value);
-        return <div>{time}</div>;
+        return formatToDateTime(value);
       },
     },
     {
