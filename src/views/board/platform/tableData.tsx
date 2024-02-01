@@ -37,6 +37,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         field: '[startTime, endTime]',
         label: '日期范围',
         component: 'RangePicker',
+        valueFormat: 'YYYY-MM-DD',
         colProps: {
           xl: 8,
         },

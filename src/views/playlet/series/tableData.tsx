@@ -23,7 +23,6 @@ const stateEnum = {
 };
 
 export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps> = ({ label }) => {
-  console.log('label', label);
   return {
     labelWidth: 100,
     schemas: [
