@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary">导出数据</a-button>
+        <a-button type="primary" @click="exportCsv">导出数据</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -30,6 +30,7 @@
   import UserDetail from './detail.vue';
   import { useModal } from '@/components/Modal';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
+  import tableToExcel from '@/utils/exportCsv';
 
   const state = reactive<{
     selectedRowKeys: any;
@@ -84,5 +85,8 @@
   });
   const confirm = (id: string) => {
     openModal(true, { id });
+  };
+  const exportCsv = () => {
+    tableToExcel();
   };
 </script>
