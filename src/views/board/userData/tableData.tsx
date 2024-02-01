@@ -67,6 +67,10 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
         componentProps: {
           format: 'YYYY-MM-DD',
           placeholder: ['开始日期', '结束日期'],
+          valueFormat: 'YYYY-MM-DD',
+          onChange(value) {
+            console.log(value);
+          },
         },
       },
     ],
