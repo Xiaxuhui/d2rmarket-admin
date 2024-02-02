@@ -63,11 +63,12 @@
       showIndexColumn: false,
     });
   const labelStore = useLabelStore();
-  const { list, loading, adding } = toRefs(labelStore);
+  labelStore.loadLabel();
+  const { list } = toRefs(labelStore);
   const go = useGo();
 
   const state = reactive({
-    loading: loading.value || adding.value,
+    loading: false, // loading.value || adding.value,
     pagination: {
       pageSize: 20,
     },

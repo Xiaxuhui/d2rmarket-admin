@@ -83,11 +83,17 @@
 
   const columns = detailColumns() as ColumnType[];
 
+  const formatMoney = (val: number) => {
+    return val / 10000;
+  };
+
   const formatText = (val: number, key: string) => {
     if (!val) {
       return 0;
     }
     switch (key as DETAIL_ENUM) {
+      case DETAIL_ENUM.v1:
+        return formatMoney(val);
       case DETAIL_ENUM.v9:
         return formatToMin(val);
       case DETAIL_ENUM.v12:

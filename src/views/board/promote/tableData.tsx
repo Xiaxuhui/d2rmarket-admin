@@ -87,6 +87,9 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '充值',
       dataIndex: 'v3',
+      customRender({ value }) {
+        return value / 10000;
+      },
     },
     {
       title: '成本',

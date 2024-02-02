@@ -96,6 +96,9 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '人均金额',
       dataIndex: 'v6',
+      customRender({ value }) {
+        return value / 10000;
+      },
     },
   ];
 }

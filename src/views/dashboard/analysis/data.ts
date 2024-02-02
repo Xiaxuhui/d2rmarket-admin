@@ -73,23 +73,22 @@ export const getGrowCardList: (
   {
     title: 'VIP数量',
     icon: 'vip|svg',
-    value: 8000,
+    value: data.vipNum,
   },
   {
     title: '下属分销商数',
     icon: 'salesman|svg',
-    value: 5000,
+    value: data.sonChannelNum,
   },
   {
     title: '投流任务数',
     icon: 'task|svg',
-    value: 2000,
+    value: data.investNum,
   },
   {
     title: '我的剧集',
     icon: 'total-sales|svg',
-    value: 20000,
+    value: data.blogNum,
   },
-  {},
   {},
 ];

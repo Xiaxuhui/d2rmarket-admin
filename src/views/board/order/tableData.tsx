@@ -102,15 +102,18 @@ export function getBasicColumns(): BasicColumn[] {
       dataIndex: 'totalBean',
     },
     {
-      title: '总计花钱',
+      title: '总计花费',
       dataIndex: 'totalMoney',
+      customRender({ value }) {
+        return value / 10000;
+      },
     },
     {
-      title: '总计豆子价值钱',
+      title: '豆子总价值',
       dataIndex: 'equivalentMoney',
-      // customRender({ value }) {
-      //   return <div>{value / 10000}</div>;
-      // },
+      customRender({ value }) {
+        return value / 10000;
+      },
     },
     {
       title: '类型',

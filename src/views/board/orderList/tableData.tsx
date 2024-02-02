@@ -175,6 +175,9 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '金额',
       dataIndex: 'moneyCost',
+      customRender({ value }) {
+        return value / 10000;
+      },
     },
     {
       title: '商品名称',

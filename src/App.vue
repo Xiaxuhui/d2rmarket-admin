@@ -13,7 +13,7 @@
   import { ConfigProvider } from 'ant-design-vue';
 
   import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
-  import { useLabelStore } from '@/store/modules/label';
+  // import { useLabelStore } from '@/store/modules/label';
   import 'dayjs/locale/zh-cn';
   import { computed } from 'vue';
 
@@ -21,8 +21,6 @@
   const { getAntdLocale } = useLocale();
 
   const { isDark, darkTheme } = useDarkModeTheme();
-  const useLabel = useLabelStore();
-  useLabel.loadLabel();
 
   const themeConfig = computed(() =>
     Object.assign(

@@ -26,9 +26,13 @@
   import { allList } from '@/api/board';
   import { distributorDetail } from '@/api/sys/distributor';
   import { useModal } from '@/components/Modal';
+  import { getHomeData } from '@/api/sys/user';
   import { getGrowCardList } from './data';
+  import { useUserStore } from '@/store/modules/user';
 
   const loading = ref(true);
+
+  const user = useUserStore();
 
   const [registerModal, { openModal }] = useModal();
 
@@ -46,6 +50,10 @@
       v6: '0',
       canRemain: false,
       remain_m: 0,
+      vipNum: 0,
+      sonChannelNum: 0,
+      investNum: 0,
+      blogNum: 0,
     },
   });
 
@@ -57,14 +65,31 @@
     allList({
       type: 6,
       timeGap: 3600000 * 24,
-      value: 2,
+      value: user.userInfo.id,
     }),
-    distributorDetail({ channelId: 2 }),
+    distributorDetail({ channelId: user.userInfo.id }),
+    getHomeData({}),
   ])
-    .then(([listData, detail]) => {
+    .then(([listData, detail, homeData]) => {
       const { channel, id, v1, v2, v3, v4, v5, v6 } = listData[0] || {};
       const { canRemain, remain_m } = detail;
-      state.data = { channel, id, v1, v2, v3, v4, v5, v6, canRemain: !!canRemain, remain_m };
+      const { vipNum, sonChannelNum, investNum, blogNum } = homeData;
+      state.data = {
+        channel,
+        id,
+        v1,
+        v2,
+        v3,
+        v4,
+        v5,
+        v6,
+        canRemain: !!canRemain,
+        remain_m,
+        vipNum,
+        sonChannelNum,
+        investNum,
+        blogNum,
+      };
     })
     .finally(() => {
       loading.value = false;

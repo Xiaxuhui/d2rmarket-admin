@@ -96,6 +96,9 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '新用户充值',
       dataIndex: 'v5',
+      customRender({ value }) {
+        return value / 10000;
+      },
     },
     {
       title: '新用户付费率',

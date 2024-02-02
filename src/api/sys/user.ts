@@ -1,21 +1,23 @@
 import { defHttp } from '@/utils/http/axios';
-import { LoginParams, LoginResultModel, GetUserInfoModel } from './model/userModel';
+import { LoginParams } from './model/userModel';
 
 import { ErrorMessageMode } from '#/axios';
+// import { useUserStoreWithOut } from '@/store/modules/user';
 
 enum Api {
-  Login = '/login',
-  Logout = '/logout',
-  GetUserInfo = '/getUserInfo',
+  Login = '/manage/login',
+  Logout = '/manage/logout',
+  GetUserInfo = '/manage/getUserInfo',
   GetPermCode = '/getPermCode',
   TestRetry = '/testRetry',
+  Home = '/manage/homePage',
 }
 
 /**
  * @description: user login api
  */
 export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') {
-  return defHttp.post<LoginResultModel>(
+  return defHttp.post(
     {
       url: Api.Login,
       params,
@@ -26,11 +28,18 @@ export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') 
   );
 }
 
+export function getHomeData(params: any) {
+  return defHttp.post({
+    url: Api.Home,
+    params,
+  });
+}
+
 /**
  * @description: getUserInfo
  */
-export function getUserInfo() {
-  return defHttp.get<GetUserInfoModel>({ url: Api.GetUserInfo }, { errorMessageMode: 'none' });
+export async function getUserInfo() {
+  return defHttp.get({ url: Api.GetUserInfo }, { errorMessageMode: 'none' });
 }
 
 export function getPermCode() {
