@@ -54,7 +54,7 @@
       onChange: onSelectChange,
     },
     showSelectionBar: true, // 显示多选状态栏
-    pagination: { pageSize: 20 },
+    pagination: { pageSize: 20, pageSizeOptions: ['20'] },
   });
 
   const exportCsv = () => {
