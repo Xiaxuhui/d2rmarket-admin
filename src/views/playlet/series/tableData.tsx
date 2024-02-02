@@ -225,6 +225,7 @@ export function getDiversityColumns(): BasicColumn[] {
     {
       title: '操作',
       dataIndex: 'operation',
+      width: 300,
     },
   ];
 }

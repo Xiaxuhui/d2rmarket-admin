@@ -20,6 +20,20 @@
                   },
                 },
               },
+              {
+                label: '向上移',
+                icon: 'ant-design:arrow-up-outlined',
+                onClick() {
+                  up(1, record);
+                },
+              },
+              {
+                label: '向下移',
+                icon: 'ant-design:arrow-down-outlined',
+                onClick() {
+                  up(0, record);
+                },
+              },
             ]"
           />
         </template>
@@ -38,6 +52,7 @@
   import FormDialog from './components/uploadForm.vue';
   import { updateRecommend } from '@/api/sys/blog';
   import { useModal } from '@/components/Modal';
+  import { updateCategory } from '@/api/sys/series';
 
   const { id } = useRoute().query as { id: string };
 
@@ -107,6 +122,12 @@
         ),
       )
       .then(() => reload());
+  };
+
+  const up = (type: number, record) => {
+    updateCategory({ flag: type, blogId: record.id }).then(() => {
+      reload();
+    });
   };
 
   const add = () => {
