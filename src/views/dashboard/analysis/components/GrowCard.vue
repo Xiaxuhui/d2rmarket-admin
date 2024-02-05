@@ -14,14 +14,18 @@
       </template>
 
       <div class="py-4 px-4 flex justify-between items-center">
-        <CountTo :prefix="item.prefix" :startVal="1" :endVal="item.value" class="text-2xl" />
+        <div class="text-2xl">{{ data[item.name || ''] }}</div>
         <Icon v-if="item.icon" :icon="item.icon" :size="40" />
       </div>
 
       <div class="p-2 px-4 flex flex-row-reverse">
         <a-button v-if="item.recordFn" size="small" @click="item.recordFn">提现记录</a-button>
         &nbsp;
-        <a-button v-if="item.actionFn" size="small" @click="item.actionFn" type="primary"
+        <a-button
+          v-if="item.name === 'remain_m' && data.canRemain"
+          size="small"
+          @click="item.actionFn"
+          type="primary"
           >提现</a-button
         >
 
@@ -32,7 +36,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { CountTo } from '@/components/CountTo';
   import Icon from '@/components/Icon/Icon.vue';
   import { Tag, Card } from 'ant-design-vue';
   import { PropType } from 'vue';
@@ -45,6 +48,10 @@
     growCardList: {
       type: Array as PropType<GrowCardItem[]>,
       default: () => [],
+    },
+    data: {
+      type: Object as PropType<Record<string, any>>,
+      default: () => ({}),
     },
   });
 </script>

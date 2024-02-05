@@ -12,13 +12,13 @@
         >
       </div>
     </div>
-    <GrowCard :loading="loading" :grow-card-list="growCardList" class="enter-y" />
+    <GrowCard :loading="loading" :grow-card-list="growCardList" :data="state.data" />
     <WithdrawModal @register="registerModal" />
     <DetailModal @register="registerDetailModal" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, reactive, computed } from 'vue';
+  import { ref, reactive, onMounted } from 'vue';
   import GrowCard from './components/GrowCard.vue';
   import WithdrawModal from './components/WithdrawModal.vue';
   import DetailModal from './components/DetailModal.vue';
@@ -32,7 +32,7 @@
 
   const loading = ref(true);
 
-  const user = useUserStore();
+  const userStore = useUserStore();
 
   const [registerModal, { openModal }] = useModal();
 
@@ -57,41 +57,41 @@
     },
   });
 
-  const growCardList = computed(() => {
-    return getGrowCardList(state.data, openModal, openDetailModal.bind(null, true, 1));
-  });
+  const growCardList = getGrowCardList(openModal, openDetailModal.bind(null, true, 1));
 
-  Promise.all([
-    allList({
-      type: 6,
-      timeGap: 3600000 * 24,
-      value: user.userInfo.id,
-    }),
-    distributorDetail({ channelId: user.userInfo.id }),
-    getHomeData({}),
-  ])
-    .then(([listData, detail, homeData]) => {
-      const { channel, id, v1, v2, v3, v4, v5, v6 } = listData[0] || {};
-      const { canRemain, remain_m } = detail;
-      const { vipNum, sonChannelNum, investNum, blogNum } = homeData;
-      state.data = {
-        channel,
-        id,
-        v1,
-        v2,
-        v3,
-        v4,
-        v5,
-        v6,
-        canRemain: !!canRemain,
-        remain_m,
-        vipNum,
-        sonChannelNum,
-        investNum,
-        blogNum,
-      };
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+  onMounted(() => {
+    Promise.all([
+      allList({
+        type: 6,
+        timeGap: 3600000 * 24,
+        value: userStore.getUserInfo.id,
+      }),
+      distributorDetail({ channelId: userStore.getUserInfo.id }),
+      getHomeData({}),
+    ])
+      .then(([listData, detail, homeData]) => {
+        const { channel, id, v1, v2, v3, v4, v5, v6 } = listData[0] || {};
+        const { canRemain, remain_m } = detail;
+        const { vipNum, sonChannelNum, investNum, blogNum } = homeData;
+        state.data = {
+          channel,
+          id,
+          v1,
+          v2,
+          v3,
+          v4,
+          v5,
+          v6,
+          canRemain: !!canRemain,
+          remain_m: remain_m / 10000,
+          vipNum,
+          sonChannelNum,
+          investNum,
+          blogNum,
+        };
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  });
 </script>
