@@ -89,7 +89,13 @@
               url: item,
             };
           } else if (item && isObject(item)) {
-            return item;
+            return {
+              uid: -i + '',
+              url: item.url,
+              status: 'done',
+              name: item.url.substring(item.url.lastIndexOf('/') + 1),
+              fileId: item.fileId,
+            };
           } else {
             return;
           }
@@ -136,7 +142,6 @@
   };
 
   const beforeUpload = (file: File) => {
-    console.log(file);
     const { maxSize, accept } = props;
     const { name } = file;
     const isAct = isImgTypeByName(name);
@@ -184,14 +189,14 @@
         info.onError!(e);
         return;
       }
-      const { data } = await getFileUploadAPI({ sha256, size: f.size, type });
+      const { url, fileId } = await getFileUploadAPI({ sha256, size: f.size, type });
       const res = await axios({
-        url: data.data as unknown as string,
+        url,
         method: 'PUT',
         data: await f.arrayBuffer(),
       });
       info.onSuccess!(res.data);
-      const value = getValue();
+      const value = getValue(fileId);
       isInnerOperate.value = true;
       emit('change', value);
     } catch (e: any) {
@@ -200,11 +205,14 @@
     }
   }
 
-  function getValue() {
+  function getValue(fileId?: string) {
     const list = (fileList.value || [])
       .filter((item) => item?.status === UploadResultStatus.DONE)
       .map((item: any) => {
-        return item?.url || item?.response?.url;
+        return {
+          url: item.url,
+          fileId: item.fileId ? item.fileId : fileId,
+        };
       });
     return props.multiple ? list : list.length > 0 ? list[0] : '';
   }

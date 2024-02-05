@@ -68,7 +68,6 @@
   });
 
   const onSelectChange = (ids) => {
-    console.log(ids);
     state.selectedRowKeys = ids;
   };
 

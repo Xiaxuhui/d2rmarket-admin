@@ -30,7 +30,7 @@
     showTableSetting: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
-    rowKey: 'id',
+    rowKey: 'key',
     showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20, pageSizeOptions: ['20'] },
   });

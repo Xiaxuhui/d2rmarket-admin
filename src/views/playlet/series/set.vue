@@ -13,6 +13,8 @@
   import { createSerie, getDetail, updateSeriesList, listCategory } from '@/api/sys/series';
   import { onMounted } from 'vue';
   import { getLabelList, searchChannel } from '@/api/sys/label';
+  // import { ImageUpload } from '@/components/Upload/index';
+  // import { FormItem } from 'ant-design-vue';
 
   const { id } = useRoute().query;
   const isEditStatus = Boolean(id);
@@ -190,12 +192,32 @@
     //   },
     // },
     {
-      field: 'picId',
+      field: 'dramaId',
       component: 'Input',
       label: '剧目ID',
       colProps: {
         span: 8,
       },
+    },
+    {
+      field: 'picId',
+      component: 'ImageUpload',
+      label: '上传封面',
+      colProps: {
+        span: 8,
+      },
+      componentProps: {},
+      // renderColContent({ model, field }) {
+      //   return (
+      //     <FormItem name={field} label="上传封面" labelCol={{ prefixCls: 'series-label' }}>
+      //       <ImageUpload
+      //         onChange={(val) => {
+      //           console.log('val', val);
+      //         }}
+      //       />
+      //     </FormItem>
+      //   );
+      // },
     },
   ];
   const { back } = useRouter();
@@ -226,12 +248,22 @@
           res.recommend = JSON.parse(res.recommendItem.data);
         }
         res.state = Boolean(res.state);
-        methods.setFieldsValue(res);
+        const state = {
+          ...res,
+          picId: [
+            {
+              url: res.picUrl,
+              fileId: res.picId,
+            },
+          ],
+        };
+        methods.setFieldsValue(state);
       });
     }
   });
 
-  function handleSubmit(values: any) {
+  async function handleSubmit(values: any) {
+    console.log('values', values);
     const tags = values.tags ? Object.values(values.tags) ?? [] : [];
     let price = -1;
     if (values.price) {
@@ -252,13 +284,17 @@
     const value = Object.assign(values, { tags, price, state: Number(values.state), type: 1 });
     delete value.field1;
     if (id) {
-      updateSeriesList(Object.assign(value, { blogId: id }));
+      await updateSeriesList(Object.assign(value, { blogId: id, picId: values.picId.fileId }));
     } else {
-      createSerie(value);
+      await createSerie({
+        ...value,
+        picId: values.picId.fileId,
+      });
     }
+    back();
   }
 </script>
-<style lang="less" scoped>
+<style lang="less">
   :deep(.local_form) .local_typeValue {
     width: calc(100% - 120px);
     margin-bottom: 0;
@@ -267,6 +303,14 @@
 
     .ant-input {
       border-radius: 0 6px 6px 0;
+    }
+  }
+
+  .series-label {
+    & > label {
+      justify-content: flex-end;
+      width: 120px;
+      text-align: right;
     }
   }
 </style>

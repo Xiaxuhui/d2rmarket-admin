@@ -1,4 +1,5 @@
 export interface GetUploadInfoModel {
-  code: number;
-  data: string;
+  allow: boolean;
+  fileId: string;
+  url: string;
 }

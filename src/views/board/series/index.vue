@@ -44,7 +44,7 @@
     showTableSetting: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
-    rowKey: 'id',
+    rowKey: 'key',
     fetchSetting: {
       listField: 'list',
       totalField: 'totalRecords',
