@@ -19,8 +19,8 @@ export default defineApplicationConfig({
     server: {
       proxy: {
         '/basic-api': {
-          // target: 'http://192.168.50.159:9290',
-          target: 'http://192.168.50.190:9290',
+          target: 'http://192.168.50.159:9290',
+          // target: 'http://192.168.50.190:9290',
           // target: 'http://192.168.50.104:9290',
           // target: 'https://grpc.okyaya.com/api',
           changeOrigin: true,

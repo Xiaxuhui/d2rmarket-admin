@@ -28,7 +28,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
       // },
       {
         field: `channelId`,
-        label: `渠道ID：`,
+        label: `用户ID：`,
         component: 'Input',
         colProps: {
           xl: 12,
@@ -146,7 +146,7 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       dataIndex: 'dealTime',
-      title: '处理用户备注',
+      title: '处理时间',
       customRender({ value }) {
         const time = formatToDateTime(value);
         return <div>{time}</div>;
