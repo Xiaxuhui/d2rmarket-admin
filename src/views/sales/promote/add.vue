@@ -25,7 +25,7 @@
     {
       field: 'channelId',
       component: 'Input',
-      label: '推广渠道：',
+      label: '分销商Id：',
       colProps: {
         span: 8,
       },
@@ -47,7 +47,7 @@
       },
     },
     {
-      field: 'pf',
+      field: 'platform',
       component: 'Input',
       label: '平台：',
       colProps: {
@@ -55,33 +55,19 @@
       },
     },
     {
-      field: 'notes',
+      field: 'pf',
       component: 'Input',
-      label: '备注：',
+      label: '平台备注：',
       colProps: {
         span: 8,
       },
     },
     {
-      field: 'field5',
-      component: 'Select',
-      label: '分销商：',
+      field: 'notes',
+      component: 'Input',
+      label: '投流备注：',
       colProps: {
         span: 8,
-      },
-      componentProps: {
-        options: [
-          {
-            label: 'csv',
-            value: 'csv',
-            key: 'csv',
-          },
-          {
-            label: 'txt',
-            value: 'txt',
-            key: 'txt',
-          },
-        ],
       },
     },
   ];
@@ -117,8 +103,9 @@
     }
   });
 
-  function handleSubmit(values: any) {
-    addPromote(values);
+  async function handleSubmit(values: any) {
+    await addPromote(values);
+    back();
   }
 </script>
 <style lang="less" scoped>

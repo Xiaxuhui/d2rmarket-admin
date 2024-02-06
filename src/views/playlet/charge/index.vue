@@ -1,7 +1,9 @@
 <template>
   <BasicTable @register="registerTable">
     <template #toolbar>
-      <a-button type="primary" @click="add"> 添加方案 </a-button>
+      <Authentication :auth="[PERMISSION_ENUM.ADD_CHARGE]">
+        <a-button type="primary" @click="add"> 添加方案 </a-button>
+      </Authentication>
     </template>
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
@@ -10,18 +12,21 @@
           :actions="[
             {
               label: '编辑',
+              ifShow: canEditCharge,
               onClick() {
                 update(record.id);
               },
             },
             {
               label: '删除',
+              ifShow: canDeleteCharge,
               onClick() {
                 del(record.id);
               },
             },
             {
               label: record.state === 1 ? '禁用' : '启用',
+              ifShow: canEditCharge,
               onClick() {
                 open(record);
               },
@@ -38,7 +43,15 @@
   import { chargeList, delCharge, updateCharge } from '@/api/playlet/charge';
   import { useGo } from '@/hooks/web/usePage';
   import { reactive } from 'vue';
+  import { PERMISSION_ENUM } from '@/enums/permissionEnum';
+  import { useAuthorization } from '@/components/Permission/permission';
+  import Authentication from '@/components/Permission/index.vue';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
+
+  const [canEditCharge, canDeleteCharge] = useAuthorization([
+    PERMISSION_ENUM.EDIT_CHARGE,
+    PERMISSION_ENUM.DELETE_CHARGE,
+  ]);
 
   const go = useGo();
   const state = reactive<{

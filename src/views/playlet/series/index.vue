@@ -1,9 +1,9 @@
 <template>
   <BasicTable @register="registerTable">
     <template #toolbar>
-      <a-button type="primary" @click="setSeries()"> 添加 </a-button>
-      <a-button type="primary" @click="batchListing"> 批量上架 </a-button>
-      <a-button type="primary" @click="bathDelist"> 批量下架 </a-button>
+      <Authentication :auth="[PERMISSION_ENUM.SERIES_ADD]">
+        <a-button type="primary" @click="setSeries()"> 添加 </a-button>
+      </Authentication>
     </template>
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
@@ -13,6 +13,7 @@
             {
               label: '编辑',
               icon: 'fe:edit',
+              ifShow: canSeriesDel,
               onClick() {
                 setSeries(record.id);
               },
@@ -20,6 +21,7 @@
             {
               label: '删除',
               icon: 'ic:outline-delete-outline',
+              ifShow: canSeriesUpdate,
               popConfirm: {
                 title: '是否确认删除',
                 placement: 'left',
@@ -31,6 +33,7 @@
             {
               label: '分集管理',
               icon: 'mingcute:classify-2-fill',
+              ifShow: canSeriesUpdate,
               onClick() {
                 go({
                   path: PageEnum.DIVERSITY,
@@ -55,6 +58,14 @@
   import { PageEnum } from '@/enums/pageEnum';
   import { useRoute } from 'vue-router';
   import * as api from '@/api/sys/series';
+  import Authentication from '@/components/Permission/index.vue';
+  import { PERMISSION_ENUM } from '@/enums/permissionEnum';
+  import { useAuthorization } from '@/components/Permission/permission';
+
+  const [canSeriesDel, canSeriesUpdate] = useAuthorization([
+    PERMISSION_ENUM.SERIES_DELETE,
+    PERMISSION_ENUM.SERIES_UPDATE,
+  ]);
 
   const go = useGo();
   const { label } = useRoute().query;
@@ -105,14 +116,6 @@
         id,
       },
     });
-  };
-
-  const batchListing = () => {
-    console.log('selectedRowKeys', state.selectedRowKeys);
-  };
-
-  const bathDelist = () => {
-    console.log('selectedRowKeys', state.selectedRowKeys);
   };
 
   const deleteSeries = (id) => {

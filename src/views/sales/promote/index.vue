@@ -1,8 +1,9 @@
 <template>
   <BasicTable @register="registerTable">
     <template #toolbar>
-      <a-button type="primary" @click="addPromote"> 添加 </a-button>
-      <a-button type="primary" @click="stopListing"> 批量停用 </a-button>
+      <Authentication :auth="[PERMISSION_ENUM.INVEST_ADD]">
+        <a-button type="primary" @click="addPromote"> 添加 </a-button>
+      </Authentication>
     </template>
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
@@ -11,6 +12,7 @@
           :actions="[
             {
               label: '编辑',
+              ifShow: canEditInvest,
               onClick() {
                 edit(record.id);
               },
@@ -18,6 +20,7 @@
             {
               label: '删除',
               icon: 'ic:outline-delete-outline',
+              ifShow: canEditInvest,
               popConfirm: {
                 title: '确认删除？',
                 confirm: () => {
@@ -27,6 +30,7 @@
             },
             {
               label: record.state === 1 ? '禁用' : '启用',
+              ifShow: canEditInvest,
               onClick() {
                 open(record);
               },
@@ -44,6 +48,11 @@
   import { listPromote, delPromote, updatePromote } from '@/api/promote';
   import { getBasicColumns, getPromoteFormConfig } from './tableData';
   import { PageEnum } from '@/enums/pageEnum';
+  import { PERMISSION_ENUM } from '@/enums/permissionEnum';
+  import { useAuthorization } from '@/components/Permission/permission';
+  import Authentication from '@/components/Permission/index.vue';
+
+  const [canEditInvest] = useAuthorization([PERMISSION_ENUM.INVEST_EDIT]);
 
   const state = reactive<{
     selectedRowKeys: any;
@@ -99,5 +108,4 @@
   const open = (item) => {
     updatePromote(Object.assign(item, { investId: item.id, state: item.state === 0 ? 1 : 0 }));
   };
-  const stopListing = () => {};
 </script>

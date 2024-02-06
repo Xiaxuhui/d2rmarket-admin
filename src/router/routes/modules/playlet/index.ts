@@ -2,6 +2,7 @@ import type { AppRouteModule } from '@/router/types';
 
 import { LAYOUT } from '@/router/constant';
 import { t } from '@/hooks/web/useI18n';
+import { RoleEnum } from '@/enums/roleEnum';
 
 const playlet: AppRouteModule = {
   path: '/playlet',
@@ -29,6 +30,7 @@ const playlet: AppRouteModule = {
       meta: {
         hideMenu: true,
         title: t('routes.playlet.setSeries'),
+        roles: [RoleEnum.SUPER],
       },
     },
     {
@@ -46,6 +48,7 @@ const playlet: AppRouteModule = {
       component: () => import('@/views/playlet/tag/index.vue'),
       meta: {
         title: t('routes.playlet.tag'),
+        roles: [RoleEnum.SUPER],
       },
     },
     {
@@ -54,6 +57,7 @@ const playlet: AppRouteModule = {
       component: () => import('@/views/playlet/homePage/index.vue'),
       meta: {
         title: t('routes.playlet.homePage'),
+        roles: [RoleEnum.SUPER],
       },
     },
     {
@@ -63,6 +67,7 @@ const playlet: AppRouteModule = {
       meta: {
         title: t('routes.playlet.homePage'),
         hideMenu: true,
+        roles: [RoleEnum.SUPER],
       },
     },
     {
@@ -80,6 +85,7 @@ const playlet: AppRouteModule = {
       meta: {
         title: t('routes.playlet.charge'),
         hideMenu: true,
+        roles: [RoleEnum.SUPER, RoleEnum.PITCHER],
       },
     },
   ] as const,

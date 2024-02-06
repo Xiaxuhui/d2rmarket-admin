@@ -2,6 +2,7 @@ import type { AppRouteModule } from '@/router/types';
 
 import { LAYOUT } from '@/router/constant';
 import { t } from '@/hooks/web/useI18n';
+import { RoleEnum } from '@/enums/roleEnum';
 
 const playlet: AppRouteModule = {
   path: '/sales',
@@ -28,6 +29,7 @@ const playlet: AppRouteModule = {
       component: () => import('@/views/sales/distributor/edit.vue'),
       meta: {
         title: t('routes.sales.editDistributor'),
+        roles: [RoleEnum.SUPER, RoleEnum.ORGANIZATION, RoleEnum.PITCHER],
         hideMenu: true,
       },
     },
@@ -38,6 +40,7 @@ const playlet: AppRouteModule = {
       meta: {
         title: t('routes.sales.addPromote'),
         hideMenu: true,
+        roles: [RoleEnum.SUPER, RoleEnum.PITCHER],
       },
     },
     {
@@ -54,6 +57,7 @@ const playlet: AppRouteModule = {
       component: () => import('@/views/sales/withdraw/index.vue'),
       meta: {
         title: t('routes.sales.withdraw'),
+        roles: [RoleEnum.SUPER, RoleEnum.ORGANIZATION, RoleEnum.DISTRIBUTOR],
       },
     },
   ],

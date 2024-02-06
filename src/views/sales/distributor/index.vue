@@ -12,6 +12,7 @@
               {
                 label: '编辑',
                 icon: 'fe:edit',
+                ifShow: canEditSales,
                 onClick() {
                   editSalesman(record.id);
                 },
@@ -26,6 +27,7 @@
               {
                 label: '添加下级',
                 icon: 'fluent:people-add-16-regular',
+                ifShow: canAddSales,
                 onClick() {
                   addNext(record.id);
                 },
@@ -47,6 +49,13 @@
   import { exportExcel } from '@/utils/exportCsv';
   import SalesModal from './components/salesModal.vue';
   import { PageEnum } from '@/enums/pageEnum';
+  import { PERMISSION_ENUM } from '@/enums/permissionEnum';
+  import { useAuthorization } from '@/components/Permission/permission';
+
+  const [canEditSales, canAddSales] = useAuthorization([
+    PERMISSION_ENUM.SALES_EDIT,
+    PERMISSION_ENUM.SALES_ADD,
+  ]);
 
   const [register, methods] = useTable({
     title: '分销商管理',

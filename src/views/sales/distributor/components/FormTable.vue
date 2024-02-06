@@ -1,9 +1,11 @@
 <template>
   <div>
     <FormItem :name="field" :label="label" :labelCol="{ prefixCls: 'series-label' }">
-      <a-button type="primary" v-if="actionOptions.api" @click="openModal(true, 1)">{{
-        actionOptions.text
-      }}</a-button>
+      <Authentication :auth="[PERMISSION_ENUM.SALES_ITEM_ADD]">
+        <a-button type="primary" v-if="actionOptions.api" @click="openModal(true, 1)">{{
+          actionOptions.text
+        }}</a-button>
+      </Authentication>
       <Table
         class="mt-2"
         :columns="columns"
@@ -31,7 +33,7 @@
                 {
                   label: '编辑',
                   icon: 'fe:edit',
-                  ifShow: Boolean(!state.editableData[record[rowKey]]),
+                  ifShow: Boolean(!state.editableData[record[rowKey]]) && canEditSalesItem,
                   onClick() {
                     edit(record[props.rowKey]);
                   },
@@ -53,14 +55,13 @@
                     if (props.isItem) {
                       const { price, channelId, goodsId, type, id } = record;
                       if (channelId === props.userId) {
-                        if (
-                          price !==
-                          state.dataSource.filter((item) => record.goodsId === item.goodsId)[0]
-                            .price
-                        ) {
+                        const currentPrice = state.dataSource.filter(
+                          (item) => record.goodsId === item.goodsId,
+                        )[0].price;
+                        if (price !== currentPrice) {
                           updatePriceRate({
                             channelId: props.userId,
-                            list: [{ priceRateId: id, price: price * 10000 }],
+                            list: [{ priceRateId: id, price: currentPrice * 10000 }],
                           }).then(() => {
                             emit('value-change');
                           });
@@ -79,7 +80,7 @@
                 {
                   label: '恢复',
                   icon: 'ri:device-recover-line',
-                  ifShow: isItem && record.channelId === userId,
+                  ifShow: isItem && record.channelId === userId && canEditSalesItem,
                   onClick() {
                     deletePriceRate([record.id]).then(() => {
                       emit('value-change');
@@ -90,7 +91,7 @@
                   label: '删除',
                   icon: 'ic:outline-delete-outline',
                   color: 'error',
-                  ifShow: !isItem,
+                  ifShow: !isItem && canDelSalesItem,
                   onClick() {
                     deleteData(record[props.rowKey]);
                   },
@@ -126,8 +127,17 @@
   import { TableAction } from '@/components/Table';
   import { useModal } from '@/components/Modal';
   import { addPriceRate, updatePriceRate, deletePriceRate } from '@/api/sys/distributor';
-  // import FormModal from './formModal.vue';
+  import { PERMISSION_ENUM } from '@/enums/permissionEnum';
+  import { useAuthorization } from '@/components/Permission/permission';
+  import Authentication from '@/components/Permission/index.vue';
+
   import SeriesModal from './seriesModal.vue';
+
+  const [canEditSalesItem, canDelSalesItem] = useAuthorization([
+    PERMISSION_ENUM.SALES_ITEM_EDIT,
+
+    PERMISSION_ENUM.SALES_ITEM_DELETE,
+  ]);
 
   defineOptions({
     name: 'FormTable',

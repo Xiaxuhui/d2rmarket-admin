@@ -13,8 +13,6 @@
   import { createSerie, getDetail, updateSeriesList, listCategory } from '@/api/sys/series';
   import { onMounted } from 'vue';
   import { getLabelList, searchChannel } from '@/api/sys/label';
-  // import { ImageUpload } from '@/components/Upload/index';
-  // import { FormItem } from 'ant-design-vue';
 
   const { id } = useRoute().query;
   const isEditStatus = Boolean(id);
@@ -207,17 +205,6 @@
         span: 8,
       },
       componentProps: {},
-      // renderColContent({ model, field }) {
-      //   return (
-      //     <FormItem name={field} label="上传封面" labelCol={{ prefixCls: 'series-label' }}>
-      //       <ImageUpload
-      //         onChange={(val) => {
-      //           console.log('val', val);
-      //         }}
-      //       />
-      //     </FormItem>
-      //   );
-      // },
     },
   ];
   const { back } = useRouter();

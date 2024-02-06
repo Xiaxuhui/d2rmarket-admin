@@ -23,7 +23,15 @@ interface UserState {
   roleList: RoleEnum[];
   sessionTimeout?: boolean;
   lastUpdateTime: number;
+  authority: string[];
 }
+
+const ROLE_REFLECT = {
+  1: RoleEnum.SUPER,
+  100: RoleEnum.ORGANIZATION,
+  200: RoleEnum.DISTRIBUTOR,
+  300: RoleEnum.PITCHER,
+};
 
 export const useUserStore = defineStore({
   id: 'app-user',
@@ -38,6 +46,8 @@ export const useUserStore = defineStore({
     sessionTimeout: false,
     // Last fetch time
     lastUpdateTime: 0,
+    // Authority point
+    authority: [],
   }),
   getters: {
     getUserInfo(state) {
@@ -54,6 +64,9 @@ export const useUserStore = defineStore({
     },
     getLastUpdateTime(state): number {
       return state.lastUpdateTime;
+    },
+    getAuthority(state): string[] {
+      return state.authority;
     },
   },
   actions: {
@@ -72,6 +85,9 @@ export const useUserStore = defineStore({
     },
     setSessionTimeout(flag: boolean) {
       this.sessionTimeout = flag;
+    },
+    setAuthorityList(authority: string[]) {
+      this.authority = authority;
     },
     resetState() {
       this.userInfo = null;
@@ -103,7 +119,7 @@ export const useUserStore = defineStore({
     async afterLoginAction(goHome: boolean = true): Promise<any> {
       if (!this.getToken) return null;
       // get user info
-      const userInfo = await getUserInfo();
+      const userInfo = await this.getUserInfoAction();
 
       this.setUserInfo(userInfo);
 
@@ -127,8 +143,12 @@ export const useUserStore = defineStore({
     async getUserInfoAction(): Promise<any> {
       if (!this.getToken) return null;
       const userInfo = await getUserInfo();
+      const { limitList, limitGroup } = userInfo;
+      const role = ROLE_REFLECT[limitGroup];
+      const authorityList = (limitList || '').split('#');
       // const { roles = [] } = userInfo;
-      this.setRoleList([RoleEnum.SUPER]);
+      this.setRoleList([role]);
+      this.setAuthorityList(authorityList);
       // if (isArray(roles)) {
       //   const roleList = roles.map((item) => item.value) as RoleEnum[];
       //   this.setRoleList(roleList);

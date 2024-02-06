@@ -2,6 +2,7 @@ import type { AppRouteModule } from '@/router/types';
 
 import { LAYOUT } from '@/router/constant';
 import { t } from '@/hooks/web/useI18n';
+import { RoleEnum } from '@/enums/roleEnum';
 
 const board: AppRouteModule = {
   path: '/board',
@@ -44,6 +45,7 @@ const board: AppRouteModule = {
       component: () => import('@/views/board/sales/index.vue'),
       meta: {
         title: t('routes.board.sales'),
+        roles: [RoleEnum.SUPER, RoleEnum.ORGANIZATION, RoleEnum.DISTRIBUTOR],
       },
     },
     {
@@ -52,6 +54,7 @@ const board: AppRouteModule = {
       component: () => import('@/views/board/promote/index.vue'),
       meta: {
         title: t('routes.board.promote'),
+        roles: [RoleEnum.SUPER, RoleEnum.PITCHER],
       },
     },
     {

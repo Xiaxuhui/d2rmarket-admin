@@ -35,8 +35,8 @@ export const useLabelStore = defineStore({
     async addLabel(name: string, sort: number = 1) {
       try {
         this.adding = true;
-        const { data } = await addLabel(name, sort);
-        this.list.unshift({ id: data.data, name, w: sort });
+        const res = await addLabel(name, sort);
+        this.list.unshift({ id: res, name, w: sort });
       } catch (error) {
         console.log(error);
         //

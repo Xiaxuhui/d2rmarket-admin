@@ -19,18 +19,19 @@
       </div>
 
       <div class="p-2 px-4 flex flex-row-reverse">
-        <a-button v-if="item.recordFn" size="small" @click="item.recordFn">提现记录</a-button>
+        <Authentication :auth="[PERMISSION_ENUM.WITHDRAW_RECORD]">
+          <a-button v-if="item.recordFn" size="small" @click="item.recordFn">提现记录</a-button>
+        </Authentication>
         &nbsp;
-        <a-button
-          v-if="item.name === 'remain_m' && data.canRemain"
-          size="small"
-          @click="item.actionFn"
-          type="primary"
-          >提现</a-button
-        >
-
-        <!-- <span>总{{ item.title }}</span> -->
-        <!-- <CountTo :prefix="item.prefix" :startVal="1" :endVal="item.total" /> -->
+        <Authentication :auth="[PERMISSION_ENUM.WITHDRAW]">
+          <a-button
+            v-if="item.name === 'remain_m' && data.canRemain"
+            size="small"
+            @click="item.actionFn"
+            type="primary"
+            >提现</a-button
+          >
+        </Authentication>
       </div>
     </Card>
   </div>
@@ -39,6 +40,8 @@
   import Icon from '@/components/Icon/Icon.vue';
   import { Tag, Card } from 'ant-design-vue';
   import { PropType } from 'vue';
+  import Authentication from '@/components/Permission/index.vue';
+  import { PERMISSION_ENUM } from '@/enums/permissionEnum';
   import { GrowCardItem } from '../data';
 
   defineProps({

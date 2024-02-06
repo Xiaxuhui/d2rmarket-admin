@@ -80,26 +80,28 @@
         } else {
           value.push(v);
         }
-        fileList.value = value.map((item, i) => {
-          if (item && isString(item)) {
-            return {
-              uid: -i + '',
-              name: item.substring(item.lastIndexOf('/') + 1),
-              status: 'done',
-              url: item,
-            };
-          } else if (item && isObject(item)) {
-            return {
-              uid: -i + '',
-              url: item.url,
-              status: 'done',
-              name: item.url.substring(item.url.lastIndexOf('/') + 1),
-              fileId: item.fileId,
-            };
-          } else {
-            return;
-          }
-        }) as UploadProps['fileList'];
+        fileList.value = value
+          .map((item, i) => {
+            if (item && isString(item)) {
+              return {
+                uid: -i + '',
+                name: item.substring(item.lastIndexOf('/') + 1),
+                status: 'done',
+                url: item,
+              };
+            } else if (item && isObject(item) && item.url) {
+              return {
+                uid: -i + '',
+                url: item.url,
+                status: 'done',
+                name: item.url ? item.url.substring(item.url.lastIndexOf('/') + 1) : '',
+                fileId: item.fileId,
+              };
+            } else {
+              return null;
+            }
+          })
+          .filter((item) => !!item) as UploadProps['fileList'];
       }
     },
   );

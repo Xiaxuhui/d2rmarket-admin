@@ -9,12 +9,14 @@
             :actions="[
               {
                 label: '确认',
+                ifShow: canEditWithdraw,
                 onClick() {
                   confirm(record.id);
                 },
               },
               {
                 label: '驳回',
+                ifShow: canEditWithdraw,
                 onClick() {
                   reject(record.id);
                 },
@@ -34,7 +36,12 @@
   import { reactive } from 'vue';
   import { BasicModal, useModal } from '@/components/Modal';
   import { list, update } from '@/api/withdraw';
+  import { PERMISSION_ENUM } from '@/enums/permissionEnum';
+  import { useAuthorization } from '@/components/Permission/permission';
+
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
+
+  const [canEditWithdraw] = useAuthorization([PERMISSION_ENUM.WITHDRAW_EDIT]);
 
   let withdrawId = '';
   const state = reactive<{
@@ -49,7 +56,6 @@
   const [register, { openModal: setModalProps }] = useModal();
 
   const onSelectChange = (ids) => {
-    console.log(ids);
     state.selectedRowKeys = ids;
   };
   const [registerTable, methods] = useTable({
