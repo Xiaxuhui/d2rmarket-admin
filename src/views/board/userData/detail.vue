@@ -110,7 +110,7 @@
       allList({ type: 4, value: id }),
       order({ pageNum: state.pagination.current, pageSize: state.pagination.pageSize, userId: id }),
     ]).then(([detail, data]) => {
-      state.detail = detail[0] || {};
+      state.detail = detail.list[0] || {};
       state.modalData = data.list;
       state.pagination.total = data.totalRecords;
     });

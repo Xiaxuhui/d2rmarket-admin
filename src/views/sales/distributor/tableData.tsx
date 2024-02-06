@@ -115,6 +115,9 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '可提现金额',
       dataIndex: 'remain_m',
+      customRender({ value }) {
+        return value / 10000;
+      },
     },
     {
       title: '状态',

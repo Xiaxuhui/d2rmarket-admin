@@ -9,7 +9,7 @@
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { withdraw } from '@/api/withdraw';
 
-  const [register] = useModalInner();
+  const [register, { closeModal }] = useModalInner();
 
   const schemas: FormSchema[] = [
     {
@@ -81,7 +81,8 @@
     showSubmitButton: true,
   });
 
-  const handleSubmit = (params) => {
-    withdraw(params);
+  const handleSubmit = async (params) => {
+    await withdraw({ ...params, money: params.money * 10000 });
+    closeModal();
   };
 </script>

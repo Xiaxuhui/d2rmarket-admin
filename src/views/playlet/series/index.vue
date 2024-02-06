@@ -91,9 +91,6 @@
     showTableSetting: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
-    searchInfo: {
-      tagId: label,
-    },
     fetchSetting: {
       listField: 'list',
       totalField: 'totalRecords',

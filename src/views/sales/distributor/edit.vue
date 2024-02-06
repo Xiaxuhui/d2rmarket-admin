@@ -425,6 +425,13 @@
   function handleSubmit(values: any) {
     const { sellVipRate, channelRate, blogOwnerRate } = values;
 
+    const commonParams = {
+      ...omit(values, 'blog', 'vip'),
+      sellVipRate: sellVipRate * 100,
+      channelRate: channelRate * 100,
+      blogOwnerRate: blogOwnerRate * 100,
+    };
+
     if (type === 'edit') {
       const { add, update, deleteData } = getPlanParams(values);
 
@@ -439,13 +446,9 @@
       if (deleteData.length > 0) {
         updateRatePromise.push(() => deletePriceRate(deleteData));
       }
-
       Promise.all([
         updateDistributor({
-          ...omit(values, 'blog', 'vip'),
-          sellVipRate: sellVipRate * 100,
-          channelRate: channelRate * 100,
-          blogOwnerRate: blogOwnerRate * 100,
+          ...commonParams,
           channelId: id,
         }),
         ...updateRatePromise.map((fn) => fn()),
@@ -453,7 +456,10 @@
         back();
       });
     } else {
-      addChild({ ...omit(values, 'blog', 'vip'), parentId: id }).then(() => {
+      addChild({
+        ...commonParams,
+        parentId: id,
+      }).then(() => {
         back();
       });
     }
