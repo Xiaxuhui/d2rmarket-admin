@@ -70,7 +70,7 @@
       getHomeData({}),
     ])
       .then(([listData, detail, homeData]) => {
-        const { channel, id, v1, v2, v3, v4, v5, v6 } = listData[0] || {};
+        const { channel, id, v1, v2, v3, v4, v5, v6 } = listData?.list[0] || {};
         const { canRemain, remain_m } = detail;
         const { vipNum, sonChannelNum, investNum, blogNum } = homeData;
         state.data = {

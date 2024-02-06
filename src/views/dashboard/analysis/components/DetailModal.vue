@@ -77,6 +77,9 @@
       title: '提现金额',
       dataIndex: 'money',
       key: 'money',
+      customRender({ value }) {
+        return value / 10000;
+      },
     },
     {
       title: '账户姓名',

@@ -118,8 +118,8 @@ export function getBasicColumns(): BasicColumn[] {
       dataIndex: 'notes',
     },
     {
-      title: 'initiateTime',
-      dataIndex: '创建时间',
+      title: '创建时间',
+      dataIndex: 'initiateTime',
       customRender({ value }) {
         const time = formatToDateTime(value);
         return <div>{time}</div>;
@@ -133,20 +133,20 @@ export function getBasicColumns(): BasicColumn[] {
       },
     },
     {
-      title: 'dealUid',
-      dataIndex: '处理用户id',
+      title: '处理用户id',
+      dataIndex: 'dealUid',
     },
     {
-      title: 'dealUName',
-      dataIndex: '处理用户名',
+      dataIndex: 'dealUName',
+      title: '处理用户名',
     },
     {
-      title: 'dealNotes',
-      dataIndex: '处理用户备注',
+      dataIndex: 'dealNotes',
+      title: '处理用户备注',
     },
     {
-      title: 'dealTime',
-      dataIndex: '处理用户备注',
+      dataIndex: 'dealTime',
+      title: '处理用户备注',
       customRender({ value }) {
         const time = formatToDateTime(value);
         return <div>{time}</div>;

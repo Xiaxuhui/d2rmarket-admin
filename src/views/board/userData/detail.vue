@@ -1,13 +1,11 @@
 <template>
   <BasicModal v-bind="$attrs" @register="register" title="用户详情">
-    <template v-for="(_, index) in Object.keys(detailTest)" :key="index">
+    <template v-for="(_, index) in Object.keys(detailText)" :key="index">
       <Row v-if="index % 4 === 0">
-        <template v-for="(detailKey, i) in Object.keys(detailTest)" :key="`detail${i}`">
+        <template v-for="(detailKey, i) in Object.keys(detailText)" :key="`detail${i}`">
           <Col span="6" v-if="i >= index && i < index + 4">
-            {{ detailTest[detailKey] }}：
-            <span class="font-bold">{{
-              formatText((state.detail[detailKey] = 0), detailKey)
-            }}</span>
+            {{ detailText[detailKey] }}：
+            <span class="font-bold">{{ formatText(state.detail[detailKey], detailKey) }}</span>
           </Col>
         </template>
       </Row>
@@ -66,7 +64,7 @@
     detail: {} as Record<DETAIL_ENUM, any>,
   });
 
-  const detailTest: Record<DETAIL_ENUM, string> = {
+  const detailText: Record<DETAIL_ENUM, string> = {
     [DETAIL_ENUM.v1]: '消费金额',
     [DETAIL_ENUM.v2]: '订单数量',
     [DETAIL_ENUM.v3]: '金豆余额',
