@@ -15,7 +15,7 @@ export const getGrowCardList: (
   openDetail?: () => void,
 ) => GrowCardItem[] = (openWithdraw, openDetail) => [
   {
-    title: '点击数',
+    title: '引流用户',
     icon: 'click-volume|svg',
     name: 'v1',
     color: 'blue',

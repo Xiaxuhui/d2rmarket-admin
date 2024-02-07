@@ -51,7 +51,7 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
       },
       {
         field: `channelId`,
-        label: `渠道商id`,
+        label: `分销商id`,
         component: 'Input',
         colProps: {
           xl: 8,
