@@ -76,10 +76,14 @@ const transform: AxiosTransform = {
     // 在此处根据自己项目的实际情况对不同的code执行不同的操作
     // 如果不希望中断当前请求，请return数据，否则直接抛出异常即可
     let timeoutMsg = '';
+    const userStore = useUserStoreWithOut();
     switch (code) {
       case ResultEnum.TIMEOUT:
         timeoutMsg = t('sys.api.timeoutMessage');
-        const userStore = useUserStoreWithOut();
+        userStore.logout(true);
+        break;
+      case ResultEnum.NOT_LOGIN:
+        timeoutMsg = t('sys.api.notLoginMessage');
         userStore.logout(true);
         break;
       default:
