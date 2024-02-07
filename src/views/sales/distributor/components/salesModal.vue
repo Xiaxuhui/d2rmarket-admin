@@ -65,9 +65,19 @@
 
   const state = reactive({
     loading: false,
+    channelId: 0,
     pagination: {
       pageSize: 10,
-      pageNum: 1,
+      current: 1,
+      total: 0,
+      onChange(pageNum, pageSize) {
+        distributorChildList({ channelId: state.channelId, pageNum, pageSize }).then((res) => {
+          state.pagination.current = pageNum;
+          state.pagination.pageSize = pageSize;
+          state.modalData = res.list;
+          state.pagination.total = res.totalRecords;
+        });
+      },
     },
     modalData: [],
   });
@@ -76,8 +86,14 @@
 
   const [register, { setModalProps, redoModalHeight }] = useModalInner((data) => {
     setModalProps({ width: 1200 });
-    distributorChildList(Object.assign({ channelId: data.id }, state.pagination)).then((res) => {
+    state.channelId = data.id;
+    distributorChildList({
+      channelId: data.id,
+      pageNum: state.pagination.current,
+      pageSize: state.pagination.pageSize,
+    }).then((res) => {
       state.modalData = res.list;
+      state.pagination.total = res.totalRecords;
     });
   });
   const go = useGo();
@@ -101,7 +117,10 @@
 
   const viewSalesman = (id) => {
     distributorChildList({ channelId: id, pageNum: 1, pageSize: 10 }).then((res) => {
-      state.pagination = { pageNum: 1, pageSize: 10 };
+      state.channelId = id;
+      state.pagination.current = 1;
+      state.pagination.pageSize = 10;
+      state.pagination.total = res.totalRecords;
       state.modalData = res.list;
     });
   };
