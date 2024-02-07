@@ -87,11 +87,11 @@
     const data = {
       blogId: item.record.id,
       price: item.record.price,
-      state: item.record.state,
+      state: Number(item.record.state),
       title: item.record.title,
     };
     data[item.key] = item.value;
-    api.updateSeriesList({ ...data, state: Number(item.value) }).then(() => {
+    api.updateSeriesList(data).then(() => {
       reload();
     });
   };
