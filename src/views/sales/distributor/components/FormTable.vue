@@ -51,13 +51,10 @@
                   icon: 'material-symbols:save-outline',
                   ifShow: Boolean(state.editableData[record[rowKey]]),
                   onClick() {
-                    save(record[props.rowKey]);
+                    const currentPrice = state.editableData[record[props.rowKey]].price;
                     if (props.isItem) {
                       const { price, channelId, goodsId, type, id } = record;
                       if (channelId === props.userId) {
-                        const currentPrice = state.dataSource.filter(
-                          (item) => record.goodsId === item.goodsId,
-                        )[0].price;
                         if (price !== currentPrice) {
                           updatePriceRate({
                             channelId: props.userId,
@@ -75,6 +72,7 @@
                         });
                       }
                     }
+                    save(record[props.rowKey]);
                   },
                 },
                 {
