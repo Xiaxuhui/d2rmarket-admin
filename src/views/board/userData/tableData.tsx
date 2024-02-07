@@ -88,15 +88,15 @@ const stateEnum = {
   [STATE_ENUM.blog]: '购买单集博客',
 };
 
-enum PLATFORM_ENUM {
-  weChat = 101,
-  pay = 401,
-}
+// enum PLATFORM_ENUM {
+//   weChat = 101,
+//   pay = 401,
+// }
 
-const platformEnum = {
-  [PLATFORM_ENUM.weChat]: '微信',
-  [PLATFORM_ENUM.pay]: '支付宝',
-};
+// const platformEnum = {
+//   [PLATFORM_ENUM.weChat]: '微信',
+//   [PLATFORM_ENUM.pay]: '支付宝',
+// };
 
 export function detailColumns(): BasicColumn[] {
   return [
@@ -121,23 +121,12 @@ export function detailColumns(): BasicColumn[] {
       },
     },
     {
-      title: '金额',
-      dataIndex: 'moneyCost',
+      title: '花费金豆',
+      dataIndex: 'beanCost',
     },
     {
       title: '商品名称',
       dataIndex: 'goodsName',
-    },
-    {
-      title: '平台单号',
-      dataIndex: 'orderId',
-    },
-    {
-      title: '支付方式',
-      dataIndex: 'platform',
-      customRender({ value }) {
-        return platformEnum[value];
-      },
     },
     {
       title: '状态',
