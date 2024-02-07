@@ -180,16 +180,19 @@ export function getDiversityColumns(): BasicColumn[] {
       dataIndex: 'state',
       edit: true,
       editComponent: 'Switch',
-      customRender({ value }) {
-        return value > 0 ? '是' : '否';
+      editComponentProps() {
+        return { checkedValue: 1, unCheckedValue: 0 };
+      },
+      editRender({ currentValue }) {
+        return +currentValue > 0 ? '是' : '否';
       },
     },
     {
       title: '是否推荐',
       dataIndex: 'recommendState',
       edit: true,
-      editComponentProps(props) {
-        return { ...props, checked: true };
+      editComponentProps() {
+        return { checkedValue: 1, unCheckedValue: 0 };
       },
       editComponent: 'Switch',
       editRender({ currentValue }) {
@@ -210,17 +213,6 @@ export function getDiversityColumns(): BasicColumn[] {
       title: '剧集ID',
       dataIndex: 'fileId',
       edit: true,
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      customRender({ value }) {
-        if (value > 0) {
-          return '正常';
-        } else {
-          return '删除';
-        }
-      },
     },
     {
       title: '操作',

@@ -250,7 +250,6 @@
   });
 
   async function handleSubmit(values: any) {
-    console.log('values', values);
     const tags = values.tags ? Object.values(values.tags) ?? [] : [];
     let price = -1;
     if (values.price) {

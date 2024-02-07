@@ -91,7 +91,7 @@
       title: item.record.title,
     };
     data[item.key] = item.value;
-    api.updateSeriesList(data).then(() => {
+    api.updateSeriesList({ ...data, state: Number(item.value) }).then(() => {
       reload();
     });
   };
