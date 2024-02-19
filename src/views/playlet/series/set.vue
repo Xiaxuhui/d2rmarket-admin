@@ -92,6 +92,15 @@
       },
     },
     {
+      field: 'priceRateType',
+      component: 'Switch',
+      label: '默认偏方分成',
+      defaultValue: false,
+      colProps: {
+        span: 8,
+      },
+    },
+    {
       field: 'p_v',
       component: 'Input',
       label: '片方分成',
@@ -100,6 +109,10 @@
       },
       colProps: {
         span: 8,
+      },
+      dynamicDisabled({ values }) {
+        const { priceRateType } = values;
+        return priceRateType;
       },
     },
     // {
@@ -235,6 +248,7 @@
           res.recommend = JSON.parse(res.recommendItem.data);
         }
         res.state = Boolean(res.state);
+        res.priceRateType = res.priceRateType === 1 ? true : false;
         const state = {
           ...res,
           picId: [
@@ -267,14 +281,20 @@
         list: Object.values(values.recommend),
       };
     }
-    const value = Object.assign(values, { tags, price, state: Number(values.state), type: 1 });
+    const value = Object.assign(values, {
+      tags,
+      price,
+      state: Number(values.state),
+      type: 1,
+      priceRateType: values.priceRateType ? 1 : 2,
+    });
     delete value.field1;
     if (id) {
       await updateSeriesList(Object.assign(value, { blogId: id, picId: values.picId.fileId }));
     } else {
       await createSerie({
         ...value,
-        picId: values.picId.fileId,
+        picId: values.picId && values.picId.fileId,
       });
     }
     back();
