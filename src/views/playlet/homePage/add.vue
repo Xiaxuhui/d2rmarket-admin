@@ -10,7 +10,7 @@
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { onMounted } from 'vue';
-  import { detail, add } from '@/api/playlet/homePage';
+  import { detail, add, update } from '@/api/playlet/homePage';
   import { useRouter, useRoute } from 'vue-router';
 
   const schemas: FormSchema[] = [
@@ -97,7 +97,12 @@
   });
 
   function handleSubmit(values: any) {
-    add(values);
+    if (id) {
+      update({ ...values, id });
+    } else {
+      add(values);
+    }
+    back();
   }
 </script>
 <style lang="less" scoped>
