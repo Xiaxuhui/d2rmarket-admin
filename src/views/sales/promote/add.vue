@@ -9,11 +9,26 @@
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { onMounted } from 'vue';
-  import { detailPromote, addPromote } from '@/api/promote';
+  import { onMounted, reactive } from 'vue';
+  import { detailPromote, addPromote, updatePromote } from '@/api/promote';
   import { useRouter, useRoute } from 'vue-router';
+  import { distributorDetail } from '@/api/sys/distributor';
+  import { useUserStore } from '@/store/modules/user';
+  import { getSeriesList } from '@/api/sys/series';
+  import { debounce, omit, pick } from 'lodash-es';
+  import { InputGroup, Input, Tooltip, Button } from 'ant-design-vue';
+  import { CopyOutlined } from '@ant-design/icons-vue';
+  import { copyText } from '@/utils/copyTextToClipboard';
 
-  const schemas: FormSchema[] = [
+  const user = useUserStore();
+  const route = useRoute();
+  const investId = route.query.id;
+
+  const params = reactive({
+    title: '',
+  });
+
+  const schemas: FormSchema[] = reactive([
     {
       field: 'divider-basic',
       component: 'Divider',
@@ -25,7 +40,75 @@
     {
       field: 'channelId',
       component: 'Input',
-      label: '分销商Id：',
+      defaultValue: '',
+      label: '投手Id：',
+      componentProps: {
+        disabled: true,
+      },
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'channelName',
+      component: 'Input',
+      defaultValue: '',
+      label: '投手名：',
+      componentProps: {
+        disabled: true,
+      },
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'platform',
+      component: 'Select',
+      label: '平台：',
+      componentProps: {
+        disabled: !!investId,
+        options: [
+          {
+            label: '抖音',
+            value: 1,
+            key: 1,
+          },
+        ],
+      },
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'state',
+      component: 'Switch',
+      label: '启用：',
+      defaultValue: 1,
+      componentProps: {
+        checkedValue: 1,
+        unCheckedValue: 0,
+      },
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'collectionId',
+      component: 'ApiSelect',
+      label: '剧集：',
+      componentProps: {
+        disabled: !!investId,
+        showSearch: true,
+        onSearch: debounce((val) => {
+          params.title = val;
+        }, 500),
+        api: (params) => getSeriesList({ ...params, pageSize: 10, pageNum: 1 }),
+        params,
+        labelField: 'title',
+        valueField: 'id',
+        resultField: 'list',
+        filterOption: false,
+      },
       colProps: {
         span: 8,
       },
@@ -34,33 +117,31 @@
       field: 'link',
       component: 'Input',
       label: '推广链接：',
+      show: !!investId,
+      render({ model, field }) {
+        return (
+          <InputGroup compact>
+            <Input disabled v-model:value={model[field]} style="width: calc(100% - 46px)" />
+            <Tooltip title="copy url">
+              <Button onClick={() => copyText(model[field])}>
+                <CopyOutlined />
+              </Button>
+            </Tooltip>
+          </InputGroup>
+        );
+      },
       colProps: {
         span: 8,
       },
     },
     {
-      field: 'link2',
+      field: 'rate',
       component: 'Input',
-      label: '内部链接：',
+      label: '回传比率：',
       colProps: {
-        span: 8,
+        span: 6,
       },
-    },
-    {
-      field: 'platform',
-      component: 'Input',
-      label: '平台：',
-      colProps: {
-        span: 8,
-      },
-    },
-    {
-      field: 'pf',
-      component: 'Input',
-      label: '平台备注：',
-      colProps: {
-        span: 8,
-      },
+      suffix: '%',
     },
     {
       field: 'notes',
@@ -70,9 +151,7 @@
         span: 8,
       },
     },
-  ];
-  const route = useRoute();
-  const id = route.query.id;
+  ]);
 
   const { back } = useRouter();
 
@@ -86,25 +165,40 @@
     submitButtonOptions: {
       text: '提交',
     },
-    showResetButton: true,
+    showResetButton: false,
     showSubmitButton: true,
   });
 
-  async function getData() {
-    const res = await detailPromote({ investId: id });
-    if (res) {
-      methods.setFieldsValue(res);
-    }
-  }
+  const initDistributor = async (id: number | string) => {
+    const res = await distributorDetail({ channelId: id });
+    const { name } = res;
+    return { name, id };
+  };
 
-  onMounted(() => {
-    if (id) {
-      getData();
+  onMounted(async () => {
+    if (investId) {
+      const res = await detailPromote({ investId });
+      const { collectionName } = res;
+      params.title = collectionName;
+      if (res) {
+        methods.setFieldsValue({ ...res });
+      }
+    } else {
+      const userInfo = user.getUserInfo;
+      const { id } = userInfo;
+      const { name } = await initDistributor(id as string);
+
+      methods.setFieldsValue({ channelId: id, channelName: name });
     }
   });
 
   async function handleSubmit(values: any) {
-    await addPromote(values);
+    if (investId) {
+      await updatePromote({ ...pick(values, 'notes', 'rate', 'state'), investId });
+    } else {
+      await addPromote(omit(values, 'divider-basic', 'link', 'channelName'));
+    }
+
     back();
   }
 </script>

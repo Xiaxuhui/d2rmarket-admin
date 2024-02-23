@@ -44,7 +44,6 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { useGo } from '@/hooks/web/usePage';
-  import { reactive } from 'vue';
   import { listPromote, delPromote, updatePromote } from '@/api/promote';
   import { getBasicColumns, getPromoteFormConfig } from './tableData';
   import { PageEnum } from '@/enums/pageEnum';
@@ -54,17 +53,6 @@
 
   const [canEditInvest] = useAuthorization([PERMISSION_ENUM.INVEST_EDIT]);
 
-  const state = reactive<{
-    selectedRowKeys: any;
-    pagination: Record<string, any>;
-  }>({
-    selectedRowKeys: [], // Check here to configure the default column
-    pagination: { pageSize: 20 },
-  });
-  const onSelectChange = (ids) => {
-    console.log(ids);
-    state.selectedRowKeys = ids;
-  };
   const [registerTable, methods] = useTable({
     title: '投放管理',
     api: listPromote,
@@ -79,10 +67,6 @@
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
     rowKey: 'id',
-    rowSelection: {
-      type: 'checkbox',
-      onChange: onSelectChange,
-    },
     showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20 },
   });

@@ -51,26 +51,36 @@ export function getBasicColumns(): BasicColumn[] {
       fixed: 'left',
     },
     {
-      title: '渠道名',
-      dataIndex: 'channelId',
+      title: '投手',
+      dataIndex: 'channelName',
       ellipsis: true,
     },
     {
-      title: '内容',
-      dataIndex: 'data',
+      title: '平台',
+      dataIndex: 'platform',
+    },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      customRender({ value }) {
+        return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
+      },
+    },
+    {
+      title: '相关短剧',
+      dataIndex: 'collectionName',
+    },
+    {
+      title: '回传比率',
+      dataIndex: 'rate',
+      customRender({ value }) {
+        return `${value}%`;
+      },
     },
     {
       title: '推广链接',
       dataIndex: 'link',
       ellipsis: true,
-    },
-    {
-      title: '内部链接',
-      dataIndex: 'link2',
-    },
-    {
-      title: '平台',
-      dataIndex: 'pf',
     },
     {
       title: '备注',
@@ -83,13 +93,6 @@ export function getBasicColumns(): BasicColumn[] {
       customRender({ value }) {
         const time = formatToDateTime(value);
         return <div>{time}</div>;
-      },
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      customRender({ value }) {
-        return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
       },
     },
     {
