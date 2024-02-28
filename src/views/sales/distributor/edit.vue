@@ -26,6 +26,7 @@
   import { chargeList } from '@/api/playlet/charge';
   import { omit } from 'lodash-es';
   import { getSeriesList, getDetail } from '@/api/sys/series';
+  import { message } from 'ant-design-vue';
 
   const { back } = useRouter();
   const route = useRoute();
@@ -423,7 +424,11 @@
   };
 
   function handleSubmit(values: any) {
-    const { sellVipRate, channelRate, blogOwnerRate } = values;
+    const { sellVipRate, channelRate, blogOwnerRate, account } = values;
+
+    if (/[\u4E00-\u9FA5]+/g.test(account)) {
+      return message.error('账号名不能包含中文');
+    }
 
     const commonParams = {
       ...omit(values, 'blog', 'vip'),

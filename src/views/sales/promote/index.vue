@@ -67,7 +67,6 @@
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
     rowKey: 'id',
-    showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20 },
   });
   const go = useGo();
