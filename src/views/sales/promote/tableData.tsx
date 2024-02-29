@@ -78,6 +78,14 @@ export function getBasicColumns(): BasicColumn[] {
       },
     },
     {
+      title: '回传范围',
+      dataIndex: 'min',
+      customRender({ record }) {
+        const { min, max } = record;
+        return `${min}~${max}¥`;
+      },
+    },
+    {
       title: '推广链接',
       dataIndex: 'link',
       ellipsis: true,

@@ -31,6 +31,7 @@
       :sticky="true"
       rowKey="id"
       :row-selection="{
+        hideSelectAll: true,
         selectedRowKeys,
         onSelect: selectRows,
       }"
@@ -88,6 +89,7 @@
     pagination: {
       pageSize: 10,
       pageNum: 1,
+      pageSizeOptions: [10],
     },
     modalData: [],
     selectedSet: new Set<number>(),

@@ -1,6 +1,6 @@
 <template>
   <div class="m-4 bg-white">
-    <BasicForm class="local_form" @register="register" @submit="handleSubmit">
+    <BasicForm class="invest_form" @register="register" @submit="handleSubmit">
       <template #resetBefore>
         <a-button class="mr-2" @click="back">返回</a-button>
       </template>
@@ -16,9 +16,10 @@
   import { useUserStore } from '@/store/modules/user';
   import { getSeriesList } from '@/api/sys/series';
   import { debounce, omit, pick } from 'lodash-es';
-  import { InputGroup, Input, Tooltip, Button } from 'ant-design-vue';
+  import { InputGroup, Input, Tooltip, Button, FormItem } from 'ant-design-vue';
   import { CopyOutlined } from '@ant-design/icons-vue';
   import { copyText } from '@/utils/copyTextToClipboard';
+  import message from '@/views/form-design/utils/message';
 
   const user = useUserStore();
   const route = useRoute();
@@ -144,6 +145,26 @@
       suffix: '%',
     },
     {
+      field: 'min',
+      component: 'Input',
+      fields: ['max'],
+      label: '回传范围：',
+      render({ model, field }) {
+        return (
+          <InputGroup compact>
+            <Input v-model:value={model[field]} class="invest_typeValue" /> &nbsp; ~ &nbsp;
+            <FormItem name="max" class="invest-from-item">
+              <Input v-model:value={model['max']} class="local_typeValue" />
+            </FormItem>
+            &nbsp; ¥
+          </InputGroup>
+        );
+      },
+      colProps: {
+        span: 8,
+      },
+    },
+    {
       field: 'notes',
       component: 'Input',
       label: '投流备注：',
@@ -188,13 +209,17 @@
       const { id } = userInfo;
       const { name } = await initDistributor(id as string);
 
-      methods.setFieldsValue({ channelId: id, channelName: name });
+      methods.setFieldsValue({ channelId: id, channelName: name, min: 0, max: 999 });
     }
   });
 
   async function handleSubmit(values: any) {
+    const { min, max } = values;
+    if (!Number.isInteger(min) || !Number.isInteger(max)) {
+      return message.error('回传范围必须是整数');
+    }
     if (investId) {
-      await updatePromote({ ...pick(values, 'notes', 'rate', 'state'), investId });
+      await updatePromote({ ...pick(values, 'notes', 'rate', 'state', 'min', 'max'), investId });
     } else {
       await addPromote(omit(values, 'divider-basic', 'link', 'channelName'));
     }
@@ -203,14 +228,16 @@
   }
 </script>
 <style lang="less" scoped>
-  :deep(.local_form) .local_typeValue {
-    width: calc(100% - 120px);
-    margin-bottom: 0;
-    margin-left: -1px;
-    border-right: 0;
+  :deep(.invest_form) .local_typeValue {
+    width: 100px;
+  }
 
-    .ant-input {
-      border-radius: 0 6px 6px 0;
-    }
+  :deep(.invest_form) .invest_typeValue {
+    width: 100px;
+    border-radius: 6px;
+  }
+
+  :deep(.invest_form) .invest-from-item {
+    border: 0;
   }
 </style>

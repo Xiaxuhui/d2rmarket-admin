@@ -263,12 +263,12 @@
                 v-model:value={model[field]}
                 columns={[
                   {
-                    title: 'title',
+                    title: '剧集名称',
                     dataIndex: 'title',
                     key: 'title',
                   },
                   {
-                    title: 'price',
+                    title: '价格',
                     dataIndex: 'price',
                     key: 'price',
                     width: 150,

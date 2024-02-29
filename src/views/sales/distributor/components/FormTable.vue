@@ -1,17 +1,32 @@
 <template>
   <div>
     <FormItem :name="field" :label="label" :labelCol="{ prefixCls: 'series-label' }">
-      <Authentication :auth="[PERMISSION_ENUM.SALES_ITEM_ADD]">
-        <a-button type="primary" v-if="actionOptions.api" @click="openModal(true, 1)">{{
-          actionOptions.text
-        }}</a-button>
-      </Authentication>
+      <Row>
+        <Authentication :auth="[PERMISSION_ENUM.SALES_ITEM_ADD]">
+          <a-button type="primary" v-if="actionOptions.api" @click="openModal(true, 1)">{{
+            actionOptions.text
+          }}</a-button>
+        </Authentication>
+        <Authentication v-if="!isItem" :auth="[PERMISSION_ENUM.SALES_ITEM_ADD]" class="ml-2">
+          <a-button @click="state.open = true" :disabled="!state.selectedRowKeys.length"
+            >批量设置</a-button
+          >
+        </Authentication>
+      </Row>
       <Table
         class="mt-2"
         :columns="columns"
         :dataSource="value"
         :pagination="state.pagination"
         :row-key="rowKey"
+        :row-selection="
+          isItem
+            ? undefined
+            : {
+                selectedRowKeys: state.selectedRowKeys,
+                onChange: onSelectChange,
+              }
+        "
       >
         <template #bodyCell="{ column, text, record }">
           <template v-if="editProps.includes(column.dataIndex || '')">
@@ -112,11 +127,14 @@
       :selectedRows="state.dataSource"
       @change="getSelectRowKeys"
     />
+    <Modal v-model:open="state.open" title="批量设置" @ok="batchSet">
+      &nbsp;&nbsp; 请设置价格：<Input v-model:value="state.batchNum" style="width: 200px" /> ¥
+    </Modal>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { Table, FormItem } from 'ant-design-vue';
+  import { Table, FormItem, Row, Input, Modal } from 'ant-design-vue';
   import type { PropType } from 'vue';
   import { reactive, watch } from 'vue';
   import { ColumnType } from 'ant-design-vue/lib/table/interface';
@@ -130,6 +148,7 @@
   import Authentication from '@/components/Permission/index.vue';
 
   import SeriesModal from './seriesModal.vue';
+  import message from '@/views/form-design/utils/message';
 
   const [canEditSalesItem, canDelSalesItem] = useAuthorization([
     PERMISSION_ENUM.SALES_ITEM_EDIT,
@@ -191,9 +210,12 @@
   const [registerModal, { openModal }] = useModal();
 
   const state = reactive({
+    open: false,
+    batchNum: 0,
     editableData: {},
     dataSource: [] as Record<string, any>[],
     listDataSource: [] as Record<string, any>[],
+    selectedRowKeys: [] as number[],
     pagination: {
       current: 1,
       pageSize: 5,
@@ -208,6 +230,24 @@
       }
     },
   );
+
+  const onSelectChange = (selectedRowKeys) => {
+    state.selectedRowKeys = selectedRowKeys;
+  };
+
+  const batchSet = () => {
+    if (Number.isNaN(state.batchNum)) {
+      return message.error('请输入数字');
+    }
+    state.dataSource.map((item) => {
+      if (state.selectedRowKeys.includes(item[props.rowKey])) {
+        item.price = state.batchNum;
+      }
+      return item;
+    });
+    state.open = false;
+    emit('update:value', state.dataSource);
+  };
 
   const edit = (key: number) => {
     state.editableData[key] = cloneDeep(
