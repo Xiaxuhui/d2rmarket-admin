@@ -219,6 +219,9 @@
     pagination: {
       current: 1,
       pageSize: 5,
+      onChange(page) {
+        state.pagination.current = page;
+      },
     },
   });
 
