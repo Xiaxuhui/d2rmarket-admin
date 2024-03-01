@@ -13,7 +13,7 @@
       </div>
     </div>
     <GrowCard :loading="loading" :grow-card-list="growCardList" :data="state.data" />
-    <WithdrawModal @register="registerModal" />
+    <WithdrawModal @register="registerModal" @refresh="refreshData" />
     <DetailModal @register="registerDetailModal" />
   </div>
 </template>
@@ -59,7 +59,23 @@
 
   const growCardList = getGrowCardList(openModal, openDetailModal.bind(null, true, 1));
 
-  onMounted(() => {
+  const refreshData = () => {
+    loading.value = true;
+    distributorDetail({ channelId: userStore.getUserInfo.id })
+      .then((detail) => {
+        const { canRemain, remain_m } = detail;
+        state.data = {
+          ...state.data,
+          canRemain: !!canRemain,
+          remain_m: remain_m / 10000,
+        };
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  };
+
+  const initData = () => {
     Promise.all([
       allList({
         type: 6,
@@ -93,5 +109,9 @@
       .finally(() => {
         loading.value = false;
       });
+  };
+
+  onMounted(() => {
+    initData();
   });
 </script>

@@ -9,6 +9,8 @@
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { withdraw } from '@/api/withdraw';
 
+  const emits = defineEmits(['refresh']);
+
   const [register, { closeModal }] = useModalInner();
 
   const schemas: FormSchema[] = [
@@ -58,6 +60,15 @@
       },
     },
     {
+      field: 'idCard',
+      component: 'Input',
+      label: '身份证号：',
+      required: true,
+      colProps: {
+        span: 20,
+      },
+    },
+    {
       field: 'notes',
       component: 'Input',
       label: '提现备注：',
@@ -83,6 +94,7 @@
 
   const handleSubmit = async (params) => {
     await withdraw({ ...params, money: params.money * 10000 });
+    emits('refresh');
     closeModal();
   };
 </script>
