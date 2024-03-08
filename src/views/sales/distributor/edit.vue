@@ -253,7 +253,6 @@
           span: 20,
         },
         renderColContent({ model, field }) {
-          console.log('aaa', model[field]);
           return (
             <>
               <FormTable
@@ -338,7 +337,6 @@
       title: item.name,
       price: type === 3 ? item.p_v : item.p_v / 10000,
     }));
-    console.log(arr);
     return arr;
   };
 
@@ -350,7 +348,6 @@
   const getData = async (id) => {
     const chosenItems = await getChosenList(1, [], 12);
     const chosenSeries = await getChosenList(1, [], 3);
-    console.log('333', chosenSeries);
     state.originSeries = chosenSeries;
     const res = await distributorDetail({ channelId: id });
     const { sellVipRate, channelRate, blogOwnerRate, id: userId, top_c } = res;
@@ -378,6 +375,13 @@
 
   const getDiffParams = (originData, currentData) => {
     if (!currentData) {
+      if (originData.length) {
+        return {
+          add: [],
+          update: [],
+          deleteData: originData.map((x) => x.goodsId),
+        };
+      }
       return {
         add: [],
         update: [],
