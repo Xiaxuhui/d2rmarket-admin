@@ -77,14 +77,6 @@
       },
     },
     {
-      field: 'vipExp',
-      component: 'Input',
-      label: 'vip经验：',
-      colProps: {
-        span: 8,
-      },
-    },
-    {
       field: 'bean',
       component: 'Input',
       label: '豆子数：',
