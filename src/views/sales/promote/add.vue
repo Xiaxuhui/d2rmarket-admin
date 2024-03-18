@@ -215,7 +215,7 @@
 
   async function handleSubmit(values: any) {
     const { min, max } = values;
-    if (!Number.isInteger(min) || !Number.isInteger(max)) {
+    if (!Number.isInteger(Number(min)) || !Number.isInteger(Number(max))) {
       return message.error('回传范围必须是整数');
     }
     if (investId) {

@@ -108,6 +108,7 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '银行卡号',
       dataIndex: 'bankCard',
+      width: 200,
     },
     {
       title: '手机号',

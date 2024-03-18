@@ -218,7 +218,7 @@
     selectedRowKeys: [] as number[],
     pagination: {
       current: 1,
-      pageSize: 5,
+      pageSize: 20,
       onChange(page) {
         state.pagination.current = page;
       },
