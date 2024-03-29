@@ -8,7 +8,7 @@ const playlet: AppRouteModule = {
   path: '/sales',
   name: 'Sales',
   component: LAYOUT,
-  redirect: '/sales/distributor',
+  redirect: '/sales/promote',
   meta: {
     orderNo: 20,
     icon: 'ant-design:partition-outlined',
@@ -18,14 +18,17 @@ const playlet: AppRouteModule = {
     {
       path: 'distributor',
       name: 'Distributor',
+      redirect: '/sales/promote',
       component: () => import('@/views/sales/distributor/index.vue'),
       meta: {
         title: t('routes.sales.distributor'),
+        hideMenu: true,
       },
     },
     {
       path: 'editDistributor',
       name: 'EditDistributor',
+      redirect: '/sales/promote',
       component: () => import('@/views/sales/distributor/edit.vue'),
       meta: {
         title: t('routes.sales.editDistributor'),
