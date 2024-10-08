@@ -107,3 +107,4 @@
     });
   };
 </script>
+@/api/users/homePage

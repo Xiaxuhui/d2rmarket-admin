@@ -11,7 +11,7 @@ export const localeSetting: LocaleSetting = {
   // Locale
   locale: LOCALE.ZH_CN,
   // Default locale
-  fallback: LOCALE.ZH_CN,
+  fallback: LOCALE.EN_US,
   // available Locales
   availableLocales: [LOCALE.ZH_CN, LOCALE.EN_US],
 };

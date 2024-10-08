@@ -9,40 +9,77 @@
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { onMounted } from 'vue';
-  import { detail, add, update } from '@/api/playlet/homePage';
+  import { addCharge, detailCharge, updateCharge } from '@/api/playlet/charge';
   import { useRouter, useRoute } from 'vue-router';
+  import { onMounted } from 'vue';
 
   const schemas: FormSchema[] = [
     {
       field: 'divider-basic',
       component: 'Divider',
-      label: '添加任务',
+      label: '添加充值方案',
       colProps: {
         span: 24,
+      },
+    },
+    {
+      field: 'name',
+      component: 'Input',
+      label: '商品名称：',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'data',
+      component: 'Input',
+      label: '商品介绍：',
+      colProps: {
+        span: 8,
       },
     },
     {
       field: 'type',
       component: 'Select',
       label: '类型：',
+      colProps: {
+        span: 8,
+      },
       componentProps: {
         options: [
           {
-            label: '小程序',
-            value: '1',
-            key: '1',
+            label: 'vip',
+            value: 1,
+            key: 'vip',
+          },
+          {
+            label: '豆子',
+            value: 2,
+            key: '豆子',
           },
         ],
       },
+    },
+    {
+      field: 'price',
+      component: 'Input',
+      label: '价格：',
       colProps: {
         span: 8,
       },
     },
     {
-      field: 'notes',
+      field: 'vipDays',
       component: 'Input',
-      label: '备注：',
+      label: 'vip天数：',
+      colProps: {
+        span: 8,
+      },
+    },
+    {
+      field: 'bean',
+      component: 'Input',
+      label: '豆子数：',
       colProps: {
         span: 8,
       },
@@ -55,20 +92,10 @@
         span: 8,
       },
     },
-    {
-      field: 'v1',
-      component: 'Input',
-      label: '跳转视频ID：',
-      colProps: {
-        span: 8,
-      },
-    },
   ];
+  const { back } = useRouter();
   const route = useRoute();
   const id = route.query.id;
-
-  const { back } = useRouter();
-
   const [register, methods] = useForm({
     labelWidth: 120,
     isNotRow: true,
@@ -84,8 +111,11 @@
   });
 
   async function getData() {
-    const res = await detail({ id });
+    const res = await detailCharge({ id });
     if (res) {
+      if (res.price) {
+        res.price = Number(res.price) / 10000;
+      }
       methods.setFieldsValue(res);
     }
   }
@@ -96,13 +126,15 @@
     }
   });
 
-  function handleSubmit(values: any) {
-    if (id) {
-      update({ ...values, id });
-    } else {
-      add(values);
+  async function handleSubmit(values: any) {
+    if (values.price) {
+      values.price = Number(values.price) * 10000;
     }
-    back();
+    if (id) {
+      await updateCharge(Object.assign(values, { priceRateId: id }));
+      return;
+    }
+    await addCharge(Object.assign(values, { uid: 2 }));
   }
 </script>
 <style lang="less" scoped>
@@ -117,3 +149,4 @@
     }
   }
 </style>
+@/api/users/charge

@@ -40,7 +40,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { PageEnum } from '@/enums/pageEnum';
-  import { chargeList, delCharge, updateCharge } from '@/api/playlet/charge';
+  import { chargeList, delCharge, updateCharge } from '@/api/users/charge';
   import { useGo } from '@/hooks/web/usePage';
   import { reactive } from 'vue';
   import { PERMISSION_ENUM } from '@/enums/permissionEnum';
@@ -109,3 +109,4 @@
     });
   };
 </script>
+@/api/users/charge

@@ -11,7 +11,10 @@ export function createFakeUserList() {
       desc: 'manager',
       password: '123456',
       token: 'fakeToken1',
+      account: '1',
       homePath: '/dashboard/analysis',
+      limitList: '2001',
+      limitGroup: '1',
       roles: [
         {
           roleName: 'Super Admin',
@@ -26,6 +29,7 @@ export function createFakeUserList() {
       realName: 'test user',
       avatar: '',
       desc: 'tester',
+      account: '2',
       token: 'fakeToken2',
       homePath: '/dashboard/workbench',
       roles: [
@@ -46,18 +50,18 @@ const fakeCodeList: any = {
 export default [
   // mock user login
   {
-    url: '/basic-api/login',
+    url: '/basic-api/manage/login',
     timeout: 200,
     method: 'post',
     response: ({ body }) => {
-      const { username, password } = body;
+      const { account, pwd } = body;
       const checkUser = createFakeUserList().find(
-        (item) => item.username === username && password === item.password,
+        (item) => item.username === account && pwd === item.password,
       );
       if (!checkUser) {
         return resultError('Incorrect account or password！');
       }
-      const { userId, username: _username, token, realName, desc, roles } = checkUser;
+      const { userId, username: _username, token, realName, desc, roles, account: ac } = checkUser;
       return resultSuccess({
         roles,
         userId,
@@ -65,16 +69,17 @@ export default [
         token,
         realName,
         desc,
+        account: ac,
       });
     },
   },
   {
-    url: '/basic-api/getUserInfo',
+    url: '/basic-api/manage/getUserInfo',
     method: 'get',
     response: (request: requestParams) => {
       const token = getRequestToken(request);
       if (!token) return resultError('Invalid token');
-      const checkUser = createFakeUserList().find((item) => item.token === token);
+      const checkUser = createFakeUserList().find((item) => item.account === token);
       if (!checkUser) {
         return resultError('The corresponding user information was not obtained!');
       }

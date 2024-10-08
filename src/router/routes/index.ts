@@ -10,8 +10,8 @@ import { t } from '@/hooks/web/useI18n';
 const modules = import.meta.glob(
   [
     './modules/board/index.ts',
-    './modules/playlet/index.ts',
-    './modules/sales/index.ts',
+    './modules/users/index.ts',
+    './modules/goods/index.ts',
     './modules/dashboard.ts',
   ],
   { eager: true },
