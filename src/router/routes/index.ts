@@ -9,10 +9,11 @@ import { t } from '@/hooks/web/useI18n';
 // import.meta.glob() 直接引入所有的模块 Vite 独有的功能
 const modules = import.meta.glob(
   [
-    './modules/board/index.ts',
+    './modules/order/index.ts',
     './modules/users/index.ts',
     './modules/goods/index.ts',
     './modules/dashboard.ts',
+    './modules/demo/comp.ts',
   ],
   { eager: true },
 ); // './modules/**/*.ts'

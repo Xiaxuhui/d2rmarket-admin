@@ -124,6 +124,7 @@ interface _CustomComponents {
   InputCountDown: ExtractPropTypes<
     (typeof import('@/components/CountDown/src/CountdownInput.vue'))['default']
   >;
+  FormTag: ExtractPropTypes<(typeof import('@/components/Tags/src/formTag.vue'))['default']>;
 }
 
 type CustomComponents<T = _CustomComponents> = {
@@ -175,4 +176,5 @@ export interface ComponentProps {
   Transfer: ExtractPropTypes<(typeof import('ant-design-vue/es/transfer'))['default']>;
   CropperAvatar: CustomComponents['CropperAvatar'];
   BasicTitle: CustomComponents['BasicTitle'];
+  FormTag: CustomComponents['FormTag'];
 }

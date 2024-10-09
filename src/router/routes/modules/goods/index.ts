@@ -9,7 +9,7 @@ const goods: AppRouteModule = {
   component: LAYOUT,
   redirect: '/goods/basic',
   meta: {
-    orderNo: 20,
+    orderNo: 10,
     icon: 'lsicon:goods-outline',
     title: t('routes.goods.goods'),
   },

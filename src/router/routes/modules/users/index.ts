@@ -10,7 +10,7 @@ const users: AppRouteModule = {
   component: LAYOUT,
   redirect: '/user/userList',
   meta: {
-    orderNo: 10,
+    orderNo: 20,
     icon: 'mdi:users-outline',
     title: t('routes.users.users'),
   },
@@ -18,7 +18,7 @@ const users: AppRouteModule = {
     {
       path: 'userList',
       name: 'UserList',
-      component: () => import('@/views/users/series/index.vue'),
+      component: () => import('@/views/users/userList/index.vue'),
       meta: {
         title: t('routes.users.userList'),
       },
@@ -26,7 +26,7 @@ const users: AppRouteModule = {
     {
       path: 'setSeries',
       name: 'SetSeries',
-      component: () => import('@/views/users/series/set.vue'),
+      component: () => import('@/views/users/userList/set.vue'),
       meta: {
         hideMenu: true,
         title: t('routes.users.setSeries'),

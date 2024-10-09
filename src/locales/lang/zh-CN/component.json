@@ -124,5 +124,8 @@
     "redoTip": "点击图片可刷新",
     "dragText": "请按住滑块拖动",
     "successText": "验证通过"
+  },
+  "tags": {
+    "create": "创建"
   }
 }
