@@ -1,65 +1,22 @@
 import { BasicColumn, FormProps } from '@/components/Table';
-import { tv } from 'tailwind-variants';
-
-enum STATE_ENUM {
-  del = -1,
-  normal = 1,
-  disabled = 2,
-}
-
-const colorText = tv({
-  variants: {
-    color: {
-      [STATE_ENUM.del]: 'text-red',
-      [STATE_ENUM.disabled]: 'text-red',
-    },
-  },
-});
-
-const stateEnum = {
-  [STATE_ENUM.del]: '删除',
-  [STATE_ENUM.normal]: '正常',
-  [STATE_ENUM.disabled]: '禁用',
-};
+import { TYPE_SELECTION } from '@/contants';
 
 export const getFormConfig: () => Partial<FormProps> = () => {
   return {
     labelWidth: 100,
     schemas: [
       {
-        field: `name`,
-        label: `分销商：`,
-        component: 'Input',
+        field: `type`,
+        label: `Type:`,
+        component: 'Select',
+        componentProps: {
+          options: TYPE_SELECTION,
+        },
         colProps: {
-          xl: 12,
-          xxl: 8,
+          xl: 10,
+          xxl: 6,
         },
       },
-      // {
-      //   field: `level`,
-      //   label: `等级：`,
-      //   component: 'Select',
-      //   colProps: {
-      //     xl: 12,
-      //     xxl: 8,
-      //   },
-      //   componentProps: {
-      //     options: [
-      //       {
-      //         label: '一级',
-      //         value: 1,
-      //       },
-      //       {
-      //         label: '二级',
-      //         value: 2,
-      //       },
-      //       {
-      //         label: '三级',
-      //         value: 3,
-      //       },
-      //     ],
-      //   },
-      // },
     ],
   };
 };
@@ -87,52 +44,17 @@ export const getSeriesColumns: () => BasicColumn[] = () => {
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
-      title: 'ID',
-      dataIndex: 'id',
-    },
-    {
-      title: '名称',
+      title: 'Name',
       dataIndex: 'name',
-    },
-    {
-      title: '上级分销商',
-      dataIndex: 'parentName',
-    },
-    {
-      title: '备注',
-      dataIndex: 'notes',
-    },
-    {
-      title: '账号',
-      dataIndex: 'account',
-      align: 'center',
-    },
-    {
-      title: '密码',
-      dataIndex: 'pwd',
-      align: 'center',
-    },
-    {
-      title: '可提现金额',
-      dataIndex: 'remain_m',
-      customRender({ value }) {
-        return value / 10000;
-      },
-    },
-    {
-      title: '状态',
-      width: 80,
-      dataIndex: 'state',
-      customRender({ value, text }) {
-        if (!text) {
-          return stateEnum[value];
-        }
-        return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
-      },
-    },
-    {
-      title: '操作',
       width: 300,
+    },
+    {
+      title: 'Type',
+      width: 300,
+      dataIndex: 'type',
+    },
+    {
+      title: 'Operation',
       align: 'center',
       dataIndex: 'operation',
     },

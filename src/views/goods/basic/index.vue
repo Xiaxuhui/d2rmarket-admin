@@ -2,7 +2,7 @@
   <div>
     <BasicTable @register="register">
       <template #toolbar>
-        <a-button type="primary" @click="exportCsv">导出数据</a-button>
+        <a-button type="primary" @click="() => {}">Create</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -10,7 +10,7 @@
             stopButtonPropagation
             :actions="[
               {
-                label: '编辑',
+                label: 'Edit',
                 icon: 'fe:edit',
                 ifShow: canEditSales,
                 onClick() {
@@ -18,14 +18,14 @@
                 },
               },
               {
-                label: '下级',
+                label: 'View',
                 icon: 'carbon:sales-ops',
                 onClick() {
                   viewSalesman(record.id);
                 },
               },
               {
-                label: '添加下级',
+                label: 'Delete',
                 icon: 'fluent:people-add-16-regular',
                 ifShow: canAddSales,
                 onClick() {
@@ -46,7 +46,6 @@
   import { distributorList } from '@/api/sys/distributor';
   import { useModal } from '@/components/Modal';
   import { useGo } from '@/hooks/web/usePage';
-  import { exportExcel } from '@/utils/exportCsv';
   import SalesModal from './components/salesModal.vue';
   import { PageEnum } from '@/enums/pageEnum';
   import { PERMISSION_ENUM } from '@/enums/permissionEnum';
@@ -57,10 +56,11 @@
     PERMISSION_ENUM.SALES_ADD,
   ]);
 
-  const [register, methods] = useTable({
-    title: '分销商管理',
+  const [register] = useTable({
+    title: 'Basic Goods',
     api: distributorList,
     columns: getBasicColumns(),
+    showIndexColumn: false,
     fetchSetting: {
       listField: 'list',
       totalField: 'totalRecords',
@@ -96,9 +96,5 @@
 
   const viewSalesman = (id) => {
     openModal(true, { id });
-  };
-
-  const exportCsv = () => {
-    exportExcel(methods.getDataSource(), '分销商列表', getBasicColumns());
   };
 </script>
