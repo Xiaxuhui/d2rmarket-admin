@@ -24,25 +24,21 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
     labelWidth: 100,
     schemas: [
       {
-        field: `type`,
-        label: `充值类型：`,
-        component: 'Select',
+        field: `email`,
+        label: `Email:`,
+        component: 'Input',
         colProps: {
-          span: 6,
+          xl: 12,
+          xxl: 8,
         },
-        componentProps: {
-          options: [
-            {
-              label: 'vip',
-              value: '1',
-              key: 'vip',
-            },
-            {
-              label: '豆子',
-              value: '2',
-              key: '豆子',
-            },
-          ],
+      },
+      {
+        field: `uid`,
+        label: `Uid:`,
+        component: 'Input',
+        colProps: {
+          xl: 12,
+          xxl: 8,
         },
       },
     ],

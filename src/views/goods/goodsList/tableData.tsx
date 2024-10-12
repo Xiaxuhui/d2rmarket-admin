@@ -1,43 +1,76 @@
 import { BasicColumn, FormProps } from '@/components/Table';
+import { QUALITY_SELECTION, QUALITY_TEXT, TYPE_SELECTION, TYPE_TEXT } from '@/contants';
 import { formatToDateTime } from '@/utils/dateUtil';
-import { tv } from 'tailwind-variants';
-
-enum STATE_ENUM {
-  OPEN = 1,
-  CLOSE = 0,
-}
-
-const colorText = tv({
-  variants: {
-    color: {
-      [STATE_ENUM.OPEN]: 'text-red',
-    },
-  },
-});
-
-const stateEnum = {
-  [STATE_ENUM.OPEN]: '启用',
-  [STATE_ENUM.CLOSE]: '禁用',
-};
 
 export const getPromoteFormConfig: () => Partial<FormProps> = () => {
   return {
     labelWidth: 100,
     schemas: [
       {
-        field: `investId`,
-        label: `任务ID：`,
+        field: `name`,
+        label: `Name:`,
         component: 'Input',
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
       },
       {
-        field: `pf`,
-        label: `平台：`,
+        field: `id`,
+        label: `Id:`,
         component: 'Input',
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
       },
       {
-        field: `channelId`,
-        label: `渠道：`,
-        component: 'Input',
+        field: `type`,
+        label: `Type:`,
+        component: 'Select',
+        componentProps: {
+          options: TYPE_SELECTION,
+        },
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
+      },
+      {
+        field: `location`,
+        label: `Location:`,
+        component: 'ApiSelect',
+        componentProps: {
+          options: [],
+        },
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
+      },
+      {
+        field: `quality`,
+        label: `Quality:`,
+        component: 'Select',
+        componentProps: {
+          options: QUALITY_SELECTION,
+        },
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
+      },
+      {
+        field: `role`,
+        label: `RoleSpecific:`,
+        component: 'Select',
+        componentProps: {
+          options: [],
+        },
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
       },
     ],
   };
@@ -46,65 +79,64 @@ export const getPromoteFormConfig: () => Partial<FormProps> = () => {
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
-      title: '任务ID',
+      title: 'id',
       dataIndex: 'id',
       fixed: 'left',
     },
     {
-      title: '投手',
-      dataIndex: 'channelName',
+      title: 'name',
+      dataIndex: 'name',
       ellipsis: true,
     },
     {
-      title: '平台',
-      dataIndex: 'platform',
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
+      title: 'img',
+      dataIndex: 'img',
       customRender({ value }) {
-        return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
+        return <img src={value} alt="" />;
       },
     },
     {
-      title: '相关短剧',
-      dataIndex: 'collectionName',
-    },
-    {
-      title: '回传比率',
-      dataIndex: 'rate',
+      title: 'type',
+      dataIndex: 'type',
       customRender({ value }) {
-        return `${value}%`;
+        return <div>{TYPE_TEXT[value]}</div>;
       },
     },
     {
-      title: '回传范围',
-      dataIndex: 'min',
-      customRender({ record }) {
-        const { min, max } = record;
-        return `${min}~${max}¥`;
-      },
-    },
-    {
-      title: '推广链接',
-      dataIndex: 'link',
-      ellipsis: true,
-    },
-    {
-      title: '备注',
-      dataIndex: 'notes',
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'startTime',
-      width: 200,
+      title: 'quality',
+      dataIndex: 'quality',
       customRender({ value }) {
-        const time = formatToDateTime(value);
-        return <div>{time}</div>;
+        return <div>{QUALITY_TEXT[value]}</div>;
       },
     },
     {
-      title: '操作',
+      title: 'role specific',
+      dataIndex: 'role',
+      customRender({ value }) {
+        return <div>{value}</div>;
+      },
+    },
+    {
+      title: 'ctime',
+      dataIndex: 'ctime',
+      customRender({ value }) {
+        return formatToDateTime(value);
+      },
+    },
+    {
+      title: 'inventory',
+      dataIndex: 'inventory',
+    },
+    {
+      title: 'status',
+      dataIndex: 'status',
+    },
+    {
+      title: 'price',
+      dataIndex: 'price',
+    },
+    {
+      title: 'operation',
       width: 300,
       dataIndex: 'operation',
     },

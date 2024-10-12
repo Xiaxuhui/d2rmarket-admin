@@ -11,14 +11,26 @@
           stopButtonPropagation
           :actions="[
             {
-              label: '编辑',
-              ifShow: canEditInvest,
+              label: 'publish',
               onClick() {
                 edit(record.id);
               },
             },
             {
-              label: '删除',
+              label: 'View',
+              icon: 'hugeicons:view',
+              onClick() {
+                edit(record.id);
+              },
+            },
+            {
+              label: 'edit',
+              onClick() {
+                edit(record.id);
+              },
+            },
+            {
+              label: 'delete',
               icon: 'ic:outline-delete-outline',
               ifShow: canEditInvest,
               popConfirm: {
@@ -26,13 +38,6 @@
                 confirm: () => {
                   del(record.id);
                 },
-              },
-            },
-            {
-              label: record.state === 1 ? '禁用' : '启用',
-              ifShow: canEditInvest,
-              onClick() {
-                open(record);
               },
             },
           ]"
@@ -44,7 +49,7 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { useGo } from '@/hooks/web/usePage';
-  import { listPromote, delPromote, updatePromote } from '@/api/promote';
+  import { listPromote, delPromote } from '@/api/promote';
   import { getBasicColumns, getPromoteFormConfig } from './tableData';
   import { PageEnum } from '@/enums/pageEnum';
   import { PERMISSION_ENUM } from '@/enums/permissionEnum';
@@ -64,6 +69,11 @@
     },
     formConfig: getPromoteFormConfig(),
     showTableSetting: true,
+    rowSelection: {
+      type: 'checkbox',
+      onChange: () => {},
+    },
+    showSelectionBar: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
     rowKey: 'id',
@@ -87,8 +97,5 @@
     go({
       path: PageEnum.ADD_PROMOTE,
     });
-  };
-  const open = (item) => {
-    updatePromote(Object.assign(item, { investId: item.id, state: item.state === 0 ? 1 : 0 }));
   };
 </script>

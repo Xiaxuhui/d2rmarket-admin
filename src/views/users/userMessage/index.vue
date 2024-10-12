@@ -42,7 +42,6 @@
   import { PageEnum } from '@/enums/pageEnum';
   import { chargeList, delCharge, updateCharge } from '@/api/users/charge';
   import { useGo } from '@/hooks/web/usePage';
-  import { reactive } from 'vue';
   import { PERMISSION_ENUM } from '@/enums/permissionEnum';
   import { useAuthorization } from '@/components/Permission/permission';
   import Authentication from '@/components/Permission/index.vue';
@@ -54,17 +53,7 @@
   ]);
 
   const go = useGo();
-  const state = reactive<{
-    selectedRowKeys: any;
-    pagination: Record<string, any>;
-  }>({
-    selectedRowKeys: [], // Check here to configure the default column
-    pagination: { pageSize: 20 },
-  });
-  const onSelectChange = (ids) => {
-    console.log(ids);
-    state.selectedRowKeys = ids;
-  };
+
   const [registerTable, methods] = useTable({
     title: '充值方案',
     api: chargeList,
@@ -79,11 +68,6 @@
       listField: 'list',
       totalField: 'totalRecords',
     },
-    rowSelection: {
-      type: 'checkbox',
-      onChange: onSelectChange,
-    },
-    showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20 },
   });
   const update = (id: string) => {
