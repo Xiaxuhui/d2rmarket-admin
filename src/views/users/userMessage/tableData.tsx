@@ -1,23 +1,4 @@
 import { BasicColumn, FormProps } from '@/components/Table';
-import { tv } from 'tailwind-variants';
-
-enum STATE_ENUM {
-  OPEN = 1,
-  CLOSE = 0,
-}
-
-const colorText = tv({
-  variants: {
-    color: {
-      [STATE_ENUM.OPEN]: 'text-red',
-    },
-  },
-});
-
-const stateEnum = {
-  [STATE_ENUM.OPEN]: '启用',
-  [STATE_ENUM.CLOSE]: '禁用',
-};
 
 export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
   return {
@@ -48,51 +29,30 @@ export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
-      title: '分销商',
-      dataIndex: 'channelName',
-      ellipsis: true,
-    },
-    {
-      title: '名称',
-      dataIndex: 'name',
+      title: 'Uid',
+      dataIndex: 'uid',
       fixed: 'left',
       width: 200,
     },
+
     {
-      title: '详情',
-      dataIndex: 'data',
+      title: 'Name',
+      dataIndex: 'name',
+      ellipsis: true,
     },
     {
-      title: '价格',
-      dataIndex: 'price',
-      format(state) {
-        return Number(state) / 10000;
-      },
+      title: 'New Message',
+      dataIndex: 'new',
     },
     {
-      title: '权重',
-      dataIndex: 'weight',
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      format(state) {
-        return stateEnum[state];
-      },
-      customRender({ value }) {
-        return <div class={colorText({ color: value })}>{stateEnum[value]}</div>;
-      },
-    },
-    {
-      title: '操作',
+      title: 'Detail',
       width: 300,
       dataIndex: 'operation',
     },
   ];
 }
 
-export const getBasicData = async (params) => {
-  console.log('params', params);
+export const getBasicData = async () => {
   const arr: any = [];
   for (let index = 0; index < 40; index++) {
     arr.push({

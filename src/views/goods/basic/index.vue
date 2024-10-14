@@ -20,14 +20,14 @@
                 label: 'View',
                 icon: 'hugeicons:view',
                 onClick() {
-                  viewBasic(record.id);
+                  viewBasic();
                 },
               },
               {
                 label: 'Delete',
                 icon: 'material-symbols:delete-outline',
                 onClick() {
-                  deleteBasic(record.id);
+                  deleteBasic();
                 },
               },
             ]"

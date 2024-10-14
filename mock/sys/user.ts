@@ -42,11 +42,6 @@ export function createFakeUserList() {
   ];
 }
 
-const fakeCodeList: any = {
-  '1': ['1000', '3000', '5000'],
-
-  '2': ['2000', '4000', '6000'],
-};
 export default [
   // mock user login
   {
@@ -87,19 +82,17 @@ export default [
     },
   },
   {
-    url: '/basic-api/getPermCode',
+    url: '/basic-api/manage/goodsPriceRatePage',
     timeout: 200,
     method: 'get',
-    response: (request: requestParams) => {
-      const token = getRequestToken(request);
-      if (!token) return resultError('Invalid token');
-      const checkUser = createFakeUserList().find((item) => item.token === token);
-      if (!checkUser) {
-        return resultError('Invalid token!');
-      }
-      const codeList = fakeCodeList[checkUser.userId];
-
-      return resultSuccess(codeList);
+    response: () => {
+      return resultSuccess([
+        {
+          uid: 1,
+          name: 'xiaXuHui',
+          new: 5,
+        },
+      ]);
     },
   },
   {
