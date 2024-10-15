@@ -88,9 +88,11 @@ export default [
     response: () => {
       return resultSuccess([
         {
-          uid: 1,
+          id: 1,
+          uid: 1000,
           name: 'xiaXuHui',
           new: 5,
+          qid: 256001,
         },
       ]);
     },

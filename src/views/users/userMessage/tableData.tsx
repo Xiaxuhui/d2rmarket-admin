@@ -42,7 +42,7 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: 'New Message',
-      dataIndex: 'new',
+      dataIndex: 'num',
     },
     {
       title: 'Detail',

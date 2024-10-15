@@ -10,7 +10,7 @@
                 label: 'view',
                 icon: 'hugeicons:view',
                 onClick() {
-                  openModal(record.id);
+                  openModal(true, record.qid);
                 },
               },
             ]"
@@ -23,27 +23,23 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { chargeList } from '@/api/users/charge';
-  import { getBasicColumns, getWithDrawFormConfig } from './tableData';
+  import { getBasicColumns } from './tableData';
   import ChatModal from './components/chatModal.vue';
   import { useModal } from '@/components/Modal';
+  import { userMessageList } from '@/api/users/message';
 
   const [registerModal, { openModal }] = useModal();
 
   const [registerTable] = useTable({
     title: 'User Message',
-    api: chargeList,
+    api: userMessageList,
     columns: getBasicColumns(),
-    useSearchForm: true,
-    formConfig: getWithDrawFormConfig(),
+    useSearchForm: false,
+    // formConfig: getWithDrawFormConfig(),
     showTableSetting: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
-    rowKey: 'id',
-    fetchSetting: {
-      listField: 'list',
-      totalField: 'totalRecords',
-    },
+    rowKey: 'uid',
     pagination: { pageSize: 20 },
   });
 </script>
