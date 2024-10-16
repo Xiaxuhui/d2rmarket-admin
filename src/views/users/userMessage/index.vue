@@ -10,7 +10,7 @@
                 label: 'view',
                 icon: 'hugeicons:view',
                 onClick() {
-                  openModal(true, record.qid);
+                  openModal(true, { qid: record.qid, replyId: record.uid });
                 },
               },
             ]"

@@ -1,15 +1,16 @@
 <template>
   <div class="flex flex-row items-center h-16 rounded-xl bg-white w-full">
     <div class="flex items-center justify-center text-gray-400 hover:text-gray-600">
-      <UploadFile />
+      <UploadFile :disabled="disabled" />
     </div>
     <div class="flex-grow ml-2">
       <div class="relative w-full">
-        <div class="flex w-full border border-slate-300 rounded-xl pl-4 pr-12 min-h-[40px]">
+        <div class="flex w-full border border-slate-300 rounded-xl px-4 min-h-[40px]">
           <input
             type="text"
             class="w-full focus:outline-none focus:border-indigo-300"
             v-model="message"
+            :disabled="disabled"
             @keydown="
               (e) => {
                 if (e.keyCode === 13) {
@@ -22,7 +23,7 @@
       </div>
     </div>
     <div class="ml-4">
-      <Button type="primary" size="large" @click="sendMsg">
+      <Button type="primary" size="large" @click="sendMsg" :disabled="disabled">
         Send
         <template #icon>
           <svg
@@ -53,6 +54,10 @@
   import UploadFile from './uploadFile.vue';
 
   const emit = defineEmits(['send']);
+
+  defineProps({
+    disabled: Boolean,
+  });
 
   const message = ref('');
 

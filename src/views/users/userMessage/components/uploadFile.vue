@@ -5,7 +5,7 @@
     :before-upload="beforeUpload"
     @change="handleChange"
   >
-    <Button>
+    <Button :disabled="disabled">
       <template #icon>
         <svg
           class="w-[25px] cursor-pointer"
@@ -28,6 +28,10 @@
 <script lang="ts" setup>
   import { Button, Upload } from 'ant-design-vue';
   import { ref } from 'vue';
+
+  defineProps({
+    disabled: Boolean,
+  });
 
   const fileList = ref([]);
 

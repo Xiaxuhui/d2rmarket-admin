@@ -3,6 +3,11 @@ export enum IMessageType {
   IMG,
 }
 
+export enum IMessageState {
+  UNREAD,
+  READ,
+}
+
 export interface IMessage {
   data: string;
   id: number;
@@ -11,4 +16,6 @@ export interface IMessage {
   time: number;
   type: IMessageType;
   uid: number;
+  name: string;
+  state: IMessageState;
 }
