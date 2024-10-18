@@ -15,8 +15,8 @@ export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps>
         },
       },
       {
-        field: `uid`,
-        label: `Uid:`,
+        field: `name`,
+        label: `Name:`,
         component: 'Input',
         colProps: {
           xl: 12,
@@ -31,7 +31,7 @@ export const getBasicColumns: () => BasicColumn[] = () => {
   return [
     {
       title: 'Uid',
-      dataIndex: 'uid',
+      dataIndex: 'id',
       width: 150,
       ellipsis: true,
     },
@@ -42,17 +42,22 @@ export const getBasicColumns: () => BasicColumn[] = () => {
     },
     {
       title: 'First Name',
-      dataIndex: 'f',
+      dataIndex: 'firstName',
       ellipsis: true,
     },
     {
       title: 'Last Name',
-      dataIndex: 'l',
+      dataIndex: 'lastName',
+      ellipsis: true,
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
       ellipsis: true,
     },
     {
       title: 'Points',
-      dataIndex: 'points',
+      dataIndex: 'point',
     },
     {
       title: 'Order Record',

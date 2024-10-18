@@ -58,7 +58,9 @@
                     >
                       {{ (item.name || 'U').slice(0, 1).toUpperCase() }}
                     </div>
-                    <RenderMessage :message="{ data: item.data, type: item.type }" />
+                    <RenderMessage
+                      :message="{ data: item.data, type: item.type, time: item.time }"
+                    />
                   </div>
                 </div>
               </template>

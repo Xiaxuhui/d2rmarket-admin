@@ -49,7 +49,6 @@
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { useGo } from '@/hooks/web/usePage';
-  import { listPromote, delPromote } from '@/api/promote';
   import { getBasicColumns, getPromoteFormConfig } from './tableData';
   import { PageEnum } from '@/enums/pageEnum';
   import { PERMISSION_ENUM } from '@/enums/permissionEnum';
@@ -58,9 +57,9 @@
 
   const [canEditInvest] = useAuthorization([PERMISSION_ENUM.INVEST_EDIT]);
 
-  const [registerTable, methods] = useTable({
+  const [registerTable] = useTable({
     title: '投放管理',
-    api: listPromote,
+    // api: () => [],
     columns: getBasicColumns(),
     useSearchForm: true,
     fetchSetting: {
@@ -89,9 +88,7 @@
     });
   };
   const del = (id) => {
-    delPromote({ investId: id }).then(() => {
-      methods.reload();
-    });
+    console.log(id);
   };
   const addPromote = () => {
     go({

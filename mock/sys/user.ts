@@ -82,6 +82,22 @@ export default [
     },
   },
   {
+    url: '/basic-api/order/list',
+    method: 'get',
+    response: () => {
+      return resultSuccess([
+        {
+          orderId: 1,
+          uid: 1,
+          email: 'xiaxuhui@gmail.com',
+          status: 1,
+          price: 100,
+          time: Date.now(),
+        },
+      ]);
+    },
+  },
+  {
     url: '/basic-api/manage/goodsPriceRatePage',
     timeout: 200,
     method: 'get',

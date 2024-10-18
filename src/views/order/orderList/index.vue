@@ -1,33 +1,65 @@
 <template>
   <div>
     <BasicTable @register="registerTable">
-      <template #toolbar>
-        <a-button type="primary" @click="exportCsv">导出数据</a-button>
+      <template #bodyCell="{ column, record }">
+        <a
+          v-if="column.dataIndex === 'detail'"
+          @click="
+            () => {
+              openModal(true, 1);
+            }
+          "
+        >
+          detail
+        </a>
+        <template v-if="column.dataIndex === 'operation'">
+          <TableAction
+            stopButtonPropagation
+            :actions="[
+              {
+                label: 'send',
+                icon: 'material-symbols:send-outline',
+                onClick() {
+                  console.log(record);
+                },
+              },
+              {
+                label: 'complete',
+                icon: 'carbon:task-complete',
+                onClick() {
+                  console.log(record);
+                },
+              },
+              {
+                label: 'delete',
+                icon: 'material-symbols:delete-outline',
+                color: 'error',
+                onClick() {
+                  console.log(record);
+                },
+              },
+            ]"
+          />
+        </template>
       </template>
     </BasicTable>
+    <DetailDialog @register="registerModal" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { BasicTable, useTable } from '@/components/Table';
-  import { reactive } from 'vue';
-  import { order } from '@/api/board';
+  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import { orderList } from '@/api/order';
   import { useRoute } from 'vue-router';
-  import { exportExcel } from '@/utils/exportCsv';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
+  import DetailDialog from './components/detailDialog.vue';
+  import { useModal } from '@/components/Modal';
 
   const route = useRoute();
 
-  const state = reactive<{
-    selectedRowKeys: any;
-  }>({
-    selectedRowKeys: [], // Check here to configure the default column
-  });
+  const [registerModal, { openModal }] = useModal();
 
-  const onSelectChange = (ids) => {
-    state.selectedRowKeys = ids;
-  };
-  const [registerTable, methods] = useTable({
-    title: '订单查询',
+  const [registerTable] = useTable({
+    title: 'Order List',
     api: (params) => {
       const { startTime, endTime } = params;
       const param: Record<string, any> = {};
@@ -35,7 +67,7 @@
         param.startTime = new Date(startTime).getTime();
         param.endTime = new Date(endTime).getTime();
       }
-      return order({ ...params, ...param });
+      return orderList({ ...params, ...param });
     },
     columns: getBasicColumns(),
     useSearchForm: true,
@@ -48,15 +80,6 @@
       listField: 'list',
       totalField: 'totalRecords',
     },
-    rowSelection: {
-      type: 'checkbox',
-      onChange: onSelectChange,
-    },
-    showSelectionBar: true, // 显示多选状态栏
     pagination: { pageSize: 20, pageSizeOptions: ['20'] },
   });
-
-  const exportCsv = () => {
-    exportExcel(methods.getDataSource(), '订单查询', getBasicColumns());
-  };
 </script>

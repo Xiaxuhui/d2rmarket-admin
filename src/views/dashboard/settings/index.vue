@@ -16,30 +16,37 @@
   </div>
 </template>
 <script lang="ts" setup>
+  import { addTags, locationTags, delTags } from '@/api/settings';
   import { FormTag } from '@/components/Tags';
   import { Divider } from 'ant-design-vue';
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
 
-  const tags = ref([
-    {
-      label: 'label1',
-      id: 1,
-    },
-    {
-      label: 'label2',
-      id: 2,
-    },
-  ]);
+  const tags = ref<{ label: string; id: number }[]>([]);
 
-  const deleteLocation = (item) => {
-    tags.value = tags.value.filter((tag) => tag.id !== item.id);
+  const deleteLocation = (id) => {
+    delTags({ id }).then(() => {
+      getTags();
+    });
   };
 
   const addLocation = (name: string) => {
-    const id = Date.now();
-    tags.value.push({
-      id,
-      label: name,
+    addTags({ name }).then(() => {
+      getTags();
     });
   };
+
+  const getTags = () => {
+    locationTags().then((res) => {
+      tags.value = res.map((item) => {
+        return {
+          id: item.id,
+          label: item.name,
+        };
+      });
+    });
+  };
+
+  onMounted(() => {
+    getTags();
+  });
 </script>

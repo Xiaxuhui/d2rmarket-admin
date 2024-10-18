@@ -3,16 +3,19 @@
     <div class="text-[#1677FF] cursor-pointer" @click="showModal">{{
       t('component.tags.create')
     }}</div>
-    <div class="mt-2">
-      <Tag
-        v-bind="$attrs"
-        closable
-        v-for="(item, index) in tagList"
-        :key="`tag${index}`"
-        @close.prevent="closeTag(item)"
-        >{{ item.label }}</Tag
-      >
+    <div class="mt-4">
+      <template v-for="(item, index) in tagList" :key="`tag${index}`">
+        <Tag v-bind="$attrs" closable @close.prevent="closeTag(item)">{{ item.label }}</Tag>
+      </template>
     </div>
+    <Modal
+      v-model:open="isVisible"
+      title="Delete Confirmation"
+      @ok="confirm"
+      :okButtonProps="{ danger: true }"
+    >
+      <div class="px-[24px] py-[16px]"> Are you sure to remove this tag? </div>
+    </Modal>
     <Modal v-model:open="open" :title="title" @ok="handleOk" @cancel="handleCancel">
       <div class="px-[24px] py-[16px]">
         <div class="flex items-center">
@@ -38,7 +41,11 @@
 
   const open = ref(false);
 
+  const deleteIndex = ref();
+
   const tagName = ref('');
+
+  const isVisible = ref(false);
 
   const emit = defineEmits(['change', 'update:value', 'delete', 'add']);
 
@@ -48,6 +55,7 @@
       default: () => [],
     },
     title: String,
+    noConfirm: Boolean,
   });
 
   const tagList = computed(() => {
@@ -70,6 +78,16 @@
   };
 
   const closeTag = (item: ITag) => {
-    emit('delete', item);
+    if (props.noConfirm) {
+      emit('delete', item.id);
+      return;
+    }
+    isVisible.value = true;
+    deleteIndex.value = item.id;
+  };
+
+  const confirm = () => {
+    isVisible.value = false;
+    emit('delete', deleteIndex.value);
   };
 </script>

@@ -7,26 +7,21 @@
   import { getBasicColumns, getFormConfig } from './tableData';
   // import { useGo } from '@/hooks/web/usePage';
   import { useRoute } from 'vue-router';
-  import * as api from '@/api/sys/series';
+  import * as api from '@/api/users/list';
 
   // const go = useGo();
   const { label } = useRoute().query;
 
   const [registerTable] = useTable({
     title: 'UserList',
-    api: api.getSeriesList,
+    api: api.userList,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getFormConfig({ label: (label as string) || '' }),
     showTableSetting: true,
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
-    fetchSetting: {
-      listField: 'list',
-      totalField: 'totalRecords',
-    },
     rowKey: 'id',
-
     pagination: {
       pageSize: 20,
     },

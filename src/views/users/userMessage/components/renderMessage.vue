@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="timeStyle({ isMyself })">2024/10/15 9:58</div>
+    <div :class="timeStyle({ isMyself })">{{ formatToDateTime(message.time) }}</div>
     <div :class="messageCardStyle({ isMyself })">
       <div class="flex items-center break-all">
         <template v-if="message.type === IMessageType.IMG">
@@ -16,6 +16,7 @@
 <script lang="ts" setup>
   import { tv } from 'tailwind-variants';
   import { IMessageType } from '../definition';
+  import { formatToDateTime } from '@/utils/dateUtil';
 
   defineProps({
     isMyself: Boolean,
