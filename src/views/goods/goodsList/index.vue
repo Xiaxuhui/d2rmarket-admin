@@ -81,7 +81,7 @@
   const go = useGo();
   const edit = (id) => {
     go({
-      path: PageEnum.ADD_PROMOTE,
+      path: PageEnum.BASIC_SETTING,
       query: {
         id,
       },
@@ -92,7 +92,7 @@
   };
   const addPromote = () => {
     go({
-      path: PageEnum.ADD_PROMOTE,
+      path: PageEnum.BASIC_SETTING,
     });
   };
 </script>

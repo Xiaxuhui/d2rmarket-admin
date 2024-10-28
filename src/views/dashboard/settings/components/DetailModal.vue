@@ -16,7 +16,7 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { Table } from 'ant-design-vue';
   import { ColumnType } from 'ant-design-vue/lib/table/interface';
-  import { record } from '@/api/withdraw';
+  import { record } from '@/api/goods';
   import { formatToDateTime } from '@/utils/dateUtil';
 
   enum STATE_ENUM {

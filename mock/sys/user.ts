@@ -48,7 +48,8 @@ export default [
     url: '/basic-api/manage/login',
     timeout: 200,
     method: 'post',
-    response: ({ body }) => {
+    response: (res) => {
+      const { body } = res;
       const { account, pwd } = body;
       const checkUser = createFakeUserList().find(
         (item) => item.username === account && pwd === item.password,

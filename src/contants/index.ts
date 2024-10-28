@@ -1,5 +1,5 @@
 export enum TYPE_ENUM {
-  Sundry,
+  Sundry = 1,
   Armor,
   Weapon,
   Currency,

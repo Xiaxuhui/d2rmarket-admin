@@ -7,7 +7,7 @@
 <script lang="ts" setup>
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { withdraw } from '@/api/withdraw';
+  import { withdraw } from '@/api/goods';
 
   const emits = defineEmits(['refresh']);
 

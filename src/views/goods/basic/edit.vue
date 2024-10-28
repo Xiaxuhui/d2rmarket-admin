@@ -2,49 +2,55 @@
   <div class="m-4 bg-white">
     <BasicForm class="local_form" @register="register" @submit="handleSubmit">
       <template #resetBefore>
-        <a-button class="mr-2" @click="back">返回</a-button>
+        <a-button class="mr-2" @click="back">back</a-button>
       </template>
     </BasicForm>
-    <SeriesModal @register="registerModal" />
   </div>
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { useRoute, useRouter } from 'vue-router';
-  import { useModal } from '@/components/Modal';
-  import SeriesModal from './components/seriesModal.vue';
-  import FormTable from './components/formTable.vue';
-  import {
-    updateDistributor,
-    distributorDetail,
-    addChild,
-    addPriceRate,
-    updatePriceRate,
-    deletePriceRate,
-  } from '@/api/sys/distributor';
-  import { onMounted, reactive, computed } from 'vue';
-  import { chargeList } from '@/api/playlet/charge';
-  import { omit } from 'lodash-es';
-  import { getSeriesList, getDetail } from '@/api/sys/series';
-  import { message } from 'ant-design-vue';
+  import { useRouter } from 'vue-router';
+
+  import { onMounted, computed } from 'vue';
+  import { TYPE_ENUM, TYPE_SELECTION } from '@/contants';
+  import UploadField from './components/UploadField.vue';
+  import AffixField from './components/AffixField.vue';
+  import { useGlobSetting } from '@/hooks/setting';
+  import { addPropBase } from '@/api/goods';
 
   const { back } = useRouter();
-  const route = useRoute();
-  const id = route.query.id;
-  const type = route.query.type;
+  // const route = useRoute();
+  const { appDomain } = useGlobSetting();
+  // const id = route.query.id;
+  // const type = route.query.type;
 
-  const state = reactive({
-    originItems: [],
-    originSeries: [],
-    isRoot: false,
-  });
+  interface IParams {
+    name: string;
+    type: TYPE_ENUM;
+    imgs: {
+      uid: number;
+      name: string;
+      url: string;
+      response: {
+        code?: number;
+        data: {
+          id: number;
+          name: string;
+          url: string;
+        };
+      };
+
+      [key: string]: any;
+    }[];
+    affix: { id: number; name: string }[];
+  }
 
   const schemas = computed(() => {
     return [
       {
         field: 'divider-basic',
         component: 'Divider',
-        label: '添加分销商',
+        label: 'ADD BASE GOODS',
         colProps: {
           span: 24,
         },
@@ -52,263 +58,46 @@
       {
         field: 'name',
         component: 'Input',
-        show: type === 'edit',
-        label: '分销商名称：',
+        label: 'Name:',
         colProps: {
           span: 8,
         },
       },
       {
-        field: 'userId',
-        component: 'Input',
-        label: '用户id：',
-        colProps: {
-          span: 8,
-        },
-      },
-      {
-        field: 'parentName',
-        component: 'Input',
-        label: '上级名称：',
-        colProps: {
-          span: 8,
-        },
-        componentProps: {
-          disabled: true,
-        },
-      },
-      {
-        field: 'notes',
-        component: 'Input',
-        label: '备注：',
-        colProps: {
-          span: 8,
-        },
-      },
-      {
-        field: 'account',
-        component: 'Input',
-        helpMessage: '登录管理后台的账号名',
-        label: '账号名：',
-        colProps: {
-          span: 8,
-        },
-      },
-      {
-        field: 'pwd',
-        component: 'Input',
-        label: '密码：',
-        colProps: {
-          span: 8,
-        },
-      },
-      {
-        field: 'state',
+        field: 'type',
         component: 'Select',
-        label: '状态：',
+        label: 'Type:',
         colProps: {
           span: 8,
         },
         componentProps: {
-          options: [
-            {
-              label: '正常',
-              value: 1,
-              key: 1,
-            },
-            {
-              label: '禁用',
-              value: 2,
-              key: 2,
-            },
-          ],
+          options: TYPE_SELECTION,
         },
       },
       {
-        field: 'canRemain',
-        component: 'Select',
-        label: '提现状态：',
-        colProps: {
-          span: 8,
-        },
-        componentProps: {
-          options: [
-            {
-              label: '正常',
-              value: 1,
-              key: 1,
-            },
-            {
-              label: '禁用',
-              value: 2,
-              key: 2,
-            },
-          ],
-        },
-      },
-      {
-        field: 'canAdd',
-        component: 'Select',
-        label: '添加下级：',
-        colProps: {
-          span: 8,
-        },
-        componentProps: {
-          options: [
-            {
-              label: '能',
-              value: 1,
-              key: 1,
-            },
-            {
-              label: '不能',
-              value: 0,
-              key: 0,
-            },
-          ],
-        },
-      },
-      {
-        field: 'sellVipRate',
+        field: 'imgs',
         component: 'Input',
-        label: '销售vip分成比例：',
-        colProps: {
-          span: 8,
-        },
-        suffix: '%',
-      },
-      {
-        field: 'channelRate',
-        component: 'Input',
-        label: '销售剧分成比例：',
-        colProps: {
-          span: 8,
-        },
-        suffix: '%',
-      },
-      {
-        field: 'blogOwnerRate',
-        component: 'Input',
-        label: '发剧方分成比例：',
-        colProps: {
-          span: 8,
-        },
-        suffix: '%',
-      },
-      {
-        field: 'vip',
-        component: 'Input',
-        show: type === 'edit' && !state.isRoot,
-        label: '推广道具：',
+        label: 'Image:',
         colProps: {
           span: 20,
         },
         renderColContent({ model, field }) {
-          return (
-            <>
-              <FormTable
-                label="推广道具："
-                field="vip"
-                userId={+id!}
-                rowKey="goodsId"
-                isItem={true}
-                v-model:value={model[field]}
-                onValueChange={refreshItemList}
-                columns={[
-                  {
-                    title: '道具名称',
-                    dataIndex: 'title',
-                    key: 'title',
-                  },
-                  {
-                    title: '价格',
-                    dataIndex: 'price',
-                    key: 'price',
-                    width: 150,
-                  },
-                  {
-                    title: '隶属',
-                    dataIndex: 'channelName',
-                    key: 'channelName',
-                    width: 150,
-                  },
-                  {
-                    title: '操作',
-                    dataIndex: 'operation',
-                    width: 300,
-                  },
-                ]}
-                editProps={['price']}
-              />
-            </>
-          );
+          return <UploadField vModel={model[field]} />;
         },
       },
       {
-        field: 'blog',
+        field: 'affix',
         component: 'Input',
-        show: type === 'edit' && !state.isRoot,
-        label: '推广剧集：',
+        label: 'Affix:',
         colProps: {
           span: 20,
         },
         renderColContent({ model, field }) {
-          return (
-            <>
-              <FormTable
-                userId={+id!}
-                field="blog"
-                label="推广剧集："
-                showTable={true}
-                v-model:value={model[field]}
-                columns={[
-                  {
-                    title: '剧集名称',
-                    dataIndex: 'title',
-                    key: 'title',
-                  },
-                  {
-                    title: '价格',
-                    dataIndex: 'price',
-                    key: 'price',
-                    width: 150,
-                  },
-                  {
-                    title: '操作',
-                    dataIndex: 'operation',
-                    width: 300,
-                  },
-                ]}
-                editProps={['price']}
-                rowKey="goodsId"
-                actionOptions={{
-                  text: '添加剧集',
-                  api: (params) => getSeriesList({ ...params, pageSize: 10, pageNum: 1 }),
-                  detailApi: getDetail,
-                  optionField: ['title', 'id', 'list'],
-                  props: {
-                    title: '选择剧集',
-                    columns: [
-                      {
-                        title: 'title',
-                        dataIndex: 'title',
-                      },
-                      {
-                        title: 'price',
-                        dataIndex: 'price',
-                      },
-                    ],
-                  },
-                }}
-              />
-            </>
-          );
+          return <AffixField vModel={model[field]} />;
         },
       },
     ] as FormSchema[];
   });
-
-  const [registerModal] = useModal();
 
   const [register, { setFieldsValue }] = useForm({
     labelWidth: 160,
@@ -318,165 +107,70 @@
       span: 12,
     },
     submitButtonOptions: {
-      text: '提交',
+      text: 'Submit',
     },
-    showResetButton: true,
     showSubmitButton: true,
+    showResetButton: false,
   });
 
-  const getChosenList = async (pageNum, topList, type) => {
-    const data = await chargeList({ channelId: id, pageNum, pageSize: 20, type });
-    const { nextPage, list } = data;
-    const composeList = [...topList, ...list];
-    if (nextPage) {
-      return getChosenList(pageNum + 1, composeList, type);
-    }
-    const arr = composeList.map((item) => ({
-      ...item,
-      goodsId: +item.goodsId,
-      title: item.name,
-      price: type === 3 ? item.p_v : item.p_v / 10000,
-    }));
-    return arr;
-  };
-
-  const refreshItemList = async () => {
-    const chosenItems = await getChosenList(1, [], 12);
-    setFieldsValue({ vip: chosenItems });
-  };
-
-  const getData = async (id) => {
-    const chosenItems = await getChosenList(1, [], 12);
-    const chosenSeries = await getChosenList(1, [], 3);
-    state.originSeries = chosenSeries;
-    const res = await distributorDetail({ channelId: id });
-    const { sellVipRate, channelRate, blogOwnerRate, id: userId, top_c } = res;
-    state.isRoot = Boolean(+top_c);
-    setFieldsValue({
-      ...res,
-      userId,
-      sellVipRate: sellVipRate / 100,
-      channelRate: channelRate / 100,
-      blogOwnerRate: blogOwnerRate / 100,
-      vip: chosenItems,
-      blog: chosenSeries,
-    });
-  };
+  // const getData = async (id) => {
+  //   propBase(id).then(() => {
+  //     setFieldsValue({
+  //       name: 'ceshi',
+  //       type: 1,
+  //       img: [],
+  //       affix: [],
+  //     });
+  //   });
+  // };
 
   onMounted(async () => {
-    if (type === 'edit') {
-      getData(id);
-    } else {
-      const res = await distributorDetail({ channelId: id });
-      const { name } = res;
-      setFieldsValue({ parentName: name });
-    }
+    setFieldsValue({
+      name: 'ceshi',
+      type: 1,
+      imgs: [
+        {
+          uid: 144422,
+          name: '1704770278679.png',
+          url: `${appDomain}/assets/144422.png`,
+          response: {
+            data: {
+              id: 144422,
+              name: '1704770278679.png',
+              url: '/assets/144422.png',
+            },
+          },
+        },
+      ],
+      affix: [{ name: '123', id: 123 }],
+    });
   });
 
-  const getDiffParams = (originData, currentData) => {
-    if (!currentData) {
-      if (originData.length) {
-        return {
-          add: [],
-          update: [],
-          deleteData: originData.map((x) => x.goodsId),
-        };
-      }
-      return {
-        add: [],
-        update: [],
-        deleteData: [],
-      };
-    }
-    const update: Record<'priceRateId' | 'price', string>[] = [];
-    const add: Record<'price' | 'goodsId' | 'type', string | number>[] = [];
-    const originMap = new Map();
-    const deleteSet = new Set();
-    for (let data of originData) {
-      originMap.set(data.goodsId, data);
-      deleteSet.add(data.id);
-    }
-    for (let current of currentData) {
-      if (deleteSet.has(current.id)) {
-        deleteSet.delete(current.id);
-      }
-      if (originMap.has(current.goodsId)) {
-        const origin = originMap.get(current.goodsId);
-        if (origin.price !== current.price) {
-          // 已有的剧集包含销售方案id
-          update.push({ priceRateId: current.id, price: current.price });
-        }
-      } else {
-        add.push({ price: current.price, goodsId: current.goodsId, type: 3 });
-      }
-    }
+  const handleParams = (params: IParams) => {
+    const { imgs, type, name, affix } = params;
     return {
-      add,
-      update,
-      deleteData: Array.from(deleteSet),
-    };
-  };
-
-  const getPlanParams = (values: Record<string, any>) => {
-    const { blog } = values;
-    const {
-      add: blogAdd,
-      update: blogUpdate,
-      deleteData: blogDelete,
-    } = getDiffParams(state.originSeries, blog);
-
-    return {
-      add: blogAdd,
-      update: blogUpdate,
-      deleteData: blogDelete,
+      type,
+      name,
+      affixs: affix
+        .reduce((prev, nxt) => {
+          return prev + nxt.id + ',';
+        }, '')
+        .slice(0, -1),
+      imgs: imgs
+        .reduce((prev, nxt) => {
+          return prev + nxt.response.data.id + ',';
+        }, '')
+        .slice(0, -1),
     };
   };
 
   function handleSubmit(values: any) {
-    const { sellVipRate, channelRate, blogOwnerRate, account } = values;
-
-    if (/[\u4E00-\u9FA5]+/g.test(account)) {
-      return message.error('账号名不能包含中文');
-    }
-
-    const commonParams = {
-      ...omit(values, 'blog', 'vip'),
-      sellVipRate: sellVipRate * 100,
-      channelRate: channelRate * 100,
-      blogOwnerRate: blogOwnerRate * 100,
-    };
-
-    if (type === 'edit') {
-      const { add, update, deleteData } = getPlanParams(values);
-
-      let updateRatePromise: (() => Promise<any>)[] = [];
-
-      if (add.length > 0) {
-        updateRatePromise.push(() => addPriceRate({ channelId: id, list: add }));
-      }
-      if (update.length > 0) {
-        updateRatePromise.push(() => updatePriceRate({ channelId: id, list: update }));
-      }
-      if (deleteData.length > 0) {
-        updateRatePromise.push(() => deletePriceRate(deleteData));
-      }
-      Promise.all([
-        updateDistributor({
-          ...commonParams,
-          channelId: id,
-        }),
-        ...updateRatePromise.map((fn) => fn()),
-      ]).then(() => {
-        back();
-      });
-    } else {
-      addChild({
-        ...commonParams,
-        parentId: id,
-      }).then(() => {
-        back();
-      });
-    }
+    console.log('values', values);
+    const params = handleParams(values);
+    console.log('params', params);
+    addPropBase(params).then((res) => {
+      console.log('res', res);
+    });
   }
 </script>
 <style lang="less" scoped>

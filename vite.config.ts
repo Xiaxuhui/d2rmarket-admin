@@ -27,11 +27,11 @@ export default defineApplicationConfig({
           // only https
           // secure: false
         },
-        '/upload': {
-          target: 'http://192.168.50.104:9290',
+        '/gm/upload': {
+          target: 'https://d2.dyna1.asia',
           changeOrigin: true,
           ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/upload`), ''),
+          // rewrite: (path) => path.replace(new RegExp(`^/upload`), ''),
         },
         '/api': {
           target: 'http://192.168.50.104:9290',

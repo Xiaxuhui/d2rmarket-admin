@@ -107,7 +107,7 @@
 
   const editSalesman = (id) => {
     go({
-      path: PageEnum.DISTRIBUTOR_EDIT,
+      path: PageEnum.BASIC_SETTING,
       query: {
         id,
         type: 'edit',
@@ -127,7 +127,7 @@
 
   const addNext = (id) => {
     go({
-      path: PageEnum.DISTRIBUTOR_EDIT,
+      path: PageEnum.BASIC_SETTING,
       query: {
         id,
         type: 'add',

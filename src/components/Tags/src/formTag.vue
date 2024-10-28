@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-col">
-    <div class="text-[#1677FF] cursor-pointer" @click="showModal">{{
+    <div class="text-[#1677FF] cursor-pointer w-[100px]" @click="showModal">{{
       t('component.tags.create')
     }}</div>
     <div class="mt-4">
       <template v-for="(item, index) in tagList" :key="`tag${index}`">
-        <Tag v-bind="$attrs" closable @close.prevent="closeTag(item)">{{ item.label }}</Tag>
+        <Tag v-bind="$attrs" closable @close.prevent="closeTag(item)">{{ item.name }}</Tag>
       </template>
     </div>
     <Modal
@@ -31,7 +31,7 @@
   import { computed, ref } from 'vue';
 
   interface ITag {
-    label: string;
+    name: string;
     id: number | string;
   }
 

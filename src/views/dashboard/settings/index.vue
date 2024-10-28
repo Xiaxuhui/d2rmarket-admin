@@ -21,7 +21,7 @@
   import { Divider } from 'ant-design-vue';
   import { onMounted, ref } from 'vue';
 
-  const tags = ref<{ label: string; id: number }[]>([]);
+  const tags = ref<{ name: string; id: number }[]>([]);
 
   const deleteLocation = (id) => {
     delTags({ id }).then(() => {
@@ -40,7 +40,7 @@
       tags.value = res.map((item) => {
         return {
           id: item.id,
-          label: item.name,
+          name: item.name,
         };
       });
     });

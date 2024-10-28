@@ -2,7 +2,6 @@ import type { AppRouteModule } from '@/router/types';
 
 import { LAYOUT } from '@/router/constant';
 import { t } from '@/hooks/web/useI18n';
-import { RoleEnum } from '@/enums/roleEnum';
 
 const users: AppRouteModule = {
   path: '/users',
@@ -21,16 +20,6 @@ const users: AppRouteModule = {
       component: () => import('@/views/users/userList/index.vue'),
       meta: {
         title: t('routes.users.userList'),
-      },
-    },
-    {
-      path: 'setSeries',
-      name: 'SetSeries',
-      component: () => import('@/views/users/userList/set.vue'),
-      meta: {
-        hideMenu: true,
-        title: t('routes.users.setSeries'),
-        roles: [RoleEnum.SUPER],
       },
     },
     {
