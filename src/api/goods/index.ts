@@ -3,9 +3,9 @@ import { defHttp } from '@/utils/http/axios';
 
 enum Api {
   baseList = '/gm/propBaseList',
-  addTag = '/gm/addPropAffix?uid=1001',
+  addTag = '/gm/addPropAffix',
   propBase = '/gm/propBase',
-  addPropBase = '/gm/addPropBase?uid=1001',
+  addPropBase = '/gm/addPropBase',
   goodsList = '/gm/productList',
 }
 
