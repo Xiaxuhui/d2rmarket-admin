@@ -1,8 +1,33 @@
 <template>
   <div class="m-4 bg-white">
     <BasicForm class="invest_form" @register="register" @submit="handleSubmit">
+      <template #localSearch="{ model, field }">
+        <AffixField
+          v-model="model[field]"
+          :columns="[
+            {
+              title: 'Name',
+              dataIndex: 'name',
+              key: 'name',
+              width: 100,
+            },
+            {
+              title: 'Value',
+              dataIndex: 'value',
+              key: 'value',
+              width: 100,
+            },
+            {
+              title: 'Opt',
+              dataIndex: 'opt',
+              key: 'opt',
+              width: 100,
+            },
+          ]"
+        />
+      </template>
       <template #resetBefore>
-        <a-button class="mr-2" @click="back">返回</a-button>
+        <a-button class="mr-2" @click="back">Back</a-button>
       </template>
     </BasicForm>
   </div>
@@ -10,164 +35,186 @@
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { onMounted, reactive } from 'vue';
-  import { detailPromote, addPromote, updatePromote } from '@/api/promote';
-  import { useRouter, useRoute } from 'vue-router';
-  import { distributorDetail } from '@/api/sys/distributor';
-  import { useUserStore } from '@/store/modules/user';
-  import { getSeriesList } from '@/api/sys/series';
-  import { debounce, omit, pick } from 'lodash-es';
-  import { InputGroup, Input, Tooltip, Button, FormItem } from 'ant-design-vue';
-  import { CopyOutlined } from '@ant-design/icons-vue';
-  import { copyText } from '@/utils/copyTextToClipboard';
+  import { useRouter } from 'vue-router';
   import message from '@/views/form-design/utils/message';
+  import { QUALITY_SELECTION } from '@/contants';
+  import ImgSelector from './components/imgSelector.vue';
+  import FieldTable from './components/fieldTable.vue';
+  import AffixField from './components/affixField.vue';
 
-  const user = useUserStore();
-  const route = useRoute();
-  const investId = route.query.id;
-
-  const params = reactive({
-    title: '',
-  });
+  // const route = useRoute();
+  // const goodsId = route.query.id;
 
   const schemas: FormSchema[] = reactive([
     {
       field: 'divider-basic',
       component: 'Divider',
-      label: '添加任务',
+      label: 'GOODS SETTING',
       colProps: {
         span: 24,
       },
     },
     {
-      field: 'channelId',
+      field: 'name',
       component: 'Input',
-      defaultValue: '',
-      label: '投手Id：',
-      componentProps: {
-        disabled: true,
-      },
+      label: 'Name:',
       colProps: {
         span: 8,
       },
     },
     {
       field: 'channelName',
-      component: 'Input',
-      defaultValue: '',
-      label: '投手名：',
-      componentProps: {
-        disabled: true,
-      },
+      component: 'Cascader',
+      label: 'Type:',
       colProps: {
         span: 8,
       },
-    },
-    {
-      field: 'platform',
-      component: 'Select',
-      label: '平台：',
       componentProps: {
-        disabled: !!investId,
         options: [
           {
-            label: '抖音',
-            value: 1,
-            key: 1,
+            value: 'zhejiang',
+            label: 'Zhejiang',
+            children: [
+              {
+                value: 'hangzhou',
+                label: 'Hangzhou',
+              },
+            ],
+          },
+          {
+            value: 'jiangsu',
+            label: 'Jiangsu',
+            children: [
+              {
+                value: 'nanjing',
+                label: 'Nanjing',
+              },
+            ],
           },
         ],
       },
-      colProps: {
-        span: 8,
+    },
+    {
+      field: 'img',
+      component: 'Input',
+      label: 'Image:',
+      render({ model, field }) {
+        return (
+          <ImgSelector
+            vModel={model[field]}
+            imgList={[
+              { id: 144422, url: '/assets/144422.png' },
+              { id: 145431, url: '/assets/145431.png' },
+            ]}
+          />
+        );
       },
     },
     {
-      field: 'state',
+      field: 'quality',
+      component: 'Select',
+      label: 'Quality:',
+      colProps: {
+        span: 8,
+      },
+      componentProps: {
+        options: QUALITY_SELECTION,
+      },
+    },
+    {
+      field: 'specific',
       component: 'Switch',
-      label: '启用：',
-      defaultValue: 1,
-      componentProps: {
-        checkedValue: 1,
-        unCheckedValue: 0,
-      },
+      label: 'Role specific',
       colProps: {
         span: 8,
       },
     },
     {
-      field: 'collectionId',
-      component: 'ApiSelect',
-      label: '剧集：',
+      field: 'role',
+      component: 'Select',
+      label: 'Role:',
       componentProps: {
-        disabled: !!investId,
-        showSearch: true,
-        onSearch: debounce((val) => {
-          params.title = val;
-        }, 500),
-        api: (params) => getSeriesList({ ...params, pageSize: 10, pageNum: 1 }),
-        params,
-        labelField: 'title',
-        valueField: 'id',
-        resultField: 'list',
-        filterOption: false,
+        options: [],
       },
       colProps: {
         span: 8,
       },
     },
+
     {
-      field: 'link',
+      field: 'affix',
+      // component: 'Input',
+      label: 'affix:',
+      slot: 'localSearch',
+      colProps: {
+        span: 8,
+      },
+      defaultValue: '0',
+      componentProps: {
+        onOptionsChange() {},
+      },
+    },
+    {
+      field: 'required',
       component: 'Input',
-      label: '推广链接：',
-      show: !!investId,
+      label: 'Required:',
+      colProps: {
+        span: 8,
+      },
       render({ model, field }) {
         return (
-          <InputGroup compact>
-            <Input disabled v-model:value={model[field]} style="width: calc(100% - 46px)" />
-            <Tooltip title="copy url">
-              <Button onClick={() => copyText(model[field])}>
-                <CopyOutlined />
-              </Button>
-            </Tooltip>
-          </InputGroup>
+          <FieldTable
+            columns={[
+              {
+                title: 'Name',
+                dataIndex: 'name',
+                key: 'name',
+                width: 100,
+              },
+              {
+                title: 'Value',
+                dataIndex: 'value',
+                key: 'value',
+                width: 100,
+              },
+            ]}
+            vModel={model[field]}
+          />
         );
       },
-      colProps: {
-        span: 8,
-      },
     },
     {
-      field: 'rate',
+      field: 'price',
       component: 'Input',
-      label: '回传比率：',
-      colProps: {
-        span: 6,
-      },
-      suffix: '%',
-    },
-    {
-      field: 'min',
-      component: 'Input',
-      fields: ['max'],
-      label: '回传范围：',
+
+      label: 'Price/Inventory:',
       render({ model, field }) {
         return (
-          <InputGroup compact>
-            <Input v-model:value={model[field]} class="invest_typeValue" /> &nbsp; ~ &nbsp;
-            <FormItem name="max" class="invest-from-item">
-              <Input v-model:value={model['max']} class="local_typeValue" />
-            </FormItem>
-            &nbsp; ¥
-          </InputGroup>
+          <FieldTable
+            columns={[
+              {
+                title: 'Name',
+                dataIndex: 'name',
+                key: 'name',
+                width: 100,
+              },
+              {
+                title: 'Price',
+                dataIndex: 'price',
+                key: 'price',
+                width: 100,
+              },
+              {
+                title: 'Inventory',
+                dataIndex: 'inventory',
+                key: 'inventory',
+                width: 100,
+              },
+            ]}
+            vModel={model[field]}
+          />
         );
       },
-      colProps: {
-        span: 8,
-      },
-    },
-    {
-      field: 'notes',
-      component: 'Input',
-      label: '投流备注：',
       colProps: {
         span: 8,
       },
@@ -176,7 +223,7 @@
 
   const { back } = useRouter();
 
-  const [register, methods] = useForm({
+  const [register] = useForm({
     labelWidth: 120,
     isNotRow: true,
     schemas,
@@ -184,44 +231,18 @@
       span: 10,
     },
     submitButtonOptions: {
-      text: '提交',
+      text: 'Submit',
     },
     showResetButton: false,
     showSubmitButton: true,
   });
 
-  const initDistributor = async (id: number | string) => {
-    const res = await distributorDetail({ channelId: id });
-    const { name } = res;
-    return { name, id };
-  };
-
-  onMounted(async () => {
-    if (investId) {
-      const res = await detailPromote({ investId });
-      const { collectionName } = res;
-      params.title = collectionName;
-      if (res) {
-        methods.setFieldsValue({ ...res });
-      }
-    } else {
-      const userInfo = user.getUserInfo;
-      const { id } = userInfo;
-      const { name } = await initDistributor(id as string);
-
-      methods.setFieldsValue({ channelId: id, channelName: name, min: 0, max: 999 });
-    }
-  });
+  onMounted(async () => {});
 
   async function handleSubmit(values: any) {
     const { min, max } = values;
     if (!Number.isInteger(Number(min)) || !Number.isInteger(Number(max))) {
       return message.error('回传范围必须是整数');
-    }
-    if (investId) {
-      await updatePromote({ ...pick(values, 'notes', 'rate', 'state', 'min', 'max'), investId });
-    } else {
-      await addPromote(omit(values, 'divider-basic', 'link', 'channelName'));
     }
 
     back();

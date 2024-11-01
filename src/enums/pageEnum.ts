@@ -6,6 +6,8 @@ export enum PageEnum {
   // playlet series
   BASIC_SETTING = '/goods/basicSetting',
 
+  GOODS_SETTING = '/goods/goodsSetting',
+
   // error page path
   ERROR_PAGE = '/exception',
   // error log page path

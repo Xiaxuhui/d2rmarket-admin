@@ -2,7 +2,7 @@
  * @description: Login interface parameters
  */
 export interface LoginParams {
-  account: string;
+  email: string;
   pwd: string;
 }
 

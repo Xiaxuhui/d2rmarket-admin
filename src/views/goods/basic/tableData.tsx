@@ -1,5 +1,5 @@
 import { BasicColumn, FormProps } from '@/components/Table';
-import { TYPE_SELECTION } from '@/contants';
+import { TYPE_SELECTION, TYPE_TEXT } from '@/contants';
 
 export const getFormConfig: () => Partial<FormProps> = () => {
   return {
@@ -52,6 +52,9 @@ export function getBasicColumns(): BasicColumn[] {
       title: 'Type',
       width: 300,
       dataIndex: 'type',
+      format(text) {
+        return TYPE_TEXT[text];
+      },
     },
     {
       title: 'Operation',

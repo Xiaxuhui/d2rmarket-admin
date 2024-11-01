@@ -13,7 +13,7 @@ const modules = import.meta.glob(
     './modules/users/index.ts',
     './modules/goods/index.ts',
     './modules/dashboard.ts',
-    './modules/demo/comp.ts',
+    // './modules/demo/comp.ts',
   ],
   { eager: true },
 ); // './modules/**/*.ts'

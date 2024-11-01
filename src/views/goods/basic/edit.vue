@@ -9,16 +9,20 @@
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { useRouter } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
 
   import { onMounted, computed } from 'vue';
   import { TYPE_ENUM, TYPE_SELECTION } from '@/contants';
   import UploadField from './components/UploadField.vue';
   import AffixField from './components/AffixField.vue';
   import { useGlobSetting } from '@/hooks/setting';
-  import { addPropBase } from '@/api/goods';
+  import { addPropBase, propBase } from '@/api/goods';
 
   const { back } = useRouter();
+
+  const route = useRoute();
+  const baseId = route.query.id;
+  // const isEdit = route.query.type === 'edit';
   // const route = useRoute();
   const { appDomain } = useGlobSetting();
   // const id = route.query.id;
@@ -113,40 +117,41 @@
     showResetButton: false,
   });
 
-  // const getData = async (id) => {
-  //   propBase(id).then(() => {
-  //     setFieldsValue({
-  //       name: 'ceshi',
-  //       type: 1,
-  //       img: [],
-  //       affix: [],
-  //     });
-  //   });
-  // };
+  const getData = async (id) => {
+    propBase(id).then((res) => {
+      const { affixList, imgList, type, name } = res;
+      setFieldsValue({
+        name,
+        type,
+        imgs: imgList.map((item) => {
+          const { id, name, url } = item;
+          return {
+            uid: id,
+            name,
+            url: `${appDomain}${url}`,
+            response: {
+              data: item,
+            },
+          };
+        }),
+        affix: affixList.map((item) => {
+          const { id, name } = item;
+          return {
+            id,
+            name,
+          };
+        }),
+      });
+    });
+  };
 
   onMounted(async () => {
-    setFieldsValue({
-      name: 'ceshi',
-      type: 1,
-      imgs: [
-        {
-          uid: 144422,
-          name: '1704770278679.png',
-          url: `${appDomain}/assets/144422.png`,
-          response: {
-            data: {
-              id: 144422,
-              name: '1704770278679.png',
-              url: '/assets/144422.png',
-            },
-          },
-        },
-      ],
-      affix: [{ name: '123', id: 123 }],
-    });
+    getData(baseId);
   });
 
-  const handleParams = (params: IParams) => {
+  const handleParams = (
+    params: IParams,
+  ): { id?: number; imgs: string; affixs: string } & Pick<IParams, 'type' | 'name'> => {
     const { imgs, type, name, affix } = params;
     return {
       type,
@@ -168,8 +173,12 @@
     console.log('values', values);
     const params = handleParams(values);
     console.log('params', params);
+    if (baseId) {
+      params.id = +baseId;
+    }
     addPropBase(params).then((res) => {
       console.log('res', res);
+      back();
     });
   }
 </script>

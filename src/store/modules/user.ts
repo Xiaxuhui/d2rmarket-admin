@@ -27,7 +27,7 @@ interface UserState {
 }
 
 const ROLE_REFLECT = {
-  1: RoleEnum.SUPER,
+  0: RoleEnum.SUPER,
   100: RoleEnum.ORGANIZATION,
   200: RoleEnum.DISTRIBUTOR,
   300: RoleEnum.PITCHER,
@@ -108,9 +108,9 @@ export const useUserStore = defineStore({
         const { goHome = true, mode, ...loginParams } = params;
         console.log('loginParams', loginParams);
         const data = await loginApi(loginParams, mode);
-        const { account } = data;
+        const { ltime } = data;
         // save token
-        this.setToken(account);
+        this.setToken(ltime);
         return this.afterLoginAction(goHome);
       } catch (error) {
         return Promise.reject(error);
@@ -143,12 +143,10 @@ export const useUserStore = defineStore({
     async getUserInfoAction(): Promise<any> {
       if (!this.getToken) return null;
       const userInfo = await getUserInfo();
-      const { limitList, limitGroup } = userInfo;
-      const role = ROLE_REFLECT[limitGroup];
-      const authorityList = (limitList || '').split('#');
+      const { permissions } = userInfo;
+      const role = ROLE_REFLECT[permissions];
       // const { roles = [] } = userInfo;
       this.setRoleList([role]);
-      this.setAuthorityList(authorityList);
       // if (isArray(roles)) {
       //   const roleList = roles.map((item) => item.value) as RoleEnum[];
       //   this.setRoleList(roleList);

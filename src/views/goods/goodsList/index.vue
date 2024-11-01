@@ -1,9 +1,17 @@
 <template>
   <BasicTable @register="registerTable">
     <template #toolbar>
-      <Authentication :auth="[PERMISSION_ENUM.INVEST_ADD]">
-        <a-button type="primary" @click="addPromote"> 添加 </a-button>
-      </Authentication>
+      <a-button
+        type="primary"
+        @click="
+          () => {
+            go({
+              path: PageEnum.GOODS_SETTING,
+            });
+          }
+        "
+        >Create</a-button
+      >
     </template>
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
@@ -12,6 +20,7 @@
           :actions="[
             {
               label: 'publish',
+              icon: 'material-symbols:publish-sharp',
               onClick() {
                 edit(record.id);
               },
@@ -25,6 +34,7 @@
             },
             {
               label: 'edit',
+              icon: 'fe:edit',
               onClick() {
                 edit(record.id);
               },
@@ -32,9 +42,9 @@
             {
               label: 'delete',
               icon: 'ic:outline-delete-outline',
-              ifShow: canEditInvest,
+              color: 'error',
               popConfirm: {
-                title: '确认删除？',
+                title: 'confirm delete?',
                 confirm: () => {
                   del(record.id);
                 },
@@ -51,37 +61,23 @@
   import { useGo } from '@/hooks/web/usePage';
   import { getBasicColumns, getPromoteFormConfig } from './tableData';
   import { PageEnum } from '@/enums/pageEnum';
-  import { PERMISSION_ENUM } from '@/enums/permissionEnum';
-  import { useAuthorization } from '@/components/Permission/permission';
-  import Authentication from '@/components/Permission/index.vue';
-
-  const [canEditInvest] = useAuthorization([PERMISSION_ENUM.INVEST_EDIT]);
+  import { goodsList } from '@/api/goods';
 
   const [registerTable] = useTable({
-    title: '投放管理',
-    // api: () => [],
+    title: 'Goods List',
+    api: goodsList,
     columns: getBasicColumns(),
     useSearchForm: true,
-    fetchSetting: {
-      listField: 'list',
-      totalField: 'totalRecords',
-    },
     formConfig: getPromoteFormConfig(),
     showTableSetting: true,
-    rowSelection: {
-      type: 'checkbox',
-      onChange: () => {},
-    },
-    showSelectionBar: true,
     tableSetting: { fullScreen: true },
-    showIndexColumn: false,
     rowKey: 'id',
     pagination: { pageSize: 20 },
   });
   const go = useGo();
   const edit = (id) => {
     go({
-      path: PageEnum.BASIC_SETTING,
+      path: PageEnum.GOODS_SETTING,
       query: {
         id,
       },
@@ -89,10 +85,5 @@
   };
   const del = (id) => {
     console.log(id);
-  };
-  const addPromote = () => {
-    go({
-      path: PageEnum.BASIC_SETTING,
-    });
   };
 </script>

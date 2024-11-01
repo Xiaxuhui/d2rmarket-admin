@@ -40,6 +40,10 @@
                 onClick() {
                   deleteBasic();
                 },
+                popConfirm: {
+                  title: 'confirm delete?',
+                  confirm: () => {},
+                },
               },
             ]"
           />

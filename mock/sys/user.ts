@@ -5,11 +5,11 @@ export function createFakeUserList() {
   return [
     {
       userId: '1',
-      username: 'admin',
+      username: 'gm@qq.com',
       realName: 'Admin',
       avatar: '',
       desc: 'manager',
-      password: '123456',
+      password: '123',
       token: 'fakeToken1',
       account: '1',
       homePath: '/dashboard/analysis',
@@ -50,9 +50,9 @@ export default [
     method: 'post',
     response: (res) => {
       const { body } = res;
-      const { account, pwd } = body;
+      const { email, pwd } = body;
       const checkUser = createFakeUserList().find(
-        (item) => item.username === account && pwd === item.password,
+        (item) => item.username === email && pwd === item.password,
       );
       if (!checkUser) {
         return resultError('Incorrect account or password！');
@@ -65,7 +65,7 @@ export default [
         token,
         realName,
         desc,
-        account: ac,
+        ltime: ac,
       });
     },
   },

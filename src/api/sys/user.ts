@@ -5,9 +5,9 @@ import { ErrorMessageMode } from '#/axios';
 // import { useUserStoreWithOut } from '@/store/modules/user';
 
 enum Api {
-  Login = '/manage/login',
-  Logout = '/manage/logout',
-  GetUserInfo = '/manage/getUserInfo',
+  Login = '/gm/login',
+  Logout = '/gm/logout',
+  GetUserInfo = '/gm/basic',
   GetPermCode = '/getPermCode',
   TestRetry = '/testRetry',
   Home = '/manage/homePage',
