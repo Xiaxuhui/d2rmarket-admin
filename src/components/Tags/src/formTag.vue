@@ -1,11 +1,16 @@
 <template>
   <div class="flex flex-col">
-    <div class="text-[#1677FF] cursor-pointer w-[100px]" @click="showModal">{{
-      t('component.tags.create')
-    }}</div>
+    <div
+      :class="disabled ? 'opacity-30' : ''"
+      class="text-[#1677FF] cursor-pointer w-[100px]"
+      @click="showModal"
+      >{{ t('component.tags.create') }}</div
+    >
     <div class="mt-4">
       <template v-for="(item, index) in tagList" :key="`tag${index}`">
-        <Tag v-bind="$attrs" closable @close.prevent="closeTag(item)">{{ item.name }}</Tag>
+        <Tag v-bind="$attrs" :closable="!disabled" @close.prevent="closeTag(item)">{{
+          item.name
+        }}</Tag>
       </template>
     </div>
     <Modal
@@ -41,7 +46,7 @@
 
   const open = ref(false);
 
-  const deleteIndex = ref();
+  const deleteItem = ref({} as ITag);
 
   const tagName = ref('');
 
@@ -56,6 +61,7 @@
     },
     title: String,
     noConfirm: Boolean,
+    disabled: Boolean,
   });
 
   const tagList = computed(() => {
@@ -63,6 +69,9 @@
   });
 
   const showModal = () => {
+    if (props.disabled) {
+      return;
+    }
     open.value = true;
   };
 
@@ -79,15 +88,16 @@
 
   const closeTag = (item: ITag) => {
     if (props.noConfirm) {
-      emit('delete', item.id);
+      emit('delete', item);
       return;
     }
     isVisible.value = true;
-    deleteIndex.value = item.id;
+    deleteItem.value.id = item.id;
+    deleteItem.value.name = item.name;
   };
 
   const confirm = () => {
     isVisible.value = false;
-    emit('delete', deleteIndex.value);
+    emit('delete', deleteItem.value);
   };
 </script>

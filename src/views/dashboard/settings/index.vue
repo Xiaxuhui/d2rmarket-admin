@@ -23,7 +23,7 @@
 
   const tags = ref<{ name: string; id: number }[]>([]);
 
-  const deleteLocation = (id) => {
+  const deleteLocation = ({ id }) => {
     delTags({ id }).then(() => {
       getTags();
     });

@@ -1,16 +1,20 @@
 import { BasicColumn, FormProps } from '@/components/Table';
+import { ORDER_TEXT } from '@/contants';
+import { useGlobSetting } from '@/hooks/setting';
+import { numberFixed } from '@/utils';
 import { formatToDateTime } from '@/utils/dateUtil';
+import { Image } from 'ant-design-vue';
+
+const { appDomain } = useGlobSetting();
 
 export const getWithDrawFormConfig: (query: Record<string, any>) => Partial<FormProps> = ({
-  startTime,
-  endTime,
+  email,
 }) => {
-  console.log('startTime,endTime,', startTime, endTime);
   return {
     labelWidth: 100,
     schemas: [
       {
-        field: 'orderId',
+        field: 'id',
         label: 'OrderId',
         component: 'Input',
         colProps: {
@@ -22,6 +26,7 @@ export const getWithDrawFormConfig: (query: Record<string, any>) => Partial<Form
         field: 'email',
         label: 'Email',
         component: 'Input',
+        defaultValue: email ? email : '',
         colProps: {
           xl: 12,
           xxl: 8,
@@ -35,7 +40,7 @@ export function getBasicColumns(): BasicColumn[] {
   return [
     {
       title: 'OrderId',
-      dataIndex: 'orderId',
+      dataIndex: 'id',
       fixed: true,
     },
     {
@@ -47,14 +52,33 @@ export function getBasicColumns(): BasicColumn[] {
       dataIndex: 'email',
     },
     {
+      title: 'Attachment',
+      dataIndex: 'attachments',
+      customRender({ value }) {
+        const imgFile = (value || [])[0] || {};
+        const { url, name } = imgFile;
+        if (!url) {
+          return null;
+        }
+        return (
+          <div class={'w-[100px] h-[100px] flex items-center'}>
+            <Image class={'rounded-[4px]'} width={100} src={`${appDomain}${url}`} alt={name} />
+          </div>
+        );
+      },
+    },
+    {
       title: 'Price',
-      dataIndex: 'price',
+      dataIndex: 'amount',
+      customRender({ value }) {
+        return numberFixed((+value || 0) / 100, 2);
+      },
     },
     {
       title: 'Create Time',
-      dataIndex: 'time',
+      dataIndex: 'ctime',
       customRender({ value }) {
-        return formatToDateTime(value);
+        return formatToDateTime(value * 1000);
       },
     },
     {
@@ -64,10 +88,13 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: 'Status',
       dataIndex: 'status',
+      customRender({ value }) {
+        return ORDER_TEXT[value];
+      },
     },
     {
       title: 'Operation',
-      width: 300,
+      width: 150,
       dataIndex: 'operation',
     },
   ];

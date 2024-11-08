@@ -3,55 +3,52 @@
     v-bind="$attrs"
     v-model:open="open"
     @register="register"
-    :title="'Chat'"
+    :title="'Details'"
     :showCancelBtn="false"
     @ok="confirm"
   >
-    <Table :columns="columns" />
+    <Table :columns="columns" :data-source="dataSource" />
   </BasicModal>
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue';
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { Table } from 'ant-design-vue';
+  import { numberFixed } from '@/utils';
 
   const loading = ref(true);
   const open = ref(false);
+  const dataSource = ref([]);
 
   const [register, { setModalProps }] = useModalInner(async (data) => {
-    console.log(data);
+    dataSource.value = data;
     setModalProps({ width: 800 });
     loading.value = true;
   });
 
   const columns = [
     {
-      name: 'Name',
+      title: 'Name',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
+      title: 'Num',
+      dataIndex: 'num',
+      key: 'num',
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-    },
-    {
-      title: 'Action',
-      key: 'action',
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+      customRender({ value }) {
+        return numberFixed(+value / 100 || 0, 2);
+      },
     },
   ];
 
   const confirm = () => {
+    dataSource.value = [];
     open.value = false;
   };
 </script>

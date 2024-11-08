@@ -1,12 +1,15 @@
 <template>
-  <Table :columns="columns" :data-source="dataSource" :pagination="{ pageSize: 5 }" rowKey="id">
-    <template #bodyCell="{ column, index }">
+  <Table :columns="columns" :data-source="dataSource" :pagination="{ pageSize: 5 }">
+    <template #bodyCell="{ column, record }">
       <template v-if="column.key && column.key !== 'name' && column.key !== 'opt'">
         <input
           class="border-[#D9D9D9] border-[1px] px-[11px] h-[32px] leading-[32px] rounded-[6px]"
-          :value="modelValue[index][column.key]"
-          @input="(e) => valueChange(e, index, column.key)"
+          :value="modelValue[record.id]"
+          @input="(e) => valueChange(e, record.id)"
         />
+      </template>
+      <template v-if="column.key && column.key === 'opt'">
+        <div @click="record['del'](record.id)" class="text-[#ed6f6f] cursor-pointer">delete</div>
       </template>
     </template>
   </Table>
@@ -26,17 +29,17 @@
       default: () => [],
     },
     modelValue: {
-      type: Array as PropType<{ [key: string]: string }[]>,
-      default: () => [],
+      type: Object as PropType<{ [key: string]: string }>,
+      default: () => ({}),
     },
   });
 
   const emits = defineEmits(['update:modelValue']);
 
-  const valueArray = reactive(Array.from({ length: 10 }, () => ({})));
+  const valueMap = reactive({});
 
-  const valueChange = (e, index, name) => {
-    valueArray[index][name] = e.target.value;
-    emits('update:modelValue', valueArray);
+  const valueChange = (e, id) => {
+    valueMap[id] = e.target.value;
+    emits('update:modelValue', valueMap);
   };
 </script>

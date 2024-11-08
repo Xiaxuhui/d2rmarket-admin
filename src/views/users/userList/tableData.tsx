@@ -1,4 +1,6 @@
 import { BasicColumn, FormProps } from '@/components/Table';
+import { PageEnum } from '@/enums/pageEnum';
+import { router } from '@/router';
 
 export const getFormConfig: ({ label }: { label: string }) => Partial<FormProps> = () => {
   return {
@@ -61,8 +63,21 @@ export const getBasicColumns: () => BasicColumn[] = () => {
     {
       title: 'Order Record',
       dataIndex: 'record',
-      customRender() {
-        return <a onClick={() => {}}>record</a>;
+      customRender({ record }) {
+        return (
+          <a
+            onClick={() => {
+              router.push({
+                path: PageEnum.ORDER_LIST,
+                query: {
+                  email: record.email,
+                },
+              });
+            }}
+          >
+            record
+          </a>
+        );
       },
     },
   ];

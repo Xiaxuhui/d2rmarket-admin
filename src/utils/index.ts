@@ -1,8 +1,9 @@
 import type { RouteLocationNormalized, RouteRecordNormalized } from 'vue-router';
 import type { App, Component } from 'vue';
-
+import BigNumber from 'bignumber.js';
 import { cloneDeep, intersectionWith, isEqual, mergeWith, unionWith } from 'lodash-es';
 import { unref } from 'vue';
+import { LocationQueryValueRaw } from 'vue-router';
 import { isArray, isObject } from '@/utils/is';
 import { RcFile } from 'ant-design-vue/es/vc-upload/interface';
 import { useLabelStore } from '../store/modules/label';
@@ -209,4 +210,14 @@ export const fileToSha256 = (file: RcFile): Promise<string> => {
     };
     reader.readAsArrayBuffer(file);
   });
+};
+
+export const numberFixed = (
+  num: number | string | LocationQueryValueRaw | LocationQueryValueRaw[],
+  pos = 4,
+) => {
+  if (!num) return 0;
+  const base = Math.pow(10, pos);
+  const basePow = Math.floor(+BigNumber(Number(num)).multipliedBy(base).valueOf());
+  return +BigNumber(basePow).div(base).valueOf();
 };

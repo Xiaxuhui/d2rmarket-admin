@@ -21,26 +21,6 @@ export const getFormConfig: () => Partial<FormProps> = () => {
   };
 };
 
-export const getSeriesColumns: () => BasicColumn[] = () => {
-  return [
-    {
-      title: '剧名',
-      dataIndex: 'name',
-      width: 150,
-      ellipsis: true,
-    },
-    {
-      title: '剧描述',
-      dataIndex: 'info',
-    },
-    {
-      title: '设置时间',
-      dataIndex: 'time',
-      width: 150,
-    },
-  ];
-};
-
 export function getBasicColumns(): BasicColumn[] {
   return [
     {

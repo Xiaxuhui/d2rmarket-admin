@@ -6,6 +6,7 @@
       no-confirm
       @add="addAffix"
       @delete="deleteAffix"
+      :disabled="disabled"
   /></FormItem>
 </template>
 <script lang="ts" setup>
@@ -26,6 +27,7 @@
       type: Object as PropType<{ name: string; id: number | string }[]>,
       default: () => [],
     },
+    disabled: Boolean,
   });
 
   const valueArr = computed({
@@ -40,7 +42,7 @@
   const emits = defineEmits(['update:modelValue']);
 
   const addAffix = (name: string) => {
-    addTag({ name, descTpl: `%d ${name}`, type: TEXT_TYPE.NUM })
+    addTag({ name, descTpl: `[] ${name}`, type: TEXT_TYPE.NUM })
       .then((res) => {
         valueArr.value = [...valueArr.value, { name: res.name, id: res.id }];
       })
@@ -49,8 +51,8 @@
       });
   };
 
-  const deleteAffix = (id) => {
-    deleteTag({ id })
+  const deleteAffix = ({ id, name }) => {
+    deleteTag({ id, name, descTpl: `[] ${name}` })
       .then(() => {
         const handleArr = valueArr.value.filter((item) => item.id !== id);
         valueArr.value = handleArr;

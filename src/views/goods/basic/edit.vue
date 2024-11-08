@@ -1,6 +1,11 @@
 <template>
   <div class="m-4 bg-white">
-    <BasicForm class="local_form" @register="register" @submit="handleSubmit">
+    <BasicForm
+      class="local_form"
+      @register="register"
+      @submit="handleSubmit"
+      :disabled="!!baseId && !isEdit"
+    >
       <template #resetBefore>
         <a-button class="mr-2" @click="back">back</a-button>
       </template>
@@ -22,11 +27,8 @@
 
   const route = useRoute();
   const baseId = route.query.id;
-  // const isEdit = route.query.type === 'edit';
-  // const route = useRoute();
+  const isEdit = Boolean(baseId && route.query.type === 'edit');
   const { appDomain } = useGlobSetting();
-  // const id = route.query.id;
-  // const type = route.query.type;
 
   interface IParams {
     name: string;
@@ -97,7 +99,7 @@
           span: 20,
         },
         renderColContent({ model, field }) {
-          return <AffixField vModel={model[field]} />;
+          return <AffixField vModel={model[field]} disabled={!!baseId && !isEdit} />;
         },
       },
     ] as FormSchema[];
@@ -113,7 +115,7 @@
     submitButtonOptions: {
       text: 'Submit',
     },
-    showSubmitButton: true,
+    showSubmitButton: Boolean(!baseId || isEdit),
     showResetButton: false,
   });
 
@@ -146,7 +148,7 @@
   };
 
   onMounted(async () => {
-    getData(baseId);
+    baseId && getData(baseId);
   });
 
   const handleParams = (
@@ -170,14 +172,11 @@
   };
 
   function handleSubmit(values: any) {
-    console.log('values', values);
     const params = handleParams(values);
-    console.log('params', params);
     if (baseId) {
       params.id = +baseId;
     }
     addPropBase(params).then((res) => {
-      console.log('res', res);
       back();
     });
   }

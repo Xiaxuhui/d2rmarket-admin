@@ -4,36 +4,52 @@
       :api="optionsListApi"
       v-model:value="selectValue"
       showSearch
+      alwaysLoad
       optionFilterProp="label"
-      resultField="list"
-      labelField="name"
-      valueField="id"
+      labelField="label"
+      valueField="value"
       @options-change="optionsChange"
     />
-    <FieldTable class="mt-[10px]" v-model="emitData" :columns="columns" :data-source="dataSource" />
+    <UniteTable class="mt-[10px]" v-model="valueMap" :columns="columns" :data-source="dataSource" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { optionsListApi } from '@/api/demo/select';
   import { ApiSelect } from '@/components/Form';
   import { ColumnsType } from 'ant-design-vue/es/table';
-  import FieldTable from './fieldTable.vue';
+  import { DefaultOptionType } from 'ant-design-vue/es/vc-select/Select';
+  import UniteTable from './uniteTable.vue';
   import { computed, ref, watch } from 'vue';
 
   const props = defineProps({
     modelValue: {
-      type: Array as PropType<{ name: string; value: number }[]>,
+      type: Object as PropType<{ [key: string]: string }>,
       default: () => [],
     },
     columns: {
       type: Array as PropType<ColumnsType>,
       default: () => [],
     },
+    selections: {
+      type: Array as PropType<DefaultOptionType[]>,
+      default: () => [],
+    },
   });
 
   const emits = defineEmits(['update:modelValue']);
 
-  const emitData = computed({
+  const dataSource = ref<{ name: string; id: number; key?: number; [key: string]: any }[]>([]);
+
+  watch(
+    () => props.selections,
+    (val) => {
+      console.log('props.selections', props.selections);
+      selectValue.value = '';
+      valueMap.value = {};
+      dataSource.value = [];
+    },
+  );
+
+  const valueMap = computed({
     get() {
       return props.modelValue;
     },
@@ -46,7 +62,11 @@
 
   const selectValue = ref();
 
-  const dataSource = ref<Record<string, any>[]>([]);
+  const optionsListApi = async (arg?: any) => {
+    return props.selections.map((item) => {
+      return { label: item.label, value: item.value + '' };
+    });
+  };
 
   const optionsChange = (val) => {
     options.value = val;
@@ -63,10 +83,12 @@
             key: +opt.value,
             id: opt.value,
             name: opt.label,
-            value: '',
-            del() {
-              cacheSet.value.delete(opt.value);
-              dataSource.value = dataSource.value.filter((item) => item.id !== opt.value);
+            del(id) {
+              if (id === selectValue.value) {
+                selectValue.value = '';
+              }
+              cacheSet.value.delete(id);
+              dataSource.value = dataSource.value.filter((item) => item.id !== id);
             },
           });
           console.log('dataSource.value', dataSource.value);

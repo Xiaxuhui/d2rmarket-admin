@@ -2,28 +2,13 @@
   <div class="m-4 bg-white">
     <BasicForm class="invest_form" @register="register" @submit="handleSubmit">
       <template #localSearch="{ model, field }">
-        <AffixField
+        <AffixField v-model="model[field]" :selections="currentSelections" :columns="affixColumn" />
+      </template>
+      <template #localRequire="{ model, field }">
+        <uniteTable
+          :columns="requireColumn"
+          :data-source="requireDateSource"
           v-model="model[field]"
-          :columns="[
-            {
-              title: 'Name',
-              dataIndex: 'name',
-              key: 'name',
-              width: 100,
-            },
-            {
-              title: 'Value',
-              dataIndex: 'value',
-              key: 'value',
-              width: 100,
-            },
-            {
-              title: 'Opt',
-              dataIndex: 'opt',
-              key: 'opt',
-              width: 100,
-            },
-          ]"
         />
       </template>
       <template #resetBefore>
@@ -34,18 +19,103 @@
 </template>
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { onMounted, reactive } from 'vue';
+  import { computed, onMounted, ref, unref, watch } from 'vue';
   import { useRouter } from 'vue-router';
-  import message from '@/views/form-design/utils/message';
   import { QUALITY_SELECTION } from '@/contants';
   import ImgSelector from './components/imgSelector.vue';
   import FieldTable from './components/fieldTable.vue';
+  import uniteTable from './components/uniteTable.vue';
   import AffixField from './components/affixField.vue';
+  import { locationTags } from '@/api/settings';
+  import { useGoodsStore } from '@/store/modules/goods';
 
   // const route = useRoute();
   // const goodsId = route.query.id;
 
-  const schemas: FormSchema[] = reactive([
+  enum REQUIRE_TYPE {
+    STRENGTH,
+    LEVEL,
+  }
+
+  const goods = useGoodsStore();
+
+  const currentImgList = ref([]);
+
+  const currentSelections = ref([]);
+
+  const currentType = ref('');
+
+  const priceDataSource = ref<{ name: string; id: number; key?: number; [key: string]: any }[]>([]);
+
+  const priceColumns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      width: 100,
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+      width: 100,
+    },
+    {
+      title: 'Inventory',
+      dataIndex: 'inventory',
+      key: 'inventory',
+      width: 100,
+    },
+  ];
+
+  const affixColumn = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      width: 100,
+    },
+    {
+      title: 'Value',
+      dataIndex: 'value',
+      key: 'value',
+      width: 100,
+    },
+    {
+      title: 'Opt',
+      dataIndex: 'opt',
+      key: 'opt',
+      width: 100,
+    },
+  ];
+
+  const requireColumn = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      width: 100,
+    },
+    {
+      title: 'Value',
+      dataIndex: 'value',
+      key: 'value',
+      width: 100,
+    },
+  ];
+
+  const requireDateSource = [
+    {
+      name: 'Strength',
+      id: REQUIRE_TYPE.STRENGTH,
+    },
+    {
+      name: 'Level',
+      id: REQUIRE_TYPE.LEVEL,
+    },
+  ];
+
+  const schemas = computed<FormSchema[]>(() => [
     {
       field: 'divider-basic',
       component: 'Divider',
@@ -57,6 +127,7 @@
     {
       field: 'name',
       component: 'Input',
+      required: true,
       label: 'Name:',
       colProps: {
         span: 8,
@@ -66,46 +137,25 @@
       field: 'channelName',
       component: 'Cascader',
       label: 'Type:',
+      required: true,
       colProps: {
         span: 8,
       },
       componentProps: {
-        options: [
-          {
-            value: 'zhejiang',
-            label: 'Zhejiang',
-            children: [
-              {
-                value: 'hangzhou',
-                label: 'Hangzhou',
-              },
-            ],
-          },
-          {
-            value: 'jiangsu',
-            label: 'Jiangsu',
-            children: [
-              {
-                value: 'nanjing',
-                label: 'Nanjing',
-              },
-            ],
-          },
-        ],
+        options: goods.typeOption,
       },
     },
     {
       field: 'img',
       component: 'Input',
+      required: true,
       label: 'Image:',
       render({ model, field }) {
         return (
           <ImgSelector
             vModel={model[field]}
-            imgList={[
-              { id: 144422, url: '/assets/144422.png' },
-              { id: 145431, url: '/assets/145431.png' },
-            ]}
+            imgList={currentImgList.value}
+            type={currentType.value}
           />
         );
       },
@@ -114,6 +164,7 @@
       field: 'quality',
       component: 'Select',
       label: 'Quality:',
+      required: true,
       colProps: {
         span: 8,
       },
@@ -122,9 +173,19 @@
       },
     },
     {
+      field: 'sundry',
+      component: 'Switch',
+      label: 'Sundry goods',
+      defaultValue: false,
+      colProps: {
+        span: 8,
+      },
+    },
+    {
       field: 'specific',
       component: 'Switch',
       label: 'Role specific',
+      defaultValue: false,
       colProps: {
         span: 8,
       },
@@ -139,79 +200,41 @@
       colProps: {
         span: 8,
       },
+      ifShow: ({ values }) => {
+        return values.specific;
+      },
     },
-
     {
       field: 'affix',
-      // component: 'Input',
-      label: 'affix:',
+      label: 'Affix:',
       slot: 'localSearch',
+      required: true,
       colProps: {
         span: 8,
       },
-      defaultValue: '0',
-      componentProps: {
-        onOptionsChange() {},
-      },
+      defaultValue: [],
     },
     {
       field: 'required',
-      component: 'Input',
       label: 'Required:',
+      slot: 'localRequire',
+      defaultValue: [],
       colProps: {
         span: 8,
-      },
-      render({ model, field }) {
-        return (
-          <FieldTable
-            columns={[
-              {
-                title: 'Name',
-                dataIndex: 'name',
-                key: 'name',
-                width: 100,
-              },
-              {
-                title: 'Value',
-                dataIndex: 'value',
-                key: 'value',
-                width: 100,
-              },
-            ]}
-            vModel={model[field]}
-          />
-        );
       },
     },
     {
       field: 'price',
       component: 'Input',
-
       label: 'Price/Inventory:',
+      required: true,
+      defaultValue: Array.from({ length: 10 }, () => ({})),
       render({ model, field }) {
         return (
           <FieldTable
-            columns={[
-              {
-                title: 'Name',
-                dataIndex: 'name',
-                key: 'name',
-                width: 100,
-              },
-              {
-                title: 'Price',
-                dataIndex: 'price',
-                key: 'price',
-                width: 100,
-              },
-              {
-                title: 'Inventory',
-                dataIndex: 'inventory',
-                key: 'inventory',
-                width: 100,
-              },
-            ]}
+            columns={priceColumns}
             vModel={model[field]}
+            dataSource={priceDataSource.value}
           />
         );
       },
@@ -223,10 +246,17 @@
 
   const { back } = useRouter();
 
-  const [register] = useForm({
+  watch(currentType, (val) => {
+    if (!val) {
+      currentSelections.value = [];
+      currentImgList.value = [];
+    }
+  });
+
+  const [register, { updateSchema }] = useForm({
     labelWidth: 120,
     isNotRow: true,
-    schemas,
+    schemas: unref(schemas),
     actionColOptions: {
       span: 10,
     },
@@ -237,15 +267,41 @@
     showSubmitButton: true,
   });
 
-  onMounted(async () => {});
+  onMounted(async () => {
+    goods.getBaseList().then(() => {
+      updateSchema({
+        field: 'channelName',
+        component: 'Cascader',
+        label: 'Type:',
+        colProps: {
+          span: 8,
+        },
+        componentProps: {
+          options: goods.typeOption,
+          onChange: (_, opt) => {
+            if (opt && opt[1]) {
+              currentType.value = opt.join('');
+              currentImgList.value = opt[1].imgList;
+              currentSelections.value = opt[1].affixList;
+            } else {
+              currentType.value = '';
+            }
+          },
+        },
+      });
+    });
+    locationTags().then((res) => {
+      priceDataSource.value = res;
+    });
+  });
+
+  const formatValues = (values: any) => {
+    return values;
+  };
 
   async function handleSubmit(values: any) {
-    const { min, max } = values;
-    if (!Number.isInteger(Number(min)) || !Number.isInteger(Number(max))) {
-      return message.error('回传范围必须是整数');
-    }
-
-    back();
+    const params = formatValues(values);
+    console.log('params', params);
   }
 </script>
 <style lang="less" scoped>

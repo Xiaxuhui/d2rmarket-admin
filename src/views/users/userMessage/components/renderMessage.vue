@@ -4,7 +4,7 @@
     <div :class="messageCardStyle({ isMyself })">
       <div class="flex items-center break-all">
         <template v-if="message.type === IMessageType.IMG">
-          <img class="max-w-[600px]" :src="message.data" alt="" />
+          <Image class="max-w-[200px]" :src="`${appDomain}${message.data}`" alt="" />
         </template>
         <template v-else>
           {{ message.data }}
@@ -17,6 +17,8 @@
   import { tv } from 'tailwind-variants';
   import { IMessageType } from '../definition';
   import { formatToDateTime } from '@/utils/dateUtil';
+  import { useGlobSetting } from '@/hooks/setting';
+  import { Image } from 'ant-design-vue';
 
   defineProps({
     isMyself: Boolean,
@@ -25,6 +27,8 @@
       default: () => ({}),
     },
   });
+
+  const { appDomain } = useGlobSetting();
 
   const styles = tv({
     slots: {

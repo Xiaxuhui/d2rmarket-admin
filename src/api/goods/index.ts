@@ -17,8 +17,8 @@ export const baseList = (params) => {
   return defHttp.get({ url: Api.baseList, params });
 };
 
-export const deleteTag = ({ id }) => {
-  return defHttp.post({ url: Api.addTag, params: { id } });
+export const deleteTag = (params) => {
+  return defHttp.post({ url: Api.addTag, params });
 };
 
 export const propBase = (id) => {
@@ -48,6 +48,10 @@ export const propBase = (id) => {
 };
 
 export const addPropBase = (params) => {
+  return defHttp.post({ url: Api.addPropBase, params });
+};
+
+export const deletePropBase = (params: { deleteId: number }) => {
   return defHttp.post({ url: Api.addPropBase, params });
 };
 

@@ -1,9 +1,9 @@
 import { defHttp } from '@/utils/http/axios';
 
 enum Api {
-  messageList = '/app/queryMsg?uid=100',
-  sendMessage = '/gm/sendMsg?uid=100',
-  userMessageList = '/gm/queryMsgList?uid=100',
+  messageList = '/app/queryMsg',
+  sendMessage = '/gm/sendMsg',
+  userMessageList = '/gm/queryMsgList',
 }
 
 export const userMessageList = (params) => {

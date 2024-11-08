@@ -6,7 +6,7 @@
           v-if="column.dataIndex === 'detail'"
           @click="
             () => {
-              openModal(true, 1);
+              openModal(true, record.details);
             }
           "
         >
@@ -19,27 +19,59 @@
               {
                 label: 'send',
                 icon: 'material-symbols:send-outline',
+                ifShow: record.status === ORDER_STATUS.PAID,
                 onClick() {
-                  console.log(record);
+                  updateOrder({ state: ORDER_STATUS.BE_SENDING, ids: record.id }).then(() =>
+                    reload(),
+                  );
                 },
               },
               {
                 label: 'complete',
-                icon: 'carbon:task-complete',
+                icon: currentIds[record.id] ? 'eos-icons:loading' : 'carbon:task-complete',
+                ifShow: record.status === ORDER_STATUS.BE_SENDING,
+                color: currentIds[record.id] ? 'success' : undefined,
                 onClick() {
-                  console.log(record);
+                  return uploadAttachment(record.id);
                 },
               },
               {
                 label: 'delete',
                 icon: 'material-symbols:delete-outline',
                 color: 'error',
-                onClick() {
-                  console.log(record);
+                ifShow: [ORDER_STATUS.DONE, ORDER_STATUS.OVERTIME].includes(record.status),
+                popConfirm: {
+                  title: 'confirm delete?',
+                  confirm: () => {
+                    updateOrder({ state: ORDER_STATUS.DELETE, ids: record.id }).then(() =>
+                      reload(),
+                    );
+                  },
                 },
               },
             ]"
-          />
+          >
+          </TableAction>
+          <Upload
+            class="hidden"
+            name="file"
+            @change="(fileObj) => handleChange(fileObj, record.id)"
+            :action="uploadUrl"
+            :showUploadList="false"
+            accept=".jpg,.jpeg,.gif,.png,.webp"
+          >
+            <div
+              :ref="
+                (el) => {
+                  if (el) {
+                    uploadRef[record.id] = el;
+                  }
+                }
+              "
+              class="hidden"
+              >click</div
+            >
+          </Upload>
         </template>
       </template>
     </BasicTable>
@@ -48,27 +80,25 @@
 </template>
 <script lang="ts" setup>
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { orderList } from '@/api/order';
+  import { orderList, updateOrder } from '@/api/order';
   import { useRoute } from 'vue-router';
+  import { Upload } from 'ant-design-vue';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
   import DetailDialog from './components/detailDialog.vue';
   import { useModal } from '@/components/Modal';
+  import { ORDER_STATUS } from '@/contants';
+  import { useGlobSetting } from '@/hooks/setting';
+  import { ref } from 'vue';
 
   const route = useRoute();
 
   const [registerModal, { openModal }] = useModal();
 
-  const [registerTable] = useTable({
+  const { uploadUrl } = useGlobSetting();
+
+  const [registerTable, { reload }] = useTable({
     title: 'Order List',
-    api: (params) => {
-      const { startTime, endTime } = params;
-      const param: Record<string, any> = {};
-      if (startTime && endTime) {
-        param.startTime = new Date(startTime).getTime();
-        param.endTime = new Date(endTime).getTime();
-      }
-      return orderList({ ...params, ...param });
-    },
+    api: orderList,
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(route.query),
@@ -82,4 +112,26 @@
     },
     pagination: { pageSize: 20, pageSizeOptions: ['20'] },
   });
+
+  const uploadRef = ref<any>({});
+
+  const currentIds = ref({});
+
+  const handleChange = ({ file }, id) => {
+    currentIds.value[id] = true;
+    if (file.response) {
+      const { data } = file.response;
+      updateOrder({ state: ORDER_STATUS.DONE, ids: id, imgs: data.id }).then(() => {
+        currentIds.value[id] = false;
+        reload();
+      });
+    }
+  };
+
+  const uploadAttachment = (id) => {
+    if (currentIds.value[id]) {
+      return;
+    }
+    uploadRef.value[id]?.click();
+  };
 </script>

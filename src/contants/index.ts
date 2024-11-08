@@ -6,7 +6,7 @@ export enum TYPE_ENUM {
 }
 
 export enum QUALITY_ENUM {
-  Common,
+  Common = 1,
   Magic,
   Uncommon,
   Unique,
@@ -14,6 +14,23 @@ export enum QUALITY_ENUM {
   Runewords,
   Handmade,
 }
+
+export enum ORDER_STATUS {
+  DELETE = -1,
+  UNPAID = 1,
+  PAID = 5,
+  BE_SENDING = 10,
+  DONE = 15,
+  OVERTIME = 20,
+}
+
+export const ORDER_TEXT = {
+  [ORDER_STATUS.UNPAID]: 'unpaid',
+  [ORDER_STATUS.PAID]: 'paid',
+  [ORDER_STATUS.BE_SENDING]: 'be sending',
+  [ORDER_STATUS.DONE]: 'done',
+  [ORDER_STATUS.OVERTIME]: 'overtime',
+};
 
 export const TYPE_SELECTION = [
   {

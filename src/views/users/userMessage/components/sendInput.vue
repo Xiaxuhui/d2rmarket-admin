@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row items-center h-16 rounded-xl bg-white w-full">
     <div class="flex items-center justify-center text-gray-400 hover:text-gray-600">
-      <UploadFile :disabled="disabled" />
+      <UploadFile :disabled="disabled" :file-loading="fileLoading" @fileChange="fileChange" />
     </div>
     <div class="flex-grow ml-2">
       <div class="relative w-full">
@@ -53,13 +53,18 @@
   import { ref } from 'vue';
   import UploadFile from './uploadFile.vue';
 
-  const emit = defineEmits(['send']);
+  const emit = defineEmits(['send', 'fileChange']);
 
   defineProps({
     disabled: Boolean,
+    fileLoading: Boolean,
   });
 
   const message = ref('');
+
+  const fileChange = (fileObj) => {
+    emit('fileChange', fileObj);
+  };
 
   const sendMsg = () => {
     emit('send', message.value);

@@ -68,7 +68,12 @@
           </div>
         </div>
       </div>
-      <SendInput @send="sendUserMessage" :disabled="loading" />
+      <SendInput
+        @send="sendUserMessage"
+        @file-change="fileChange"
+        :disabled="loading"
+        :file-loading="fileLoading"
+      />
     </div>
   </BasicModal>
 </template>
@@ -78,13 +83,14 @@
   import { messageList as getMessageList, sendMessage } from '@/api/users/message';
   import SendInput from './sendInput.vue';
   import RenderMessage from './renderMessage.vue';
-  import { IMessage, IMessageState } from '../definition';
+  import { IMessage, IMessageState, IMessageType } from '../definition';
 
   const messageList = ref<IMessage[]>([]);
 
   const qid = ref();
   const replyId = ref();
   const loading = ref(true);
+  const fileLoading = ref(false);
   const stop = ref(false);
 
   const [register, { setModalProps }] = useModalInner(async (data) => {
@@ -103,7 +109,22 @@
   });
 
   const sendUserMessage = (message: string) => {
-    sendMessage({ data: message, qid: qid.value, replyId: replyId.value });
+    sendMessage({ data: message, qid: qid.value, replyId: replyId.value, type: IMessageType.TEXT });
+  };
+
+  const fileChange = (fileObj: any) => {
+    const { file } = fileObj;
+    fileLoading.value = true;
+    if (file.response) {
+      const { data } = file.response;
+      fileLoading.value = false;
+      sendMessage({
+        data: data.id,
+        qid: qid.value,
+        replyId: replyId.value,
+        type: IMessageType.IMG,
+      });
+    }
   };
 
   const getRealMessageList = async (qid) => {
@@ -111,6 +132,7 @@
       const list = await getMessageList({ qid }).catch((err) => {
         console.log(err.message);
       });
+      console.log('messageList.value', messageList.value);
       if (list.length !== messageList.value.length) {
         messageList.value = list;
         messageView();
@@ -127,8 +149,8 @@
     });
   };
 
-  watch([qid, loading], ([q, l]) => {
-    if (q && !l) {
+  watch([qid, loading, stop], ([q, l, s]) => {
+    if (q && !l && !s) {
       getRealMessageList(q);
     }
   });

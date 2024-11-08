@@ -2,12 +2,15 @@
   <div class="flex items-center flex-wrap">
     <template v-if="imgList.length">
       <div
-        :class="styles.imgContainer({ active: activeId === item.id })"
+        class="ml-[10px] mt-[10px]"
         v-for="item in imgList"
         :key="item.id"
         @click="chooseImg(item.id)"
       >
-        <img class="w-[100px] h-[100px] rounded-[4px]" :src="`${appDomain}${item.url}`" alt="" />
+        <div :class="styles.imgContainer({ active: activeId === item.id })">
+          <img class="w-[100px] h-[100px] rounded-[4px]" :src="`${appDomain}${item.url}`" alt="" />
+        </div>
+        <div :class="styles.text({ active: activeId === item.id })">{{ item.id }}</div>
       </div>
     </template>
     <img v-else class="w-[100px] h-[100px] rounded-[4px]" :src="ERROR_IMG" alt="" />
@@ -17,17 +20,19 @@
   import { ERROR_IMG } from '@/contants';
   import { useGlobSetting } from '@/hooks/setting';
   import { tv } from 'tailwind-variants';
-  import { computed } from 'vue';
+  import { computed, watch } from 'vue';
 
   const styles = tv({
     slots: {
       imgContainer:
-        'cursor-pointer border-[2px] border-transparent rounded-[4px] ml-[10px] mt-[10px]',
+        'cursor-pointer border-[2px] border-transparent rounded-[4px]flex-col items-center',
+      text: 'text-center leading-[32px]',
     },
     variants: {
       active: {
         true: {
-          imgContainer: 'border-red',
+          imgContainer: 'border-red rounded-[4px]',
+          text: 'text-red',
         },
       },
     },
@@ -40,6 +45,13 @@
     },
     modelValue: Number,
   });
+
+  watch(
+    () => props.imgList,
+    () => {
+      activeId.value = undefined;
+    },
+  );
 
   const emits = defineEmits(['update:modelValue']);
   const { appDomain } = useGlobSetting();

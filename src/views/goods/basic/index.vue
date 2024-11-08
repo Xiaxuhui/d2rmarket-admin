@@ -30,19 +30,18 @@
                 label: 'View',
                 icon: 'hugeicons:view',
                 onClick() {
-                  viewBasic();
+                  viewBasic(record.id);
                 },
               },
               {
                 label: 'Delete',
                 icon: 'material-symbols:delete-outline',
                 color: 'error',
-                onClick() {
-                  deleteBasic();
-                },
                 popConfirm: {
                   title: 'confirm delete?',
-                  confirm: () => {},
+                  confirm: () => {
+                    deleteBasic(record.id);
+                  },
                 },
               },
             ]"
@@ -57,9 +56,9 @@
   import { getBasicColumns, getFormConfig } from './tableData';
   import { useGo } from '@/hooks/web/usePage';
   import { PageEnum } from '@/enums/pageEnum';
-  import { baseList } from '@/api/goods';
+  import { baseList, deletePropBase } from '@/api/goods';
 
-  const [register] = useTable({
+  const [register, { reload }] = useTable({
     title: 'Basic Goods',
     api: baseList,
     columns: getBasicColumns(),
@@ -85,7 +84,18 @@
     });
   };
 
-  const deleteBasic = () => {};
+  const deleteBasic = (id) => {
+    return deletePropBase({ deleteId: id }).then(() => {
+      reload();
+    });
+  };
 
-  const viewBasic = () => {};
+  const viewBasic = (id) => {
+    go({
+      path: PageEnum.BASIC_SETTING,
+      query: {
+        id,
+      },
+    });
+  };
 </script>
