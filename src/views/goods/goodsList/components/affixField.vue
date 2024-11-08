@@ -23,7 +23,7 @@
   const props = defineProps({
     modelValue: {
       type: Object as PropType<{ [key: string]: string }>,
-      default: () => [],
+      default: () => ({}),
     },
     columns: {
       type: Array as PropType<ColumnsType>,
@@ -41,8 +41,7 @@
 
   watch(
     () => props.selections,
-    (val) => {
-      console.log('props.selections', props.selections);
+    () => {
       selectValue.value = '';
       valueMap.value = {};
       dataSource.value = [];
@@ -62,7 +61,7 @@
 
   const selectValue = ref();
 
-  const optionsListApi = async (arg?: any) => {
+  const optionsListApi = async () => {
     return props.selections.map((item) => {
       return { label: item.label, value: item.value + '' };
     });
@@ -91,7 +90,6 @@
               dataSource.value = dataSource.value.filter((item) => item.id !== id);
             },
           });
-          console.log('dataSource.value', dataSource.value);
         }
       }
     }
