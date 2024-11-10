@@ -19,7 +19,7 @@ export default defineApplicationConfig({
     server: {
       proxy: {
         '/basic-api': {
-          target: 'https://d2.dyna1.asia',
+          target: 'http://42.193.157.49:8848',
           // target: 'http://localhost:3000',
           changeOrigin: true,
           ws: true,
@@ -28,7 +28,7 @@ export default defineApplicationConfig({
           // secure: false
         },
         '/gm/upload': {
-          target: 'https://d2.dyna1.asia',
+          target: 'https://d2-test.dyna1.asia',
           changeOrigin: true,
           ws: true,
           // rewrite: (path) => path.replace(new RegExp(`^/upload`), ''),

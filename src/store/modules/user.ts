@@ -106,7 +106,7 @@ export const useUserStore = defineStore({
     ): Promise<any> {
       try {
         const { goHome = true, mode, ...loginParams } = params;
-        const data = await loginApi(loginParams, mode);
+        const data = await loginApi({ ...loginParams }, mode);
         const { ltime } = data;
         // save token
         this.setToken(ltime);
@@ -143,7 +143,7 @@ export const useUserStore = defineStore({
       if (!this.getToken) return null;
       const userInfo = await getUserInfo();
       const { permissions } = userInfo;
-      const role = ROLE_REFLECT[permissions];
+      const role = ROLE_REFLECT[permissions || 0];
       // const { roles = [] } = userInfo;
       this.setRoleList([role]);
       // if (isArray(roles)) {

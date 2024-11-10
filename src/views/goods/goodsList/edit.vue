@@ -20,17 +20,19 @@
 <script lang="tsx" setup>
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { computed, onMounted, ref, unref, watch } from 'vue';
-  import { useRouter } from 'vue-router';
+  import { useRouter, useRoute } from 'vue-router';
   import { QUALITY_SELECTION } from '@/contants';
   import ImgSelector from './components/imgSelector.vue';
   import FieldTable from './components/fieldTable.vue';
   import uniteTable from './components/uniteTable.vue';
   import AffixField from './components/affixField.vue';
   import { locationTags } from '@/api/settings';
+  import { addProduct, productData } from '@/api/goods';
   import { useGoodsStore } from '@/store/modules/goods';
 
-  // const route = useRoute();
-  // const goodsId = route.query.id;
+  const route = useRoute();
+  const goodsId = route.query.id;
+  // const isEdit = Boolean(goodsId && route.query.type === 'edit');
 
   enum REQUIRE_TYPE {
     STRENGTH,
@@ -44,6 +46,8 @@
   const currentSelections = ref([]);
 
   const currentType = ref('');
+
+  const pendingData = ref<any>(null);
 
   const priceDataSource = ref<{ name: string; id: number; key?: number; [key: string]: any }[]>([]);
 
@@ -151,13 +155,8 @@
       required: true,
       label: 'Image:',
       render({ model, field }) {
-        return (
-          <ImgSelector
-            vModel={model[field]}
-            imgList={currentImgList.value}
-            type={currentType.value}
-          />
-        );
+        console.log('model[field]', model[field], currentImgList.value);
+        return <ImgSelector vModel={model[field]} imgList={currentImgList.value} />;
       },
     },
     {
@@ -253,7 +252,7 @@
     }
   });
 
-  const [register, { updateSchema }] = useForm({
+  const [register, { updateSchema, setFieldsValue }] = useForm({
     labelWidth: 120,
     isNotRow: true,
     schemas: unref(schemas),
@@ -266,6 +265,81 @@
     showResetButton: false,
     showSubmitButton: true,
   });
+
+  const formatResponse = (res) => {
+    const { img, ptype, attrs, name, type, role, quantity, required, sundry } = res;
+    const [strength, level] = required.split(',');
+
+    return {
+      name,
+      img,
+      channelName: [ptype, type],
+      role,
+      quality: quantity,
+      required: {
+        [REQUIRE_TYPE.STRENGTH]: strength,
+        [REQUIRE_TYPE.LEVEL]: level,
+      },
+      sundry: !!sundry,
+      affix: attrs.reduce((prev, nxt) => {
+        return {
+          ...prev,
+          [nxt.aid]: nxt.value,
+        };
+      }, {}),
+    };
+  };
+
+  const initData = async () => {
+    goodsId &&
+      productData({ id: goodsId }).then((res) => {
+        console.log('res', res);
+        const { affix, channelName, img, ...rest } = formatResponse(res);
+
+        setFieldsValue(rest);
+        pendingData.value = {
+          affix,
+          channelName,
+          img,
+        };
+        if (!goods.loading && priceDataSource.value.length) {
+          initPendingData(pendingData.value);
+        }
+      });
+  };
+
+  const initPendingData = (pendingData) => {
+    console.log('pendingData', pendingData, goods.typeOption);
+    const { channelName } = pendingData;
+    const [ptype, type] = channelName;
+    for (let item of goods.typeOption) {
+      if (+ptype === item.value && item.children) {
+        for (let child of item.children) {
+          if (+type === child.value) {
+            currentType.value = channelName.join('');
+            currentImgList.value = child.imgList;
+            currentSelections.value = child.affixList;
+            console.log(
+              'currentType.value ',
+              currentType.value,
+              currentImgList.value,
+              currentSelections.value,
+            );
+          }
+        }
+      }
+    }
+    setFieldsValue(pendingData);
+  };
+
+  watch(
+    () => priceDataSource.value,
+    (newPriceData) => {
+      if (goodsId && pendingData.value && !goods.loading && newPriceData.length) {
+        initPendingData(pendingData.value);
+      }
+    },
+  );
 
   onMounted(async () => {
     goods.getBaseList().then(() => {
@@ -293,15 +367,54 @@
     locationTags().then((res) => {
       priceDataSource.value = res;
     });
+    initData();
   });
 
   const formatValues = (values: any) => {
-    return values;
+    const {
+      affix = {},
+      channelName,
+      img,
+      name,
+      price,
+      quality,
+      required = {},
+      role,
+      sundry,
+    } = values;
+    const [, type] = channelName || [];
+    return {
+      img,
+      name,
+      quality,
+      type,
+      role,
+      sundry: sundry ? 1 : 0,
+      attrs: Object.entries(affix).map(([key, item]) => {
+        return {
+          aid: key,
+          value: item,
+        };
+      }),
+      required: Object.values(required).join(',') || '0,0',
+      price: priceDataSource.value.map((item, index) => {
+        return {
+          season: item.id,
+          price: price[index].price,
+          stock: price[index].inventory,
+        };
+      }),
+    };
   };
 
   async function handleSubmit(values: any) {
     const params = formatValues(values);
-    console.log('params', params);
+
+    console.log('params', JSON.stringify(params));
+
+    addProduct(params).then(() => {
+      back();
+    });
   }
 </script>
 <style lang="less" scoped>

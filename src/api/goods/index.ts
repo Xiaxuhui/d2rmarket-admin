@@ -1,4 +1,5 @@
 import { TYPE_ENUM } from '@/contants';
+import { ContentTypeEnum } from '@/enums/httpEnum';
 import { defHttp } from '@/utils/http/axios';
 
 enum Api {
@@ -7,6 +8,9 @@ enum Api {
   propBase = '/gm/propBase',
   addPropBase = '/gm/addPropBase',
   goodsList = '/gm/productList',
+  addProduct = '/gm/addProduct',
+  updateProduct = '/gm/updateProduct',
+  productData = '/gm/productData',
 }
 
 export const addTag = (params) => {
@@ -57,4 +61,20 @@ export const deletePropBase = (params: { deleteId: number }) => {
 
 export const goodsList = (params) => {
   return defHttp.get({ url: Api.goodsList, params });
+};
+
+export const addProduct = (params) => {
+  return defHttp.post({
+    url: Api.addProduct,
+    params,
+    headers: { 'Content-Type': ContentTypeEnum.JSON },
+  });
+};
+
+export const productData = (params) => {
+  return defHttp.get({ url: Api.productData, params });
+};
+
+export const updateProduct = (params) => {
+  return defHttp.post({ url: Api.updateProduct, params });
 };

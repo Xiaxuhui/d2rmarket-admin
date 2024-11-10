@@ -29,7 +29,7 @@
               label: 'View',
               icon: 'hugeicons:view',
               onClick() {
-                edit(record.id);
+                view(record.id);
               },
             },
             {
@@ -76,6 +76,16 @@
   });
   const go = useGo();
   const edit = (id) => {
+    go({
+      path: PageEnum.GOODS_SETTING,
+      query: {
+        id,
+        type: 'edit',
+      },
+    });
+  };
+
+  const view = (id) => {
     go({
       path: PageEnum.GOODS_SETTING,
       query: {

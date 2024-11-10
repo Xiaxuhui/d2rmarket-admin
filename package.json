@@ -78,6 +78,7 @@
     "@zxcvbn-ts/core": "^3.0.4",
     "ant-design-vue": "^4.0.8",
     "axios": "^1.6.4",
+    "bignumber.js": "^9.1.2",
     "codemirror": "^5.65.16",
     "cos-js-sdk-v5": "^1.5.0",
     "cropperjs": "^1.6.1",

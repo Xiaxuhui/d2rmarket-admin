@@ -321,7 +321,7 @@ export const defHttp = createAxios();
 export const defBusinessHttp = createBusinessAxios();
 
 // other api url
-// export const otherHttp = createAxios({
+// export const jsonHttp = createAxios({
 //   requestOptions: {
 //     apiUrl: 'xxx',
 //     urlPrefix: 'xxx',
