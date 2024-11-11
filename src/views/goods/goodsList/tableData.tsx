@@ -1,6 +1,18 @@
 import { BasicColumn, FormProps } from '@/components/Table';
-import { QUALITY_SELECTION, QUALITY_TEXT, TYPE_SELECTION, TYPE_TEXT } from '@/contants';
+import {
+  QUALITY_SELECTION,
+  QUALITY_TEXT,
+  ROLE_SELECTION,
+  ROLE_TEXT,
+  STATUS_TEXT,
+  TYPE_SELECTION,
+  TYPE_TEXT,
+} from '@/contants';
+import { useGlobSetting } from '@/hooks/setting';
 import { formatToDateTime } from '@/utils/dateUtil';
+import { Image } from 'ant-design-vue';
+
+const { appDomain } = useGlobSetting();
 
 export const getPromoteFormConfig: () => Partial<FormProps> = () => {
   return {
@@ -37,19 +49,7 @@ export const getPromoteFormConfig: () => Partial<FormProps> = () => {
         },
       },
       {
-        field: `location`,
-        label: `Location:`,
-        component: 'ApiSelect',
-        componentProps: {
-          options: [],
-        },
-        colProps: {
-          xl: 12,
-          xxl: 8,
-        },
-      },
-      {
-        field: `quality`,
+        field: `quantity`,
         label: `Quality:`,
         component: 'Select',
         componentProps: {
@@ -65,7 +65,7 @@ export const getPromoteFormConfig: () => Partial<FormProps> = () => {
         label: `RoleSpecific:`,
         component: 'Select',
         componentProps: {
-          options: [],
+          options: ROLE_SELECTION,
         },
         colProps: {
           xl: 12,
@@ -90,16 +90,28 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: 'img',
-      dataIndex: 'img',
+      dataIndex: 'imageUrl',
+      align: 'center',
       customRender({ value }) {
-        return <img src={value} alt="" />;
+        if (!value) {
+          return null;
+        }
+        return (
+          <div class={'w-[100px] h-[100px] flex items-center'}>
+            <Image class={'rounded-[4px]'} width={100} src={`${appDomain}${value}`} alt={value} />
+          </div>
+        );
       },
     },
     {
       title: 'type',
-      dataIndex: 'type',
-      customRender({ value }) {
-        return <div>{TYPE_TEXT[value]}</div>;
+      dataIndex: 'ptype',
+      customRender({ value, record }) {
+        return (
+          <div>
+            {TYPE_TEXT[value]}/{record.typeName}
+          </div>
+        );
       },
     },
     {
@@ -113,28 +125,34 @@ export function getBasicColumns(): BasicColumn[] {
       title: 'role specific',
       dataIndex: 'role',
       customRender({ value }) {
-        return <div>{value}</div>;
+        if (!value) {
+          return null;
+        }
+        return <div>{ROLE_TEXT[value]}</div>;
       },
     },
     {
       title: 'ctime',
       dataIndex: 'ctime',
       customRender({ value }) {
-        return formatToDateTime(value);
+        return formatToDateTime(value * 1000);
       },
     },
-    {
-      title: 'inventory',
-      dataIndex: 'inventory',
-    },
+    // {
+    //   title: 'inventory',
+    //   dataIndex: 'inventory',
+    // },
     {
       title: 'status',
-      dataIndex: 'status',
+      dataIndex: 'state',
+      customRender({ value }) {
+        return STATUS_TEXT[value];
+      },
     },
-    {
-      title: 'price',
-      dataIndex: 'price',
-    },
+    // {
+    //   title: 'price',
+    //   dataIndex: 'price',
+    // },
     {
       title: 'operation',
       width: 350,

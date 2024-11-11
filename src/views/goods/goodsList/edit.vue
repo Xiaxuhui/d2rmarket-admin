@@ -1,14 +1,25 @@
 <template>
   <div class="m-4 bg-white">
-    <BasicForm class="invest_form" @register="register" @submit="handleSubmit">
+    <BasicForm
+      class="invest_form"
+      :disabled="!!goodsId && !isEdit"
+      @register="register"
+      @submit="handleSubmit"
+    >
       <template #localSearch="{ model, field }">
-        <AffixField v-model="model[field]" :selections="currentSelections" :columns="affixColumn" />
+        <AffixField
+          v-model="model[field]"
+          :selections="currentSelections"
+          :columns="affixColumn"
+          :disabled="!!goodsId && !isEdit"
+        />
       </template>
       <template #localRequire="{ model, field }">
         <uniteTable
           :columns="requireColumn"
           :data-source="requireDateSource"
           v-model="model[field]"
+          :disabled="!!goodsId && !isEdit"
         />
       </template>
       <template #resetBefore>
@@ -21,22 +32,28 @@
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { computed, onMounted, ref, unref, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import { QUALITY_SELECTION } from '@/contants';
+  import { QUALITY_SELECTION, ROLE_SELECTION } from '@/contants';
   import ImgSelector from './components/imgSelector.vue';
   import FieldTable from './components/fieldTable.vue';
   import uniteTable from './components/uniteTable.vue';
   import AffixField from './components/affixField.vue';
   import { locationTags } from '@/api/settings';
-  import { addProduct, productData } from '@/api/goods';
+  import { addProduct, productData, updateProduct } from '@/api/goods';
   import { useGoodsStore } from '@/store/modules/goods';
 
   const route = useRoute();
   const goodsId = route.query.id;
-  // const isEdit = Boolean(goodsId && route.query.type === 'edit');
+  const isEdit = Boolean(goodsId && route.query.type === 'edit');
 
   enum REQUIRE_TYPE {
     STRENGTH,
     LEVEL,
+  }
+  interface IPriceData {
+    name: string;
+    id: number;
+    key?: number;
+    [key: string]: any;
   }
 
   const goods = useGoodsStore();
@@ -49,7 +66,7 @@
 
   const pendingData = ref<any>(null);
 
-  const priceDataSource = ref<{ name: string; id: number; key?: number; [key: string]: any }[]>([]);
+  const priceDataSource = ref<IPriceData[]>([]);
 
   const priceColumns = [
     {
@@ -155,7 +172,6 @@
       required: true,
       label: 'Image:',
       render({ model, field }) {
-        console.log('model[field]', model[field], currentImgList.value);
         return <ImgSelector vModel={model[field]} imgList={currentImgList.value} />;
       },
     },
@@ -193,8 +209,9 @@
       field: 'role',
       component: 'Select',
       label: 'Role:',
+      defaultValue: undefined,
       componentProps: {
-        options: [],
+        options: ROLE_SELECTION,
       },
       colProps: {
         span: 8,
@@ -228,12 +245,13 @@
       label: 'Price/Inventory:',
       required: true,
       defaultValue: Array.from({ length: 10 }, () => ({})),
-      render({ model, field }) {
+      render({ model, field }, { disabled }) {
         return (
           <FieldTable
             columns={priceColumns}
             vModel={model[field]}
             dataSource={priceDataSource.value}
+            disabled={disabled}
           />
         );
       },
@@ -245,12 +263,13 @@
 
   const { back } = useRouter();
 
-  watch(currentType, (val) => {
-    if (!val) {
-      currentSelections.value = [];
-      currentImgList.value = [];
-    }
-  });
+  // watch(currentType, (val, oldVal) => {
+  //   console.log('val, oldVal', val, oldVal);
+  //   if (!val && oldVal) {
+  //     currentSelections.value = [];
+  //     currentImgList.value = [];
+  //   }
+  // });
 
   const [register, { updateSchema, setFieldsValue }] = useForm({
     labelWidth: 120,
@@ -263,19 +282,20 @@
       text: 'Submit',
     },
     showResetButton: false,
-    showSubmitButton: true,
+    showSubmitButton: Boolean(!goodsId || isEdit),
   });
 
   const formatResponse = (res) => {
-    const { img, ptype, attrs, name, type, role, quantity, required, sundry } = res;
+    const { img, ptype, attrs, name, type, role, quality, required, sundry, prices } = res;
     const [strength, level] = required.split(',');
 
     return {
       name,
       img,
       channelName: [ptype, type],
-      role,
-      quality: quantity,
+      role: role || undefined,
+      specific: role ? true : false,
+      quality,
       required: {
         [REQUIRE_TYPE.STRENGTH]: strength,
         [REQUIRE_TYPE.LEVEL]: level,
@@ -287,14 +307,20 @@
           [nxt.aid]: nxt.value,
         };
       }, {}),
+      price: (prices || []).map((item) => {
+        return {
+          price: item.price,
+          inventory: item.stock,
+        };
+      }),
     };
   };
 
   const initData = async () => {
     goodsId &&
       productData({ id: goodsId }).then((res) => {
-        console.log('res', res);
         const { affix, channelName, img, ...rest } = formatResponse(res);
+        console.log({ affix, channelName, img, ...rest });
 
         setFieldsValue(rest);
         pendingData.value = {
@@ -309,7 +335,6 @@
   };
 
   const initPendingData = (pendingData) => {
-    console.log('pendingData', pendingData, goods.typeOption);
     const { channelName } = pendingData;
     const [ptype, type] = channelName;
     for (let item of goods.typeOption) {
@@ -319,12 +344,6 @@
             currentType.value = channelName.join('');
             currentImgList.value = child.imgList;
             currentSelections.value = child.affixList;
-            console.log(
-              'currentType.value ',
-              currentType.value,
-              currentImgList.value,
-              currentSelections.value,
-            );
           }
         }
       }
@@ -332,10 +351,16 @@
     setFieldsValue(pendingData);
   };
 
+  watch(priceDataSource, (newPriceData) => {
+    if (goodsId && pendingData.value && !goods.loading && newPriceData.length) {
+      initPendingData(pendingData.value);
+    }
+  });
+
   watch(
-    () => priceDataSource.value,
-    (newPriceData) => {
-      if (goodsId && pendingData.value && !goods.loading && newPriceData.length) {
+    () => goods.loading,
+    (val) => {
+      if (goodsId && pendingData.value && !val && priceDataSource.value.length) {
         initPendingData(pendingData.value);
       }
     },
@@ -354,7 +379,7 @@
           options: goods.typeOption,
           onChange: (_, opt) => {
             if (opt && opt[1]) {
-              currentType.value = opt.join('');
+              currentType.value = `${opt[0].value}${opt[1].value}`;
               currentImgList.value = opt[1].imgList;
               currentSelections.value = opt[1].affixList;
             } else {
@@ -397,11 +422,11 @@
         };
       }),
       required: Object.values(required).join(',') || '0,0',
-      price: priceDataSource.value.map((item, index) => {
+      prices: priceDataSource.value.map((item, index) => {
         return {
           season: item.id,
-          price: price[index].price,
-          stock: price[index].inventory,
+          price: price[index].price || 0,
+          stock: price[index].inventory || 0,
         };
       }),
     };
@@ -410,11 +435,15 @@
   async function handleSubmit(values: any) {
     const params = formatValues(values);
 
-    console.log('params', JSON.stringify(params));
-
-    addProduct(params).then(() => {
-      back();
-    });
+    if (goodsId) {
+      updateProduct({ ...params, id: goodsId }).then(() => {
+        back();
+      });
+    } else {
+      addProduct(params).then(() => {
+        back();
+      });
+    }
   }
 </script>
 <style lang="less" scoped>

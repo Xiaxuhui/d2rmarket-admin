@@ -43,13 +43,13 @@
       type: Array as PropType<{ id: number; url: string }[]>,
       default: () => [],
     },
-    modelValue: Number,
+    modelValue: [Number, String],
   });
 
   watch(
     () => props.imgList,
     () => {
-      activeId.value = undefined;
+      activeId.value = 0;
     },
   );
 
@@ -58,7 +58,7 @@
 
   const activeId = computed({
     get() {
-      return props.modelValue;
+      return +(props.modelValue || 0);
     },
     set(val) {
       emits('update:modelValue', val);

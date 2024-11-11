@@ -49,11 +49,27 @@ export const useGoodsStore = defineStore({
       const data = await baseList({});
       this.list = data;
       this.typeOption = cloneDeep(baseTypeOption);
-      console.log('this.list', this.list);
       for (let i = 0; i < this.list.length; i++) {
         const item = this.list[i];
         const currentType = item.type;
-        this.typeOption[currentType].children?.push({
+        let currentTypeOption;
+        switch (currentType) {
+          case TYPE_ENUM.Sundry:
+            currentTypeOption = this.typeOption[0].children;
+            break;
+          case TYPE_ENUM.Armor:
+            currentTypeOption = this.typeOption[1].children;
+            break;
+          case TYPE_ENUM.Weapon:
+            currentTypeOption = this.typeOption[2].children;
+            break;
+          case TYPE_ENUM.Currency:
+            currentTypeOption = this.typeOption[3].children;
+            break;
+          default:
+            currentTypeOption = [];
+        }
+        currentTypeOption.push({
           label: item.name,
           value: item.id,
           imgList: (item.imgList || []).map((img) => {

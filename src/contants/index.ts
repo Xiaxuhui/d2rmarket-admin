@@ -6,7 +6,8 @@ export enum TYPE_ENUM {
 }
 
 export enum QUALITY_ENUM {
-  Common = 1,
+  NoQuality,
+  Common,
   Magic,
   Uncommon,
   Unique,
@@ -24,6 +25,28 @@ export enum ORDER_STATUS {
   OVERTIME = 20,
 }
 
+export enum ROLE_ENUM {
+  Amazon = 1,
+  Assassin,
+  Barbarian,
+  Druid,
+  Paladin,
+  Necro,
+  Sorceress,
+  Merc,
+}
+
+export const ROLE_TEXT = {
+  [ROLE_ENUM.Amazon]: 'Amazon',
+  [ROLE_ENUM.Assassin]: 'Assassin',
+  [ROLE_ENUM.Barbarian]: 'Barbarian',
+  [ROLE_ENUM.Druid]: 'Druid',
+  [ROLE_ENUM.Paladin]: 'Paladin',
+  [ROLE_ENUM.Necro]: 'Necro',
+  [ROLE_ENUM.Sorceress]: 'Sorceress',
+  [ROLE_ENUM.Merc]: 'Merc',
+};
+
 export const ORDER_TEXT = {
   [ORDER_STATUS.UNPAID]: 'unpaid',
   [ORDER_STATUS.PAID]: 'paid',
@@ -31,6 +54,49 @@ export const ORDER_TEXT = {
   [ORDER_STATUS.DONE]: 'done',
   [ORDER_STATUS.OVERTIME]: 'overtime',
 };
+
+export const ROLE_SELECTION = [
+  {
+    label: ROLE_TEXT[ROLE_ENUM.Amazon],
+    value: ROLE_ENUM.Amazon,
+    key: ROLE_ENUM.Amazon,
+  },
+  {
+    label: ROLE_TEXT[ROLE_ENUM.Assassin],
+    value: ROLE_ENUM.Assassin,
+    key: ROLE_ENUM.Assassin,
+  },
+  {
+    label: ROLE_TEXT[ROLE_ENUM.Barbarian],
+    value: ROLE_ENUM.Barbarian,
+    key: ROLE_ENUM.Barbarian,
+  },
+  {
+    label: ROLE_TEXT[ROLE_ENUM.Druid],
+    value: ROLE_ENUM.Druid,
+    key: ROLE_ENUM.Druid,
+  },
+  {
+    label: ROLE_TEXT[ROLE_ENUM.Paladin],
+    value: ROLE_ENUM.Paladin,
+    key: ROLE_ENUM.Paladin,
+  },
+  {
+    label: ROLE_TEXT[ROLE_ENUM.Necro],
+    value: ROLE_ENUM.Necro,
+    key: ROLE_ENUM.Necro,
+  },
+  {
+    label: ROLE_TEXT[ROLE_ENUM.Sorceress],
+    value: ROLE_ENUM.Sorceress,
+    key: ROLE_ENUM.Sorceress,
+  },
+  {
+    label: ROLE_TEXT[ROLE_ENUM.Merc],
+    value: ROLE_ENUM.Merc,
+    key: ROLE_ENUM.Merc,
+  },
+];
 
 export const TYPE_SELECTION = [
   {
@@ -63,6 +129,11 @@ export const TYPE_TEXT = {
 };
 
 export const QUALITY_SELECTION = [
+  {
+    label: 'NoQuality',
+    value: QUALITY_ENUM.NoQuality,
+    key: '0',
+  },
   {
     label: 'Common',
     value: QUALITY_ENUM.Common,
@@ -108,6 +179,20 @@ export const QUALITY_TEXT = {
   [QUALITY_ENUM.Suit]: 'Suit',
   [QUALITY_ENUM.Runewords]: 'Runewords',
   [QUALITY_ENUM.Handmade]: 'Handmade',
+};
+
+export enum GOODS_STATE {
+  Init,
+  Publish,
+  Unpublish,
+  Delete = 9,
+}
+
+export const STATUS_TEXT = {
+  [GOODS_STATE.Init]: 'Unpublished',
+  [GOODS_STATE.Publish]: 'Published',
+  [GOODS_STATE.Unpublish]: 'Unpublished',
+  [GOODS_STATE.Delete]: 'Deleted',
 };
 
 export const ERROR_IMG =

@@ -19,7 +19,7 @@ export default defineApplicationConfig({
     server: {
       proxy: {
         '/basic-api': {
-          target: 'http://42.193.157.49:8848',
+          target: 'http://192.168.50.211:8848',
           // target: 'http://localhost:3000',
           changeOrigin: true,
           ws: true,

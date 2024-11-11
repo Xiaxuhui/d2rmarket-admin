@@ -5,6 +5,7 @@
         <input
           class="border-[#D9D9D9] border-[1px] px-[11px] h-[32px] leading-[32px] rounded-[6px]"
           :value="modelValue[index][column.key]"
+          :disabled="disabled"
           @input="(e) => valueChange(e, index, column.key)"
         />
       </template>
@@ -14,9 +15,9 @@
 <script lang="ts" setup>
   import { Table } from 'ant-design-vue';
   import { ColumnsType } from 'ant-design-vue/es/table';
-  import { reactive } from 'vue';
+  import { reactive, watch } from 'vue';
 
-  defineProps({
+  const props = defineProps({
     columns: {
       type: Array as PropType<ColumnsType>,
       default: () => [],
@@ -29,6 +30,7 @@
       type: Array as PropType<{ [key: string]: string }[]>,
       default: () => [],
     },
+    disabled: Boolean,
   });
 
   const emits = defineEmits(['update:modelValue']);
@@ -39,4 +41,15 @@
     valueArray[index][name] = e.target.value;
     emits('update:modelValue', valueArray);
   };
+
+  watch(
+    () => props.modelValue,
+    (val) => {
+      if (val.length < 10) {
+        for (let i = 0; i < val.length; i++) {
+          valueArray[i] = val[i];
+        }
+      }
+    },
+  );
 </script>

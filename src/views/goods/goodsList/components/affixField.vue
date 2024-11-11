@@ -10,7 +10,13 @@
       valueField="value"
       @options-change="optionsChange"
     />
-    <UniteTable class="mt-[10px]" v-model="valueMap" :columns="columns" :data-source="dataSource" />
+    <UniteTable
+      class="mt-[10px]"
+      v-model="valueMap"
+      :columns="columns"
+      :data-source="dataSource"
+      :disabled="disabled"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -30,23 +36,24 @@
       default: () => [],
     },
     selections: {
-      type: Array as PropType<DefaultOptionType[]>,
+      type: Array as PropType<(DefaultOptionType & { value: string })[]>,
       default: () => [],
     },
+    disabled: Boolean,
   });
 
   const emits = defineEmits(['update:modelValue']);
 
   const dataSource = ref<{ name: string; id: number; key?: number; [key: string]: any }[]>([]);
 
-  watch(
-    () => props.selections,
-    () => {
-      selectValue.value = '';
-      valueMap.value = {};
-      dataSource.value = [];
-    },
-  );
+  // watch(
+  //   () => props.selections,
+  //   () => {
+  //     selectValue.value = '';
+  //     valueMap.value = {};
+  //     dataSource.value = [];
+  //   },
+  // );
 
   const valueMap = computed({
     get() {
@@ -83,15 +90,44 @@
             id: opt.value,
             name: opt.label,
             del(id) {
-              if (id === selectValue.value) {
+              if (id + '' === selectValue.value) {
                 selectValue.value = '';
               }
-              cacheSet.value.delete(id);
+              cacheSet.value.delete(id + '');
               dataSource.value = dataSource.value.filter((item) => item.id !== id);
+              delete valueMap.value[id];
             },
           });
         }
       }
     }
   });
+
+  watch(
+    () => props.modelValue,
+    (val) => {
+      if (Object.keys(val).length && !dataSource.value.length) {
+        dataSource.value = props.selections
+          .filter((item) => {
+            return !!val[item.value];
+          })
+          .map((opt) => {
+            cacheSet.value.add(+opt.value! + '');
+            return {
+              key: +opt.value!,
+              id: +opt.value!,
+              name: opt.label,
+              del(id) {
+                if (id + '' === selectValue.value) {
+                  selectValue.value = '';
+                }
+                cacheSet.value.delete(id + '');
+                dataSource.value = dataSource.value.filter((item) => item.id !== id);
+                delete valueMap.value[id];
+              },
+            };
+          });
+      }
+    },
+  );
 </script>

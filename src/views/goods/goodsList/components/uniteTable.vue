@@ -5,10 +5,11 @@
         <input
           class="border-[#D9D9D9] border-[1px] px-[11px] h-[32px] leading-[32px] rounded-[6px]"
           :value="modelValue[record.id]"
+          :disabled="disabled"
           @input="(e) => valueChange(e, record.id)"
         />
       </template>
-      <template v-if="column.key && column.key === 'opt'">
+      <template v-if="column.key && column.key === 'opt' && !disabled">
         <div @click="record['del'](record.id)" class="text-[#ed6f6f] cursor-pointer">delete</div>
       </template>
     </template>
@@ -17,9 +18,9 @@
 <script lang="ts" setup>
   import { Table } from 'ant-design-vue';
   import { ColumnsType } from 'ant-design-vue/es/table';
-  import { reactive } from 'vue';
+  import { reactive, watch } from 'vue';
 
-  defineProps({
+  const props = defineProps({
     columns: {
       type: Array as PropType<ColumnsType>,
       default: () => [],
@@ -32,6 +33,7 @@
       type: Object as PropType<{ [key: string]: string }>,
       default: () => ({}),
     },
+    disabled: Boolean,
   });
 
   const emits = defineEmits(['update:modelValue']);
@@ -42,4 +44,15 @@
     valueMap[id] = e.target.value;
     emits('update:modelValue', valueMap);
   };
+
+  watch(
+    () => props.modelValue,
+    () => {
+      if (Object.keys(props.modelValue).length && !Object.keys(valueMap).length) {
+        for (let key in props.modelValue) {
+          valueMap[key] = props.modelValue[key];
+        }
+      }
+    },
+  );
 </script>

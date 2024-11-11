@@ -21,8 +21,17 @@
             {
               label: 'publish',
               icon: 'material-symbols:publish-sharp',
+              ifShow: [GOODS_STATE.Unpublish, GOODS_STATE.Init].includes(record.state),
               onClick() {
-                edit(record.id);
+                publish(record.id, GOODS_STATE.Publish);
+              },
+            },
+            {
+              label: 'unpublish',
+              icon: 'fluent-mdl2:unpublish-content',
+              ifShow: record.state === GOODS_STATE.Publish,
+              onClick() {
+                publish(record.id, GOODS_STATE.Unpublish);
               },
             },
             {
@@ -35,6 +44,7 @@
             {
               label: 'edit',
               icon: 'fe:edit',
+              ifShow: [GOODS_STATE.Unpublish, GOODS_STATE.Init].includes(record.state),
               onClick() {
                 edit(record.id);
               },
@@ -46,7 +56,7 @@
               popConfirm: {
                 title: 'confirm delete?',
                 confirm: () => {
-                  del(record.id);
+                  publish(record.id, GOODS_STATE.Delete);
                 },
               },
             },
@@ -61,12 +71,14 @@
   import { useGo } from '@/hooks/web/usePage';
   import { getBasicColumns, getPromoteFormConfig } from './tableData';
   import { PageEnum } from '@/enums/pageEnum';
-  import { goodsList } from '@/api/goods';
+  import { goodsList, updateProductState } from '@/api/goods';
+  import { GOODS_STATE } from '@/contants';
 
-  const [registerTable] = useTable({
+  const [registerTable, { reload }] = useTable({
     title: 'Goods List',
     api: goodsList,
     columns: getBasicColumns(),
+    showIndexColumn: false,
     useSearchForm: true,
     formConfig: getPromoteFormConfig(),
     showTableSetting: true,
@@ -93,7 +105,9 @@
       },
     });
   };
-  const del = (id) => {
-    console.log(id);
+  const publish = (id, state) => {
+    updateProductState({ ids: id, state }).then(() => {
+      reload();
+    });
   };
 </script>

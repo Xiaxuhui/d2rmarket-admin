@@ -11,6 +11,7 @@ enum Api {
   addProduct = '/gm/addProduct',
   updateProduct = '/gm/updateProduct',
   productData = '/gm/productData',
+  updateProductState = '/gm/updateProductState',
 }
 
 export const addTag = (params) => {
@@ -72,9 +73,20 @@ export const addProduct = (params) => {
 };
 
 export const productData = (params) => {
-  return defHttp.get({ url: Api.productData, params });
+  return defHttp.get({
+    url: Api.productData,
+    params,
+  });
 };
 
 export const updateProduct = (params) => {
-  return defHttp.post({ url: Api.updateProduct, params });
+  return defHttp.post({
+    url: Api.updateProduct,
+    params,
+    headers: { 'Content-Type': ContentTypeEnum.JSON },
+  });
+};
+
+export const updateProductState = (params) => {
+  return defHttp.post({ url: Api.updateProductState, params });
 };
