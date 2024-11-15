@@ -1,6 +1,8 @@
 <template>
   <BasicTable @register="registerTable">
     <template #toolbar>
+      <a-button type="primary" @click="batchUpdate(GOODS_STATE.Publish)">Batch Publish</a-button>
+      <a-button @click="batchUpdate(GOODS_STATE.Unpublish)">Batch Unpublish</a-button>
       <a-button
         type="primary"
         @click="
@@ -73,6 +75,9 @@
   import { PageEnum } from '@/enums/pageEnum';
   import { goodsList, updateProductState } from '@/api/goods';
   import { GOODS_STATE } from '@/contants';
+  import { ref } from 'vue';
+
+  const selectRowKeys = ref<Array<string | number>>([]);
 
   const [registerTable, { reload }] = useTable({
     title: 'Goods List',
@@ -85,6 +90,13 @@
     tableSetting: { fullScreen: true },
     rowKey: 'id',
     pagination: { pageSize: 20 },
+    rowSelection: {
+      type: 'checkbox',
+      onChange(selectedRowKeys) {
+        selectRowKeys.value = selectedRowKeys;
+      },
+    },
+    showSelectionBar: true,
   });
   const go = useGo();
   const edit = (id) => {
@@ -107,6 +119,12 @@
   };
   const publish = (id, state) => {
     updateProductState({ ids: id, state }).then(() => {
+      reload();
+    });
+  };
+
+  const batchUpdate = (state) => {
+    updateProductState({ ids: selectRowKeys.value.join(','), state }).then(() => {
       reload();
     });
   };

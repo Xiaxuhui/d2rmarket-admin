@@ -49,7 +49,7 @@ export const getPromoteFormConfig: () => Partial<FormProps> = () => {
         },
       },
       {
-        field: `quantity`,
+        field: `quality`,
         label: `Quality:`,
         component: 'Select',
         componentProps: {
