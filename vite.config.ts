@@ -19,7 +19,7 @@ export default defineApplicationConfig({
     server: {
       proxy: {
         '/basic-api': {
-          target: 'http://192.168.50.211:8848',
+          target: 'https://d2test.dyna1.asia/api/',
           // target: 'http://localhost:3000',
           changeOrigin: true,
           ws: true,

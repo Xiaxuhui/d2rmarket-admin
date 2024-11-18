@@ -13,8 +13,8 @@ interface GoodsInfo {
 
 const baseTypeOption = [
   {
-    label: TYPE_TEXT[TYPE_ENUM.Sundry],
-    value: TYPE_ENUM.Sundry,
+    label: TYPE_TEXT[TYPE_ENUM.MISC],
+    value: TYPE_ENUM.MISC,
     children: [],
   },
   {
@@ -54,7 +54,7 @@ export const useGoodsStore = defineStore({
         const currentType = item.type;
         let currentTypeOption;
         switch (currentType) {
-          case TYPE_ENUM.Sundry:
+          case TYPE_ENUM.MISC:
             currentTypeOption = this.typeOption[0].children;
             break;
           case TYPE_ENUM.Armor:
@@ -85,6 +85,11 @@ export const useGoodsStore = defineStore({
             };
           }),
         });
+      }
+      for (let i = 0; i < this.typeOption.length; i++) {
+        if (!this.typeOption[i].children?.length) {
+          this.typeOption[i].disabled = true;
+        }
       }
       this.loading = false;
     },

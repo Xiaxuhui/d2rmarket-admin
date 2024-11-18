@@ -52,7 +52,7 @@
   };
 
   const deleteAffix = ({ id, name }) => {
-    deleteTag({ id, name, descTpl: `[] ${name}` })
+    deleteTag({ deleteId: id, name, descTpl: `[] ${name}` })
       .then(() => {
         const handleArr = valueArr.value.filter((item) => item.id !== id);
         valueArr.value = handleArr;

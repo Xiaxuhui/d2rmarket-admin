@@ -164,6 +164,9 @@
       },
       componentProps: {
         options: goods.typeOption,
+        getPopupContainer(trigger) {
+          return trigger.parentNode;
+        },
       },
     },
     {
@@ -185,6 +188,9 @@
       },
       componentProps: {
         options: QUALITY_SELECTION,
+        getPopupContainer(trigger) {
+          return trigger.parentNode;
+        },
       },
     },
     {
@@ -212,6 +218,9 @@
       defaultValue: undefined,
       componentProps: {
         options: ROLE_SELECTION,
+        getPopupContainer(trigger) {
+          return trigger.parentNode;
+        },
       },
       colProps: {
         span: 8,
@@ -228,6 +237,7 @@
       colProps: {
         span: 8,
       },
+      componentProps: {},
       defaultValue: [],
     },
     {

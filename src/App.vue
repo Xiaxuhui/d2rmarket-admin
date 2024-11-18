@@ -18,7 +18,8 @@
   import { computed } from 'vue';
 
   // support Multi-language
-  const { getAntdLocale } = useLocale();
+  const { getAntdLocale, changeLocale } = useLocale();
+  changeLocale('en');
 
   const { isDark, darkTheme } = useDarkModeTheme();
 

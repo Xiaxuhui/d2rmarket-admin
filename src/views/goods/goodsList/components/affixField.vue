@@ -9,6 +9,11 @@
       labelField="label"
       valueField="value"
       @options-change="optionsChange"
+      :getPopupContainer="
+        (trigger) => {
+          return trigger.parentNode;
+        }
+      "
     />
     <UniteTable
       class="mt-[10px]"

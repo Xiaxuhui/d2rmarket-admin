@@ -65,6 +65,7 @@
         field: 'name',
         component: 'Input',
         label: 'Name:',
+        required: true,
         colProps: {
           span: 8,
         },
@@ -73,6 +74,7 @@
         field: 'type',
         component: 'Select',
         label: 'Type:',
+        required: true,
         colProps: {
           span: 8,
         },
@@ -121,7 +123,7 @@
 
   const getData = async (id) => {
     propBase(id).then((res) => {
-      const { affixList, imgList, type, name } = res;
+      const { affixList = [], imgList = [], type, name } = res;
       setFieldsValue({
         name,
         type,
@@ -158,12 +160,12 @@
     return {
       type,
       name,
-      affixs: affix
+      affixs: (affix || [])
         .reduce((prev, nxt) => {
           return prev + nxt.id + ',';
         }, '')
         .slice(0, -1),
-      imgs: imgs
+      imgs: (imgs || [])
         .reduce((prev, nxt) => {
           return prev + nxt.response.data.id + ',';
         }, '')
@@ -176,7 +178,7 @@
     if (baseId) {
       params.id = +baseId;
     }
-    addPropBase(params).then((res) => {
+    addPropBase(params).then(() => {
       back();
     });
   }

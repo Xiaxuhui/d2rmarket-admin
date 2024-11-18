@@ -17,6 +17,9 @@ export const PAGE_NOT_FOUND_ROUTE: AppRouteRecordRaw = {
       path: '/:path(.*)*',
       name: PAGE_NOT_FOUND_NAME,
       component: EXCEPTION_COMPONENT,
+      props: {
+        full: true,
+      },
       meta: {
         title: 'ErrorPage',
         hideBreadcrumb: true,

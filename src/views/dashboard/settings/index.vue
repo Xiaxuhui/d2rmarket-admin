@@ -18,20 +18,26 @@
 <script lang="ts" setup>
   import { addTags, locationTags, delTags } from '@/api/settings';
   import { FormTag } from '@/components/Tags';
-  import { Divider } from 'ant-design-vue';
+  import { Divider, message } from 'ant-design-vue';
   import { onMounted, ref } from 'vue';
 
   const tags = ref<{ name: string; id: number }[]>([]);
 
   const deleteLocation = ({ id }) => {
     delTags({ id }).then(() => {
+      message.success('Successfully deleted');
       getTags();
     });
   };
 
   const addLocation = (name: string) => {
+    if (tags.value.length > 10) {
+      message.error('Add a maximum of 10 locations');
+      return;
+    }
     addTags({ name }).then(() => {
       getTags();
+      message.success('Created successfully');
     });
   };
 

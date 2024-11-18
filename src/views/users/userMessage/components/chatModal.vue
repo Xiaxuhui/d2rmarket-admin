@@ -32,7 +32,7 @@
                   ></div>
                 </div>
                 <div
-                  v-if="item.uid === 100"
+                  v-if="item.isCustomer !== 1"
                   class="col-start-6 col-end-13 p-3 rounded-lg"
                   :id="`${qid}${index}`"
                 >
@@ -46,6 +46,7 @@
                       :message="{
                         data: item.data,
                         type: item.type,
+                        time: item.time,
                       }"
                       isMyself
                     />
@@ -132,7 +133,6 @@
       const list = await getMessageList({ qid }).catch((err) => {
         console.log(err.message);
       });
-      console.log('messageList.value', messageList.value);
       if (list.length !== messageList.value.length) {
         messageList.value = list;
         messageView();

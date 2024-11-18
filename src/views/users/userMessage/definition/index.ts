@@ -18,4 +18,5 @@ export interface IMessage {
   uid: number;
   name: string;
   state: IMessageState;
+  isCustomer: 0 | 1;
 }

@@ -97,8 +97,14 @@ export function getBasicColumns(): BasicColumn[] {
           return null;
         }
         return (
-          <div class={'w-[100px] h-[100px] flex items-center'}>
-            <Image class={'rounded-[4px]'} width={100} src={`${appDomain}${value}`} alt={value} />
+          <div class={'flex items-center justify-center'}>
+            <Image
+              class={'rounded-[4px]'}
+              width={100}
+              height={100}
+              src={`${appDomain}${value}`}
+              alt={value}
+            />
           </div>
         );
       },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="timeStyle({ isMyself })">{{ formatToDateTime(message.time) }}</div>
+    <div :class="timeStyle({ isMyself })">{{ formatToDateTime(message.time * 1000) }}</div>
     <div :class="messageCardStyle({ isMyself })">
       <div class="flex items-center break-all">
         <template v-if="message.type === IMessageType.IMG">

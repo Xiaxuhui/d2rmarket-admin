@@ -1,5 +1,5 @@
 <template>
-  <Table :columns="columns" :data-source="dataSource" :pagination="{ pageSize: 5 }" rowKey="id">
+  <Table :columns="columns" :data-source="dataSource" :pagination="{ pageSize: 10 }" rowKey="id">
     <template #bodyCell="{ column, index }">
       <template v-if="column.key && column.key !== 'name' && column.key !== 'opt'">
         <input

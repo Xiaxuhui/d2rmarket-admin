@@ -1,5 +1,5 @@
 export enum TYPE_ENUM {
-  Sundry = 1,
+  MISC = 1,
   Armor,
   Weapon,
   Currency,
@@ -100,8 +100,8 @@ export const ROLE_SELECTION = [
 
 export const TYPE_SELECTION = [
   {
-    label: 'Sundry',
-    value: TYPE_ENUM.Sundry,
+    label: 'Misc',
+    value: TYPE_ENUM.MISC,
     key: '1',
   },
   {
@@ -122,7 +122,7 @@ export const TYPE_SELECTION = [
 ];
 
 export const TYPE_TEXT = {
-  [TYPE_ENUM.Sundry]: 'Sundry',
+  [TYPE_ENUM.MISC]: 'MISC',
   [TYPE_ENUM.Armor]: 'Armor',
   [TYPE_ENUM.Weapon]: 'Weapon',
   [TYPE_ENUM.Currency]: 'Currency',
