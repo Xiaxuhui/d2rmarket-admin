@@ -40,6 +40,7 @@
   import { locationTags } from '@/api/settings';
   import { addProduct, productData, updateProduct } from '@/api/goods';
   import { useGoodsStore } from '@/store/modules/goods';
+  import { activityList } from '@/api/marketing';
 
   const route = useRoute();
   const goodsId = route.query.id;
@@ -67,6 +68,10 @@
   const pendingData = ref<any>(null);
 
   const priceDataSource = ref<IPriceData[]>([]);
+
+  const discountLoaded = ref(false);
+
+  const activityDiscount = ref<number>();
 
   const priceColumns = [
     {
@@ -230,10 +235,38 @@
       },
     },
     {
+      field: 'discounts',
+      component: 'ApiSelect',
+      label: 'Activity:',
+      defaultValue: undefined,
+      componentProps: {
+        // more details see /src/components/Form/src/components/ApiSelect.vue
+        api: activityList,
+        params: {},
+        // use name as label
+        labelField: 'name',
+        // use id as value
+        valueField: 'id',
+        // not request untill to select
+        immediate: true,
+        getPopupContainer(trigger) {
+          return trigger.parentNode;
+        },
+
+        onOptionsChange(options) {
+          if (options.length > 0) {
+            discountLoaded.value = true;
+          }
+        },
+      },
+      colProps: {
+        span: 8,
+      },
+    },
+    {
       field: 'affix',
       label: 'Affix:',
       slot: 'localSearch',
-      required: true,
       colProps: {
         span: 8,
       },
@@ -296,7 +329,19 @@
   });
 
   const formatResponse = (res) => {
-    const { img, ptype, attrs, name, type, role, quality, required, sundry, prices } = res;
+    const {
+      img,
+      ptype,
+      attrs = [],
+      name,
+      type,
+      role,
+      quality,
+      required,
+      sundry,
+      prices,
+      discounts,
+    } = res;
     const [strength, level] = required.split(',');
 
     return {
@@ -306,6 +351,7 @@
       role: role || undefined,
       specific: role ? true : false,
       quality,
+      discounts,
       required: {
         [REQUIRE_TYPE.STRENGTH]: strength,
         [REQUIRE_TYPE.LEVEL]: level,
@@ -329,15 +375,17 @@
   const initData = async () => {
     goodsId &&
       productData({ id: goodsId }).then((res) => {
-        const { affix, channelName, img, ...rest } = formatResponse(res);
-        console.log({ affix, channelName, img, ...rest });
-
+        const { affix, channelName, img, discounts, ...rest } = formatResponse(res);
         setFieldsValue(rest);
+        activityDiscount.value = discounts || undefined;
         pendingData.value = {
           affix,
           channelName,
           img,
         };
+        if (discountLoaded.value) {
+          setFieldsValue({ discounts: activityDiscount.value });
+        }
         if (!goods.loading && priceDataSource.value.length) {
           initPendingData(pendingData.value);
         }
@@ -375,6 +423,14 @@
       }
     },
   );
+
+  watch(discountLoaded, (val) => {
+    if (val && goodsId) {
+      setFieldsValue({
+        discounts: activityDiscount.value,
+      });
+    }
+  });
 
   onMounted(async () => {
     goods.getBaseList().then(() => {
@@ -416,6 +472,7 @@
       required = {},
       role,
       sundry,
+      discounts,
     } = values;
     const [, type] = channelName || [];
     return {
@@ -425,6 +482,7 @@
       type,
       role,
       sundry: sundry ? 1 : 0,
+      discounts,
       attrs: Object.entries(affix).map(([key, item]) => {
         return {
           aid: key,
@@ -444,7 +502,6 @@
 
   async function handleSubmit(values: any) {
     const params = formatValues(values);
-
     if (goodsId) {
       updateProduct({ ...params, id: goodsId }).then(() => {
         back();

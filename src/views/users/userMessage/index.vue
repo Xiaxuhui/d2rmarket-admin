@@ -1,45 +1,29 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'operation'">
-          <TableAction
-            stopButtonPropagation
-            :actions="[
-              {
-                label: 'view',
-                icon: 'hugeicons:view',
-                onClick() {
-                  openModal(true, { qid: record.qid, replyId: record.uid });
-                },
-              },
-            ]"
-          />
-        </template>
-      </template>
-    </BasicTable>
-    <ChatModal @register="registerModal" />
+  <div class="flex bg-white rounded-lg shadow-lg overflow-hidden h-full m-[20px]">
+    <UserList @chat-change="chatChange" />
+    <ChatModal :qid="qid" :replyId="userId" />
+    <OrderInfo :uid="userId" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getBasicColumns } from './tableData';
+  import { ref } from 'vue';
   import ChatModal from './components/chatModal.vue';
-  import { useModal } from '@/components/Modal';
-  import { userMessageList } from '@/api/users/message';
+  import UserList from './components/userList.vue';
+  import OrderInfo from './components/orderInfo.vue';
+  import { IUserMessage } from '@/definations';
+  import { onBeforeRouteLeave } from 'vue-router';
 
-  const [registerModal, { openModal }] = useModal();
+  const qid = ref(0);
+  const userId = ref(0);
 
-  const [registerTable] = useTable({
-    title: 'User Message',
-    api: userMessageList,
-    columns: getBasicColumns(),
-    useSearchForm: false,
-    // formConfig: getWithDrawFormConfig(),
-    showTableSetting: true,
-    tableSetting: { fullScreen: true },
-    showIndexColumn: false,
-    rowKey: 'uid',
-    pagination: { pageSize: 20 },
+  const chatChange = (item: IUserMessage) => {
+    userId.value = item.uid;
+    qid.value = item.qid;
+  };
+
+  onBeforeRouteLeave((to, from, next) => {
+    userId.value = 0;
+    qid.value = 0;
+    next();
   });
 </script>

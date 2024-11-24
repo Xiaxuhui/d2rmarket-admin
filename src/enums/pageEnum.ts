@@ -10,6 +10,14 @@ export enum PageEnum {
 
   ORDER_LIST = '/orders/orderList',
 
+  COUPON_SETTING = '/marketing/couponSetting',
+
+  COUPON_LIST = '/marketing/coupon',
+
+  ACTIVITY_LIST = '/marketing/activity',
+
+  ACTIVITY_SETTING = '/marketing/activitySetting',
+
   // error page path
   ERROR_PAGE = '/exception',
   // error log page path

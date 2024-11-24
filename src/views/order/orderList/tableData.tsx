@@ -81,6 +81,13 @@ export function getBasicColumns(): BasicColumn[] {
       },
     },
     {
+      title: 'Coupon',
+      dataIndex: 'coupon',
+      customRender({ value }) {
+        return value > 0 ? `${value}%` : null;
+      },
+    },
+    {
       title: 'Create Time',
       dataIndex: 'ctime',
       customRender({ value }) {

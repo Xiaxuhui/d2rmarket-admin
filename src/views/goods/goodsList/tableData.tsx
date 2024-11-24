@@ -124,7 +124,7 @@ export function getBasicColumns(): BasicColumn[] {
       title: 'quality',
       dataIndex: 'quality',
       customRender({ value }) {
-        return <div>{QUALITY_TEXT[value]}</div>;
+        return <div>{QUALITY_TEXT[value] || '-'}</div>;
       },
     },
     {
@@ -132,9 +132,19 @@ export function getBasicColumns(): BasicColumn[] {
       dataIndex: 'role',
       customRender({ value }) {
         if (!value) {
-          return null;
+          return '-';
         }
         return <div>{ROLE_TEXT[value]}</div>;
+      },
+    },
+    {
+      title: 'activity id',
+      dataIndex: 'discounts',
+      customRender({ value }) {
+        if (!value) {
+          return '-';
+        }
+        return value;
       },
     },
     {

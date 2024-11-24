@@ -1,3 +1,4 @@
+import { IUserMessage } from '@/definations';
 import { defHttp } from '@/utils/http/axios';
 
 enum Api {
@@ -7,7 +8,7 @@ enum Api {
 }
 
 export const userMessageList = (params) => {
-  return defHttp.post({ url: Api.userMessageList, params });
+  return defHttp.post<IUserMessage[]>({ url: Api.userMessageList, params });
 };
 
 export const messageList = (params) => {

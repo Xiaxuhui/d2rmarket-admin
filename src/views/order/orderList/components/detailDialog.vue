@@ -15,6 +15,7 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { Table } from 'ant-design-vue';
   import { numberFixed } from '@/utils';
+  import BigNumber from 'bignumber.js';
 
   const loading = ref(true);
   const open = ref(false);
@@ -43,6 +44,26 @@
       key: 'price',
       customRender({ value }) {
         return numberFixed(+value / 100 || 0, 2);
+      },
+    },
+    {
+      title: 'Discount',
+      dataIndex: 'discount',
+      key: 'discount',
+      customRender({ value }) {
+        return value > 0 ? `${value}%` : null;
+      },
+    },
+    {
+      title: 'Actual price',
+      dataIndex: 'price',
+      key: 'price',
+      customRender({ record }) {
+        const { discount, price } = record;
+        if (discount > 0) {
+          return BigNumber(discount).div(10000).multipliedBy(price).valueOf();
+        }
+        return numberFixed(+price / 100 || 0, 2);
       },
     },
   ];
