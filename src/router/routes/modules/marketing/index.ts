@@ -20,6 +20,7 @@ const marketing: AppRouteModule = {
       component: () => import('@/views/marketing/coupon/index.vue'),
       meta: {
         title: t('routes.marketing.coupon'),
+        keepAlive: true,
       },
     },
     {
@@ -29,6 +30,7 @@ const marketing: AppRouteModule = {
       meta: {
         hideMenu: true,
         title: t('routes.marketing.couponSetting'),
+        keepAlive: true,
       },
     },
     {
@@ -37,6 +39,7 @@ const marketing: AppRouteModule = {
       component: () => import('@/views/marketing/activity/index.vue'),
       meta: {
         title: t('routes.marketing.activity'),
+        keepAlive: true,
       },
     },
     {
@@ -46,6 +49,7 @@ const marketing: AppRouteModule = {
       meta: {
         hideMenu: true,
         title: t('routes.marketing.activitySetting'),
+        keepAlive: true,
       },
     },
   ],

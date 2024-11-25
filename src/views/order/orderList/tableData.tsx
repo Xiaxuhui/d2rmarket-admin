@@ -107,7 +107,7 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: 'Operation',
-      width: 150,
+      width: 250,
       dataIndex: 'operation',
     },
   ];

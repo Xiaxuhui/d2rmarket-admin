@@ -58,6 +58,9 @@
   import { PageEnum } from '@/enums/pageEnum';
   import { baseList, deletePropBase } from '@/api/goods';
 
+  defineOptions({
+    name: 'Basic',
+  });
   const [register, { reload }] = useTable({
     title: 'Basic Goods',
     api: baseList,

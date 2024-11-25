@@ -2,17 +2,23 @@
   <Table :columns="columns" :data-source="dataSource" :pagination="{ pageSize: 10 }" rowKey="id">
     <template #bodyCell="{ column, index }">
       <template v-if="column.key && column.key !== 'name' && column.key !== 'opt'">
-        <input
-          class="border-[#D9D9D9] border-[1px] px-[11px] h-[32px] leading-[32px] rounded-[6px]"
-          :value="modelValue[index][column.key]"
-          :disabled="disabled"
-          @input="(e) => valueChange(e, index, column.key)"
-        />
+        <div class="flex items-center">
+          <input
+            class="border-[#D9D9D9] border-[1px] px-[11px] h-[32px] leading-[32px] rounded-[6px]"
+            :value="modelValue[index][column.key]"
+            :disabled="disabled"
+            @input="(e) => valueChange(e, index, column.key)"
+          />
+          <a class="ml-2" v-if="column.key === 'inventory'" @click="UnlimitedInventory(index)"
+            >Unlimited</a
+          >
+        </div>
       </template>
     </template>
   </Table>
 </template>
 <script lang="ts" setup>
+  import { UNLIMITED_INVENTORY } from '@/contants';
   import { Table } from 'ant-design-vue';
   import { ColumnsType } from 'ant-design-vue/es/table';
   import { reactive, watch } from 'vue';
@@ -42,10 +48,15 @@
     emits('update:modelValue', valueArray);
   };
 
+  const UnlimitedInventory = (index) => {
+    valueArray[index]['inventory'] = UNLIMITED_INVENTORY;
+    emits('update:modelValue', valueArray);
+  };
+
   watch(
     () => props.modelValue,
     (val) => {
-      if (val.length < 10) {
+      if (val.length <= 10) {
         for (let i = 0; i < val.length; i++) {
           valueArray[i] = val[i];
         }

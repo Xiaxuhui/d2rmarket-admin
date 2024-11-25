@@ -23,6 +23,10 @@
   import { useGlobSetting } from '@/hooks/setting';
   import { addPropBase, propBase } from '@/api/goods';
 
+  defineOptions({
+    name: 'BasicSetting',
+  });
+
   const { back } = useRouter();
 
   const route = useRoute();

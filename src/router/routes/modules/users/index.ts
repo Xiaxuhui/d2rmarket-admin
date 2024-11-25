@@ -20,6 +20,7 @@ const users: AppRouteModule = {
       component: () => import('@/views/users/userList/index.vue'),
       meta: {
         title: t('routes.users.userList'),
+        keepAlive: true,
       },
     },
     {
@@ -28,6 +29,7 @@ const users: AppRouteModule = {
       component: () => import('@/views/users/userMessage/index.vue'),
       meta: {
         title: t('routes.users.userMessage'),
+        keepAlive: true,
       },
     },
   ] as const,

@@ -9,6 +9,10 @@
   import { useRoute } from 'vue-router';
   import * as api from '@/api/users/list';
 
+  defineOptions({
+    name: 'UserList',
+  });
+
   // const go = useGo();
   const { label } = useRoute().query;
 

@@ -34,6 +34,7 @@ export const getBasicColumns: () => BasicColumn[] = () => {
       dataIndex: 'id',
       width: 150,
       ellipsis: true,
+      fixed: true,
     },
     {
       title: 'Desc',

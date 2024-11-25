@@ -19,7 +19,7 @@ const dashboard: AppRouteModule = {
       name: 'Settings',
       component: () => import('@/views/dashboard/settings/index.vue'),
       meta: {
-        // affix: true,
+        keepAlive: true,
         title: t('routes.dashboard.settings'),
       },
     },

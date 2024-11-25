@@ -40,11 +40,9 @@
 <script lang="ts" setup>
   import { tv } from 'tailwind-variants';
   import { Select } from 'ant-design-vue';
-  import { onMounted, watch, computed, ref } from 'vue';
+  import { onMounted, watch, computed, ref, onDeactivated, onActivated, onUnmounted } from 'vue';
   import { userMessageList } from '@/api/users/message';
   import { IUserMessage } from '@/definations';
-  import { onBeforeRouteLeave } from 'vue-router';
-  // import { cloneDeep } from 'lodash-es';
 
   const styles = tv({
     slots: {
@@ -132,9 +130,6 @@
   };
 
   onMounted(() => {
-    stop.value = false;
-    getUserMessageListOnce();
-
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         isVisibility.value = false;
@@ -144,14 +139,22 @@
     });
   });
 
+  onUnmounted(() => {
+    stop.value = true;
+  });
+
   watch(isVisibility, (val) => {
     if (val) {
       getUserMessageListOnce();
     }
   });
 
-  onBeforeRouteLeave((to, from, next) => {
+  onDeactivated(() => {
     stop.value = true;
-    next();
+  });
+
+  onActivated(() => {
+    stop.value = false;
+    getUserMessageListOnce();
   });
 </script>

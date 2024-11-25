@@ -20,6 +20,7 @@ const board: AppRouteModule = {
       component: () => import('@/views/order/orderList/index.vue'),
       meta: {
         title: t('routes.order.orderList'),
+        keepAlive: true,
       },
     },
   ],

@@ -27,6 +27,10 @@
   import dayjs from 'dayjs';
   import FieldTable from './components/fieldTable.vue';
 
+  defineOptions({
+    name: 'ActivitySetting',
+  });
+
   interface IParams {
     id?: number;
     name: string;

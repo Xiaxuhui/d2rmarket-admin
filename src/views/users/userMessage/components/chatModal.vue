@@ -67,7 +67,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, nextTick, onMounted } from 'vue';
+  import { ref, watch, nextTick, onMounted, onDeactivated, onActivated, onUnmounted } from 'vue';
   import { messageList as getMessageList, sendMessage } from '@/api/users/message';
   import SendInput from './sendInput.vue';
   import RenderMessage from './renderMessage.vue';
@@ -95,8 +95,8 @@
       loading.value = true;
       messageList.value = [];
 
-      const list = await getMessageList({ qid: props.qid }).catch((err) => {
-        console.log(err.message);
+      const list = await getMessageList({ qid: props.qid }).catch((_err) => {
+        return [];
       });
       loading.value = false;
       messageList.value = list;
@@ -112,6 +112,7 @@
       return;
     }
     sendMessage({ data: message, qid: props.qid, replyId: props.replyId, type: IMessageType.TEXT });
+    getMessageListWithPos(props.qid, 1);
   };
 
   const fileChange = (fileObj: any) => {
@@ -129,12 +130,37 @@
     }
   };
 
+  const getMessageListWithPos = async (qid, num) => {
+    stop.value = true;
+    const list = await getMessageList({ qid, pos: pos.value }).catch((_err) => {
+      return [];
+    });
+    if (qid === props.qid) {
+      if (list.length > 0) {
+        messageList.value = messageList.value.concat(
+          list.map((item) => {
+            return {
+              ...item,
+              state: IMessageState.READ,
+            };
+          }),
+        );
+        pos.value = list[list.length - 1].id;
+        messageView();
+      }
+      if (num > 2) {
+        stop.value = false;
+        return;
+      }
+      return getMessageListWithPos(qid, num + 1);
+    }
+  };
+
   const getRealMessageList = async (qid) => {
     if (qid === props.qid && !stop.value) {
       const id = setTimeout(async () => {
         if (qid === props.qid && !stop.value) {
-          const list = await getMessageList({ qid, pos: pos.value }).catch((err) => {
-            console.log(err.message);
+          const list = await getMessageList({ qid, pos: pos.value }).catch((_err) => {
             return [];
           });
           if (qid === props.qid && !stop.value) {
@@ -156,7 +182,7 @@
             clearTimeout(id);
           }
         }
-      }, 200);
+      }, 5000);
     }
   };
 
@@ -173,15 +199,43 @@
       if (document.hidden) {
         stop.value = true;
       } else {
-        console.log('stop.value', stop.value);
         stop.value = false;
       }
     });
   });
 
+  onUnmounted(() => {
+    stop.value = true;
+  });
+
   watch(stop, (val) => {
     if (!val && props.qid && !loading.value) {
       getRealMessageList(props.qid);
+    }
+  });
+
+  onDeactivated(() => {
+    stop.value = true;
+  });
+
+  onActivated(async () => {
+    stop.value = false;
+    if (props.qid) {
+      const list = await getMessageList({ qid: props.qid, pos: pos.value }).catch((_err) => {
+        return [];
+      });
+      if (list.length > 0) {
+        messageList.value = messageList.value.concat(
+          list.map((item) => {
+            return {
+              ...item,
+              state: IMessageState.READ,
+            };
+          }),
+        );
+        pos.value = list[list.length - 1].id;
+        messageView();
+      }
     }
   });
 </script>

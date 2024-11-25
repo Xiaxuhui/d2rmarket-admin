@@ -77,6 +77,10 @@
   import { GOODS_STATE } from '@/contants';
   import { ref } from 'vue';
 
+  defineOptions({
+    name: 'GoodsList',
+  });
+
   const selectRowKeys = ref<Array<string | number>>([]);
 
   const [registerTable, { reload }] = useTable({

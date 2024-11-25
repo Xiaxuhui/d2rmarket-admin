@@ -32,7 +32,7 @@
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { computed, onMounted, ref, unref, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import { QUALITY_SELECTION, ROLE_SELECTION } from '@/contants';
+  import { QUALITY_SELECTION, ROLE_SELECTION, TAGS_OPTIONS } from '@/contants';
   import ImgSelector from './components/imgSelector.vue';
   import FieldTable from './components/fieldTable.vue';
   import uniteTable from './components/uniteTable.vue';
@@ -42,6 +42,10 @@
   import { useGoodsStore } from '@/store/modules/goods';
   import { activityList } from '@/api/marketing';
 
+  defineOptions({
+    name: 'GoodsSetting',
+  });
+
   const route = useRoute();
   const goodsId = route.query.id;
   const isEdit = Boolean(goodsId && route.query.type === 'edit');
@@ -49,6 +53,7 @@
   enum REQUIRE_TYPE {
     STRENGTH,
     LEVEL,
+    DEXTERITY,
   }
   interface IPriceData {
     name: string;
@@ -99,7 +104,7 @@
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      width: 100,
+      width: 200,
     },
     {
       title: 'Value',
@@ -138,6 +143,10 @@
     {
       name: 'Level',
       id: REQUIRE_TYPE.LEVEL,
+    },
+    {
+      name: 'Dexterity',
+      id: REQUIRE_TYPE.DEXTERITY,
     },
   ];
 
@@ -187,7 +196,6 @@
       field: 'quality',
       component: 'Select',
       label: 'Quality:',
-      required: true,
       colProps: {
         span: 8,
       },
@@ -264,11 +272,23 @@
       },
     },
     {
+      field: 'tags',
+      component: 'CheckboxGroup',
+      label: 'Tags:',
+      colProps: {
+        span: 8,
+      },
+      defaultValue: [],
+      componentProps: {
+        options: TAGS_OPTIONS,
+      },
+    },
+    {
       field: 'affix',
       label: 'Affix:',
       slot: 'localSearch',
       colProps: {
-        span: 8,
+        span: 10,
       },
       componentProps: {},
       defaultValue: [],
@@ -341,20 +361,22 @@
       sundry,
       prices,
       discounts,
+      tags,
     } = res;
-    const [strength, level] = required.split(',');
-
+    const [strength, level, dexterity] = required.split(',');
     return {
       name,
       img,
       channelName: [ptype, type],
       role: role || undefined,
       specific: role ? true : false,
-      quality,
+      quality: quality ? quality : undefined,
       discounts,
+      tags,
       required: {
         [REQUIRE_TYPE.STRENGTH]: strength,
         [REQUIRE_TYPE.LEVEL]: level,
+        [REQUIRE_TYPE.DEXTERITY]: dexterity,
       },
       sundry: !!sundry,
       affix: attrs.reduce((prev, nxt) => {
@@ -363,10 +385,11 @@
           [nxt.aid]: nxt.value,
         };
       }, {}),
-      price: (prices || []).map((item) => {
+
+      price: Array.from({ length: 10 }, () => ({})).map((_, index) => {
         return {
-          price: item.price,
-          inventory: item.stock,
+          price: prices[index]?.price || '',
+          inventory: prices[index]?.stock || '',
         };
       }),
     };
@@ -452,6 +475,11 @@
               currentType.value = '';
             }
           },
+          showSearch: {
+            // 自定义搜索逻辑
+            filter: (inputValue, path) =>
+              path.some((option) => option.label.toLowerCase().includes(inputValue.toLowerCase())),
+          },
         },
       });
     });
@@ -473,6 +501,7 @@
       role,
       sundry,
       discounts,
+      tags,
     } = values;
     const [, type] = channelName || [];
     return {
@@ -483,6 +512,7 @@
       role,
       sundry: sundry ? 1 : 0,
       discounts,
+      tags: tags || [],
       attrs: Object.entries(affix).map(([key, item]) => {
         return {
           aid: key,
@@ -490,13 +520,15 @@
         };
       }),
       required: Object.values(required).join(',') || '0,0',
-      prices: priceDataSource.value.map((item, index) => {
-        return {
-          season: item.id,
-          price: price[index].price || 0,
-          stock: price[index].inventory || 0,
-        };
-      }),
+      prices: priceDataSource.value
+        .map((item, index) => {
+          return {
+            season: item.id,
+            price: price[index].price,
+            stock: price[index].inventory,
+          };
+        })
+        .filter((item) => item.price && item.stock),
     };
   };
 

@@ -27,9 +27,9 @@
                 },
               },
               {
-                label: 'complete',
+                label: 'upload',
                 icon: currentIds[record.id] ? 'eos-icons:loading' : 'carbon:task-complete',
-                ifShow: record.status === ORDER_STATUS.BE_SENDING,
+                ifShow: [ORDER_STATUS.BE_SENDING, ORDER_STATUS.DONE].includes(record.status),
                 color: currentIds[record.id] ? 'success' : undefined,
                 onClick() {
                   return uploadAttachment(record.id);
@@ -50,8 +50,7 @@
                 },
               },
             ]"
-          >
-          </TableAction>
+          />
           <Upload
             class="hidden"
             name="file"
@@ -89,6 +88,10 @@
   import { ORDER_STATUS } from '@/contants';
   import { useGlobSetting } from '@/hooks/setting';
   import { ref } from 'vue';
+
+  defineOptions({
+    name: 'OrderList',
+  });
 
   const route = useRoute();
 

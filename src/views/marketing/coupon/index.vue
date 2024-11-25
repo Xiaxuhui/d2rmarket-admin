@@ -57,6 +57,10 @@
   import { PageEnum } from '@/enums/pageEnum';
   import { couponList, deleteCoupon } from '@/api/marketing';
 
+  defineOptions({
+    name: 'Coupon',
+  });
+
   const [register, { reload }] = useTable({
     title: 'Coupon List',
     api: couponList,

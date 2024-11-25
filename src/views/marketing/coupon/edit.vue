@@ -22,6 +22,10 @@
   import { addCoupon, detailCoupon } from '@/api/marketing';
   import CodeInput from './components/codeInput.vue';
 
+  defineOptions({
+    name: 'CouponSetting',
+  });
+
   interface IParams {
     id?: number;
     code: string;
@@ -113,7 +117,6 @@
 
   const getData = async (id) => {
     detailCoupon(id).then((res) => {
-      console.log('res', res);
       const { num, discount, start, end, note, code } = res;
       setFieldsValue({
         note,

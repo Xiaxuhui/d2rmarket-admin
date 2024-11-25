@@ -21,6 +21,10 @@
   import { Divider, message } from 'ant-design-vue';
   import { onMounted, ref } from 'vue';
 
+  defineOptions({
+    name: 'Settings',
+  });
+
   const tags = ref<{ name: string; id: number }[]>([]);
 
   const deleteLocation = ({ id }) => {
