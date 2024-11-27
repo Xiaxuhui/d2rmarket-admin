@@ -1,6 +1,12 @@
 <template>
   <div>
+    <div class="px-[16px] mt-16px"
+      ><Alert v-show="addNum > 0" :message="`${addNum} new orders have been placed`" type="success"
+    /></div>
     <BasicTable @register="registerTable">
+      <template #title>
+        <TableTitle :total="total" />
+      </template>
       <template #bodyCell="{ column, record }">
         <a
           v-if="column.dataIndex === 'detail'"
@@ -21,9 +27,7 @@
                 icon: 'material-symbols:send-outline',
                 ifShow: record.status === ORDER_STATUS.PAID,
                 onClick() {
-                  updateOrder({ state: ORDER_STATUS.BE_SENDING, ids: record.id }).then(() =>
-                    reload(),
-                  );
+                  updateOrder({ state: ORDER_STATUS.DONE, ids: record.id }).then(() => reload());
                 },
               },
               {
@@ -39,7 +43,9 @@
                 label: 'delete',
                 icon: 'material-symbols:delete-outline',
                 color: 'error',
-                ifShow: [ORDER_STATUS.DONE, ORDER_STATUS.OVERTIME].includes(record.status),
+                ifShow: [ORDER_STATUS.DONE, ORDER_STATUS.OVERTIME, ORDER_STATUS.CANCEL].includes(
+                  record.status,
+                ),
                 popConfirm: {
                   title: 'confirm delete?',
                   confirm: () => {
@@ -81,13 +87,14 @@
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { orderList, updateOrder } from '@/api/order';
   import { useRoute } from 'vue-router';
-  import { Upload } from 'ant-design-vue';
+  import { Upload, Alert } from 'ant-design-vue';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
   import DetailDialog from './components/detailDialog.vue';
   import { useModal } from '@/components/Modal';
-  import { ORDER_STATUS } from '@/contants';
+  import { ORDER_STATUS, ORDER_STATUS_GROUP } from '@/contants';
   import { useGlobSetting } from '@/hooks/setting';
-  import { ref } from 'vue';
+  import TableTitle from './components/tableTitle.vue';
+  import { onMounted, ref } from 'vue';
 
   defineOptions({
     name: 'OrderList',
@@ -99,9 +106,17 @@
 
   const { uploadUrl } = useGlobSetting();
 
+  const total = ref(0);
+
+  const addNum = ref(0);
+
   const [registerTable, { reload }] = useTable({
     title: 'Order List',
-    api: orderList,
+    api: (params) => orderList({ status: ORDER_STATUS_GROUP.join(','), ...params }),
+    afterFetch(res) {
+      total.value = (res || []).length;
+      return res;
+    },
     columns: getBasicColumns(),
     useSearchForm: true,
     formConfig: getWithDrawFormConfig(route.query),
@@ -137,4 +152,16 @@
     }
     uploadRef.value[id]?.click();
   };
+
+  const getOrderNum = () => {
+    setTimeout(async () => {
+      const res = await orderList({ status: ORDER_STATUS_GROUP.join(',') });
+      addNum.value = res.length - (total.value || res.length);
+      return getOrderNum();
+    }, 10000);
+  };
+
+  onMounted(() => {
+    getOrderNum();
+  });
 </script>

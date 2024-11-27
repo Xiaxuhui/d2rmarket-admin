@@ -9,6 +9,7 @@ export interface IUserMessage {
 export interface IOrder {
   address: string;
   amount: number;
+  relAmount: number;
   ctime: number;
   coupon: number;
   details: {
@@ -19,7 +20,7 @@ export interface IOrder {
     sid: number;
     num: number;
     price: number;
-    discount: number;
+    discountPrice: number;
   }[];
   email: string;
   etime: number;

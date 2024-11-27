@@ -1,4 +1,8 @@
 import { BasicColumn, FormProps } from '@/components/Table';
+import { ORDER_TEXT } from '@/contants';
+import { getColorText } from '@/utils';
+import { formatToDateTime } from '@/utils/dateUtil';
+import { ColumnsType } from 'ant-design-vue/lib/table';
 
 export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
   return {
@@ -51,3 +55,33 @@ export function getBasicColumns(): BasicColumn[] {
     },
   ];
 }
+
+export const columns: ColumnsType<any> = [
+  {
+    title: 'OrderId',
+    dataIndex: 'id',
+  },
+  {
+    title: 'Create Time',
+    dataIndex: 'ctime',
+    customRender({ value }) {
+      return formatToDateTime(value * 1000);
+    },
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    customRender({ value }) {
+      return <div style={{ color: getColorText(value) }}>{ORDER_TEXT[value]}</div>;
+    },
+  },
+  {
+    title: 'Detail',
+    dataIndex: 'detail',
+    key: 'detail',
+  },
+  {
+    title: 'Operation',
+    dataIndex: 'operation',
+  },
+];

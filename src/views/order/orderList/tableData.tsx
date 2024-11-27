@@ -1,7 +1,7 @@
 import { BasicColumn, FormProps } from '@/components/Table';
-import { ORDER_TEXT } from '@/contants';
+import { ORDER_SELECTION, ORDER_TEXT } from '@/contants';
 import { useGlobSetting } from '@/hooks/setting';
-import { numberFixed } from '@/utils';
+import { getColorText, numberFixed } from '@/utils';
 import { formatToDateTime } from '@/utils/dateUtil';
 import { Image } from 'ant-design-vue';
 
@@ -23,6 +23,18 @@ export const getWithDrawFormConfig: (query: Record<string, any>) => Partial<Form
         },
       },
       {
+        field: 'status',
+        label: 'Status',
+        component: 'Select',
+        componentProps: {
+          options: ORDER_SELECTION,
+        },
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
+      },
+      {
         field: 'email',
         label: 'Email',
         component: 'Input',
@@ -35,13 +47,20 @@ export const getWithDrawFormConfig: (query: Record<string, any>) => Partial<Form
     ],
   };
 };
-
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
       title: 'OrderId',
       dataIndex: 'id',
       fixed: true,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      fixed: true,
+      customRender({ value }) {
+        return <div style={{ color: getColorText(value) }}>{ORDER_TEXT[value]}</div>;
+      },
     },
     {
       title: 'Uid',
@@ -75,16 +94,16 @@ export function getBasicColumns(): BasicColumn[] {
     },
     {
       title: 'Price',
-      dataIndex: 'amount',
+      dataIndex: 'relAmount',
       customRender({ value }) {
         return numberFixed((+value || 0) / 100, 2);
       },
     },
     {
-      title: 'Coupon',
+      title: 'Coupon Id',
       dataIndex: 'coupon',
       customRender({ value }) {
-        return value > 0 ? `${value}%` : null;
+        return value ? value : '-';
       },
     },
     {
@@ -97,13 +116,6 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: 'Detail',
       dataIndex: 'detail',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      customRender({ value }) {
-        return ORDER_TEXT[value];
-      },
     },
     {
       title: 'Operation',

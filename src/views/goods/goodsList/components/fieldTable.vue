@@ -9,7 +9,10 @@
             :disabled="disabled"
             @input="(e) => valueChange(e, index, column.key)"
           />
-          <a class="ml-2" v-if="column.key === 'inventory'" @click="UnlimitedInventory(index)"
+          <a
+            class="ml-2"
+            v-if="column.key === 'inventory' && !disabled"
+            @click="UnlimitedInventory(index)"
             >Unlimited</a
           >
         </div>

@@ -17,13 +17,21 @@ export enum QUALITY_ENUM {
 }
 
 export enum ORDER_STATUS {
-  DELETE = -1,
+  CANCEL = -1,
+  OVERTIME = -2,
+  DELETE = -10,
   UNPAID = 1,
   PAID = 5,
   BE_SENDING = 10,
   DONE = 15,
-  OVERTIME = 20,
 }
+
+export const ORDER_STATUS_GROUP = [
+  ORDER_STATUS.OVERTIME,
+  ORDER_STATUS.BE_SENDING,
+  ORDER_STATUS.PAID,
+  ORDER_STATUS.DONE,
+];
 
 export enum ROLE_ENUM {
   Amazon = 1,
@@ -99,12 +107,28 @@ export const ROLE_TEXT = {
 };
 
 export const ORDER_TEXT = {
+  [ORDER_STATUS.CANCEL]: 'cancel',
   [ORDER_STATUS.UNPAID]: 'unpaid',
   [ORDER_STATUS.PAID]: 'paid',
-  [ORDER_STATUS.BE_SENDING]: 'be sending',
-  [ORDER_STATUS.DONE]: 'done',
+  [ORDER_STATUS.BE_SENDING]: 'sent',
+  [ORDER_STATUS.DONE]: 'sent',
   [ORDER_STATUS.OVERTIME]: 'overtime',
 };
+
+export const ORDER_SELECTION = [
+  {
+    label: ORDER_TEXT[ORDER_STATUS.PAID],
+    value: ORDER_STATUS.PAID,
+  },
+  {
+    label: ORDER_TEXT[ORDER_STATUS.OVERTIME],
+    value: ORDER_STATUS.OVERTIME,
+  },
+  {
+    label: ORDER_TEXT[ORDER_STATUS.DONE],
+    value: `${ORDER_STATUS.DONE},${ORDER_STATUS.BE_SENDING}`,
+  },
+];
 
 export const ROLE_SELECTION = [
   {

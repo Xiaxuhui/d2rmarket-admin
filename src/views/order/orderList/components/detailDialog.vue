@@ -39,7 +39,7 @@
       key: 'num',
     },
     {
-      title: 'Price',
+      title: 'Unit Price',
       dataIndex: 'price',
       key: 'price',
       customRender({ value }) {
@@ -47,23 +47,20 @@
       },
     },
     {
-      title: 'Discount',
-      dataIndex: 'discount',
-      key: 'discount',
+      title: 'Discount Price',
+      dataIndex: 'discountPrice',
+      key: 'discountPrice',
       customRender({ value }) {
-        return value > 0 ? `${value}%` : null;
+        return numberFixed(+value / 100 || 0, 2);
       },
     },
     {
-      title: 'Actual price',
+      title: 'Price',
       dataIndex: 'price',
       key: 'price',
       customRender({ record }) {
-        const { discount, price } = record;
-        if (discount > 0) {
-          return BigNumber(discount).div(10000).multipliedBy(price).valueOf();
-        }
-        return numberFixed(+price / 100 || 0, 2);
+        const { discountPrice, num } = record;
+        return BigNumber(discountPrice).div(100).multipliedBy(num).valueOf();
       },
     },
   ];

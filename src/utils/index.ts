@@ -8,6 +8,7 @@ import { isArray, isObject } from '@/utils/is';
 import { RcFile } from 'ant-design-vue/es/vc-upload/interface';
 import { useLabelStore } from '../store/modules/label';
 import { ComponentFormSchemaType } from '../components/Form';
+import { ORDER_STATUS } from '@/contants';
 
 export const noop = () => {};
 
@@ -220,4 +221,18 @@ export const numberFixed = (
   const base = Math.pow(10, pos);
   const basePow = Math.floor(+BigNumber(Number(num)).multipliedBy(base).valueOf());
   return +BigNumber(basePow).div(base).valueOf();
+};
+
+export const getColorText = (status: ORDER_STATUS) => {
+  switch (status) {
+    case ORDER_STATUS.OVERTIME:
+      return '#ed6f6f';
+    case ORDER_STATUS.PAID:
+      return '#efbd47';
+    case ORDER_STATUS.BE_SENDING:
+    case ORDER_STATUS.DONE:
+      return '#55de87';
+    default:
+      return '';
+  }
 };

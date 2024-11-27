@@ -225,6 +225,15 @@
       },
     },
     {
+      field: 'hot',
+      component: 'Switch',
+      label: 'Hot',
+      defaultValue: false,
+      colProps: {
+        span: 8,
+      },
+    },
+    {
       field: 'role',
       component: 'Select',
       label: 'Role:',
@@ -362,6 +371,7 @@
       prices,
       discounts,
       tags,
+      hot,
     } = res;
     const [strength, level, dexterity] = required.split(',');
     return {
@@ -371,6 +381,7 @@
       role: role || undefined,
       specific: role ? true : false,
       quality: quality ? quality : undefined,
+      hot: Boolean(hot),
       discounts,
       tags,
       required: {
@@ -501,6 +512,7 @@
       role,
       sundry,
       discounts,
+      hot,
       tags,
     } = values;
     const [, type] = channelName || [];
@@ -512,6 +524,7 @@
       role,
       sundry: sundry ? 1 : 0,
       discounts,
+      hot: hot ? 1 : 0,
       tags: tags || [],
       attrs: Object.entries(affix).map(([key, item]) => {
         return {
