@@ -21,10 +21,13 @@
   import { onMounted, computed } from 'vue';
   import { addCoupon, detailCoupon } from '@/api/marketing';
   import CodeInput from './components/codeInput.vue';
+  import { useTabs } from '@/hooks/web/useTabs';
 
   defineOptions({
     name: 'CouponSetting',
   });
+
+  const { closeCurrent } = useTabs();
 
   interface IParams {
     id?: number;
@@ -147,13 +150,13 @@
   };
 
   function handleSubmit(values: any) {
-    console.log('values', values);
     const params = handleParams(values);
 
     if (couponId) {
       params.id = +couponId;
     }
     addCoupon(params).then(() => {
+      closeCurrent();
       back();
     });
   }

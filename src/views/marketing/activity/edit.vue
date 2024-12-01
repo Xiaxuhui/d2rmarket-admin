@@ -26,6 +26,7 @@
   import { addActivity, detailActivity } from '@/api/marketing';
   import dayjs from 'dayjs';
   import FieldTable from './components/fieldTable.vue';
+  import { useTabs } from '@/hooks/web/useTabs';
 
   defineOptions({
     name: 'ActivitySetting',
@@ -42,6 +43,8 @@
   }
 
   const { back } = useRouter();
+
+  const { closeCurrent } = useTabs();
 
   const route = useRoute();
   const activityId = route.query.id;
@@ -191,6 +194,7 @@
       params.id = +activityId;
     }
     addActivity(params).then(() => {
+      closeCurrent();
       back();
     });
   }

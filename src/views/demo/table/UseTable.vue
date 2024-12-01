@@ -49,7 +49,11 @@
     canResize: true,
     title: 'useTable示例',
     titleHelpMessage: '使用useTable调用表格内方法',
-    api: demoListApi,
+    api: (params) =>
+      demoListApi(params).then((res) => {
+        console.log(res);
+        return res;
+      }),
     columns: getBasicColumns(),
     defSort: {
       field: 'name',

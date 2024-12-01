@@ -1,12 +1,9 @@
 <template>
   <div>
-    <div class="px-[16px] mt-16px"
-      ><Alert v-show="addNum > 0" :message="`${addNum} new orders have been placed`" type="success"
-    /></div>
+    <div class="px-[16px] mt-16px">
+      <TableTitle :total="total" />
+    </div>
     <BasicTable @register="registerTable">
-      <template #title>
-        <TableTitle :total="total" />
-      </template>
       <template #bodyCell="{ column, record }">
         <a
           v-if="column.dataIndex === 'detail'"
@@ -39,22 +36,22 @@
                   return uploadAttachment(record.id);
                 },
               },
-              {
-                label: 'delete',
-                icon: 'material-symbols:delete-outline',
-                color: 'error',
-                ifShow: [ORDER_STATUS.DONE, ORDER_STATUS.OVERTIME, ORDER_STATUS.CANCEL].includes(
-                  record.status,
-                ),
-                popConfirm: {
-                  title: 'confirm delete?',
-                  confirm: () => {
-                    updateOrder({ state: ORDER_STATUS.DELETE, ids: record.id }).then(() =>
-                      reload(),
-                    );
-                  },
-                },
-              },
+              // {
+              //   label: 'delete',
+              //   icon: 'material-symbols:delete-outline',
+              //   color: 'error',
+              //   ifShow: [ORDER_STATUS.DONE, ORDER_STATUS.OVERTIME, ORDER_STATUS.CANCEL].includes(
+              //     record.status,
+              //   ),
+              //   popConfirm: {
+              //     title: 'confirm delete?',
+              //     confirm: () => {
+              //       updateOrder({ state: ORDER_STATUS.DELETE, ids: record.id }).then(() =>
+              //         reload(),
+              //       );
+              //     },
+              //   },
+              // },
             ]"
           />
           <Upload
@@ -87,7 +84,7 @@
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { orderList, updateOrder } from '@/api/order';
   import { useRoute } from 'vue-router';
-  import { Upload, Alert } from 'ant-design-vue';
+  import { Upload } from 'ant-design-vue';
   import { getBasicColumns, getWithDrawFormConfig } from './tableData';
   import DetailDialog from './components/detailDialog.vue';
   import { useModal } from '@/components/Modal';
@@ -95,12 +92,13 @@
   import { useGlobSetting } from '@/hooks/setting';
   import TableTitle from './components/tableTitle.vue';
   import { onMounted, ref } from 'vue';
-
-  defineOptions({
-    name: 'OrderList',
-  });
+  import { useTagsStore } from '@/store/modules/tags';
+  import { orderCount } from '@/api/order/index';
+  // import { demoListApi } from '@/api/demo/table';
 
   const route = useRoute();
+
+  const tags = useTagsStore();
 
   const [registerModal, { openModal }] = useModal();
 
@@ -108,14 +106,27 @@
 
   const total = ref(0);
 
-  const addNum = ref(0);
-
   const [registerTable, { reload }] = useTable({
     title: 'Order List',
-    api: (params) => orderList({ status: ORDER_STATUS_GROUP.join(','), ...params }),
-    afterFetch(res) {
-      total.value = (res || []).length;
-      return res;
+    api: (params) => {
+      const { pageNum, status, pageSize, id, email } = params;
+      if (!status) {
+        orderCount({ status: ORDER_STATUS.PAID }).then((totalRes) => {
+          total.value = totalRes;
+        });
+      }
+      return orderList({
+        status: status || ORDER_STATUS_GROUP.join(','),
+        pageSize,
+        page: pageNum,
+        id,
+        email,
+      }).then((res) => {
+        return {
+          items: res.data?.data || [],
+          total: res.data?.total || 0,
+        };
+      });
     },
     columns: getBasicColumns(),
     useSearchForm: true,
@@ -124,10 +135,6 @@
     tableSetting: { fullScreen: true },
     showIndexColumn: false,
     rowKey: 'id',
-    fetchSetting: {
-      listField: 'list',
-      totalField: 'totalRecords',
-    },
     pagination: { pageSize: 20, pageSizeOptions: ['20'] },
   });
 
@@ -153,15 +160,11 @@
     uploadRef.value[id]?.click();
   };
 
-  const getOrderNum = () => {
-    setTimeout(async () => {
-      const res = await orderList({ status: ORDER_STATUS_GROUP.join(',') });
-      addNum.value = res.length - (total.value || res.length);
-      return getOrderNum();
-    }, 10000);
+  const getTags = () => {
+    tags.getTags();
   };
 
   onMounted(() => {
-    getOrderNum();
+    getTags();
   });
 </script>

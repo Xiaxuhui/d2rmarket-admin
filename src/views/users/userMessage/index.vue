@@ -6,15 +6,18 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onUnmounted, ref } from 'vue';
+  import { onUnmounted, ref, onMounted } from 'vue';
   import ChatModal from './components/chatModal.vue';
   import UserList from './components/userList.vue';
   import OrderInfo from './components/orderInfo.vue';
   import { IUserMessage } from '@/definations';
+  import { useTagsStore } from '@/store/modules/tags';
 
   defineOptions({
     name: 'UserMessage',
   });
+
+  const tags = useTagsStore();
 
   const qid = ref(0);
   const userId = ref(0);
@@ -23,6 +26,10 @@
     userId.value = item.uid;
     qid.value = item.qid;
   };
+
+  onMounted(() => {
+    tags.getTags();
+  });
 
   onUnmounted(() => {
     qid.value = 0;

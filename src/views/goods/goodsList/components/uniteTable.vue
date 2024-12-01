@@ -18,7 +18,7 @@
 <script lang="ts" setup>
   import { Table } from 'ant-design-vue';
   import { ColumnsType } from 'ant-design-vue/es/table';
-  import { reactive, watch } from 'vue';
+  import { ref, watch } from 'vue';
 
   const props = defineProps({
     columns: {
@@ -38,19 +38,20 @@
 
   const emits = defineEmits(['update:modelValue']);
 
-  const valueMap = reactive({});
+  const valueMap = ref({});
 
   const valueChange = (e, id) => {
-    valueMap[id] = e.target.value;
-    emits('update:modelValue', valueMap);
+    valueMap.value[id] = e.target.value;
+    emits('update:modelValue', valueMap.value);
   };
 
   watch(
     () => props.modelValue,
     () => {
-      if (Object.keys(props.modelValue).length && !Object.keys(valueMap).length) {
+      if (Object.keys(props.modelValue).length !== Object.keys(valueMap.value).length) {
+        valueMap.value = {};
         for (let key in props.modelValue) {
-          valueMap[key] = props.modelValue[key];
+          valueMap.value[key] = props.modelValue[key];
         }
       }
     },

@@ -41,6 +41,7 @@
   import { addProduct, productData, updateProduct } from '@/api/goods';
   import { useGoodsStore } from '@/store/modules/goods';
   import { activityList } from '@/api/marketing';
+  import { useTabs } from '@/hooks/web/useTabs';
 
   defineOptions({
     name: 'GoodsSetting',
@@ -63,6 +64,8 @@
   }
 
   const goods = useGoodsStore();
+
+  const { closeCurrent } = useTabs();
 
   const currentImgList = ref([]);
 
@@ -216,18 +219,18 @@
       },
     },
     {
-      field: 'specific',
+      field: 'hot',
       component: 'Switch',
-      label: 'Role specific',
+      label: 'Hot',
       defaultValue: false,
       colProps: {
         span: 8,
       },
     },
     {
-      field: 'hot',
+      field: 'specific',
       component: 'Switch',
-      label: 'Hot',
+      label: 'Role specific',
       defaultValue: false,
       colProps: {
         span: 8,
@@ -374,6 +377,12 @@
       hot,
     } = res;
     const [strength, level, dexterity] = required.split(',');
+    const pricesMap = (prices || []).reduce((prev, nxt) => {
+      return {
+        ...prev,
+        [nxt.sid]: nxt,
+      };
+    }, {});
     return {
       name,
       img,
@@ -398,9 +407,16 @@
       }, {}),
 
       price: Array.from({ length: 10 }, () => ({})).map((_, index) => {
+        if (pricesMap[index + 1]) {
+          const item = pricesMap[index + 1];
+          return {
+            price: item.price || '',
+            inventory: item.price ? item.stock ?? '' : '',
+          };
+        }
         return {
-          price: prices[index]?.price || '',
-          inventory: prices[index]?.stock || '',
+          price: '',
+          inventory: '',
         };
       }),
     };
@@ -509,6 +525,7 @@
       price,
       quality,
       required = {},
+      specific,
       role,
       sundry,
       discounts,
@@ -521,7 +538,7 @@
       name,
       quality,
       type,
-      role,
+      role: specific ? role : undefined,
       sundry: sundry ? 1 : 0,
       discounts,
       hot: hot ? 1 : 0,
@@ -532,7 +549,9 @@
           value: item,
         };
       }),
-      required: Object.values(required).join(',') || '0,0',
+      required: `${required[REQUIRE_TYPE.STRENGTH] || ''},${required[REQUIRE_TYPE.LEVEL] || ''},${
+        required[REQUIRE_TYPE.DEXTERITY] || ''
+      }`,
       prices: priceDataSource.value
         .map((item, index) => {
           return {
@@ -549,10 +568,12 @@
     const params = formatValues(values);
     if (goodsId) {
       updateProduct({ ...params, id: goodsId }).then(() => {
+        closeCurrent();
         back();
       });
     } else {
       addProduct(params).then(() => {
+        closeCurrent();
         back();
       });
     }

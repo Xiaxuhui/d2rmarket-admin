@@ -30,6 +30,7 @@
   import { DefaultOptionType } from 'ant-design-vue/es/vc-select/Select';
   import UniteTable from './uniteTable.vue';
   import { computed, ref, watch } from 'vue';
+  import { cloneDeep, omit } from 'lodash-es';
 
   const props = defineProps({
     modelValue: {
@@ -100,7 +101,8 @@
               }
               cacheSet.value.delete(id + '');
               dataSource.value = dataSource.value.filter((item) => item.id !== id);
-              delete valueMap.value[id];
+              const deepMap = cloneDeep(valueMap.value);
+              valueMap.value = omit(deepMap, id);
             },
           });
         }
@@ -128,7 +130,8 @@
                 }
                 cacheSet.value.delete(id + '');
                 dataSource.value = dataSource.value.filter((item) => item.id !== id);
-                delete valueMap.value[id];
+                const deepMap = cloneDeep(valueMap.value);
+                valueMap.value = omit(deepMap, id);
               },
             };
           });

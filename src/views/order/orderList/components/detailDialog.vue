@@ -16,10 +16,13 @@
   import { Table } from 'ant-design-vue';
   import { numberFixed } from '@/utils';
   import BigNumber from 'bignumber.js';
+  import { useTagsStore } from '@/store/modules/tags';
 
   const loading = ref(true);
   const open = ref(false);
   const dataSource = ref([]);
+
+  const tags = useTagsStore();
 
   const [register, { setModalProps }] = useModalInner(async (data) => {
     dataSource.value = data;
@@ -32,6 +35,19 @@
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+    },
+    {
+      title: 'Id',
+      dataIndex: 'pid',
+      key: 'pid',
+    },
+    {
+      title: 'Location',
+      dataIndex: 'sid',
+      key: 'sid',
+      customRender({ value }) {
+        return tags.tags[value] || value;
+      },
     },
     {
       title: 'Num',

@@ -1,16 +1,10 @@
 <template>
-  <div class="flex">
-    <div>Order List</div>
-    <div
-      v-show="addNum > 0"
-      class="rounded-full w-[20px] h-[20px] leading-[20px] text-[#fff] absolute right-0 bottom-0 bg-[#ff4c4a] text-center"
-      >{{ addNum }}</div
-    >
-  </div>
+  <Alert v-show="addNum > 0" :message="`${addNum} new order(s) have been placed`" type="success" />
 </template>
 <script lang="ts" setup>
-  import { orderList } from '@/api/order';
-  import { ORDER_STATUS_GROUP } from '@/contants';
+  import { orderCount } from '@/api/order';
+  import { ORDER_STATUS } from '@/contants';
+  import { Alert } from 'ant-design-vue';
   import { onMounted, ref } from 'vue';
 
   const props = defineProps({
@@ -21,12 +15,11 @@
 
   const getOrderNum = () => {
     setTimeout(async () => {
-      const res = await orderList({ status: ORDER_STATUS_GROUP.join(',') });
-      addNum.value = res.length - (props.total || res.length);
+      const res = await orderCount({ status: ORDER_STATUS.PAID });
+      addNum.value = res - props.total!;
       return getOrderNum();
     }, 10000);
   };
-
   onMounted(() => {
     getOrderNum();
   });

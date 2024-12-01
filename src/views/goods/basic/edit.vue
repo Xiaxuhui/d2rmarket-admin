@@ -22,12 +22,15 @@
   import AffixField from './components/AffixField.vue';
   import { useGlobSetting } from '@/hooks/setting';
   import { addPropBase, propBase } from '@/api/goods';
+  import { useTabs } from '@/hooks/web/useTabs';
 
   defineOptions({
     name: 'BasicSetting',
   });
 
   const { back } = useRouter();
+
+  const { closeCurrent } = useTabs();
 
   const route = useRoute();
   const baseId = route.query.id;
@@ -183,6 +186,7 @@
       params.id = +baseId;
     }
     addPropBase(params).then(() => {
+      closeCurrent();
       back();
     });
   }

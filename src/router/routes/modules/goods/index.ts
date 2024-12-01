@@ -20,7 +20,6 @@ const goods: AppRouteModule = {
       component: () => import('@/views/goods/basic/index.vue'),
       meta: {
         title: t('routes.goods.basic'),
-        keepAlive: true,
       },
     },
     {
@@ -39,7 +38,6 @@ const goods: AppRouteModule = {
       component: () => import('@/views/goods/goodsList/index.vue'),
       meta: {
         title: t('routes.goods.goodsList'),
-        keepAlive: true,
       },
     },
     {

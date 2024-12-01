@@ -57,10 +57,6 @@
   import { PageEnum } from '@/enums/pageEnum';
   import { activityList, deleteActivity } from '@/api/marketing';
 
-  defineOptions({
-    name: 'ActivityList',
-  });
-
   const [register, { reload }] = useTable({
     title: 'Activity List',
     api: activityList,
