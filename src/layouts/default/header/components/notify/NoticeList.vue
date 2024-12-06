@@ -1,5 +1,5 @@
 <template>
-  <List :class="prefixCls" bordered :pagination="getPagination">
+  <List class="min-w-[300px]" :class="prefixCls" bordered :pagination="getPagination">
     <template v-for="item in getData" :key="item.id">
       <List.Item class="list-item">
         <List.Item.Meta>

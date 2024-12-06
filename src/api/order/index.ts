@@ -19,5 +19,5 @@ export const updateOrder = (params) => {
 };
 
 export const orderCount = (params) => {
-  return defHttp.get({ url: Api.orderCount, params });
+  return defHttp.get({ url: Api.orderCount, params }, { successMessageMode: 'none' });
 };

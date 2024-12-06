@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <Popover title="" trigger="click" :overlayClassName="`${prefixCls}__overlay`">
-      <Badge :count="count" dot :numberStyle="numberStyle">
+      <Badge :count="order.orderCount" dot :numberStyle="numberStyle">
         <BellOutlined />
       </Badge>
       <template #content>
@@ -23,31 +23,53 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed, ref } from 'vue';
+  import { onMounted, ref, watch } from 'vue';
   import { Popover, Tabs, Badge } from 'ant-design-vue';
   import { BellOutlined } from '@ant-design/icons-vue';
   import { tabListData, ListItem } from './data';
   import NoticeList from './NoticeList.vue';
   import { useDesign } from '@/hooks/web/useDesign';
-  import { useMessage } from '@/hooks/web/useMessage';
+  import { useGo } from '@/hooks/web/usePage';
+  import { PageEnum } from '@/enums/pageEnum';
+  import { useOrderStore } from '@/store/modules/order';
 
+  const go = useGo();
   const { prefixCls } = useDesign('header-notify');
-  const { createMessage } = useMessage();
+
   const listData = ref(tabListData);
   const numberStyle = {};
 
-  const count = computed(() => {
-    let count = 0;
-    for (let i = 0; i < tabListData.length; i++) {
-      count += tabListData[i].list.length;
-    }
-    return count;
+  const order = useOrderStore();
+
+  watch(
+    () => order.orderCount,
+    (val) => {
+      console.log('order.orderCount', order.orderCount);
+      if (val) {
+        listData.value[0].list.push({
+          id: '1',
+          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png',
+          title: `${val} new order(s) have been placed`,
+          description: '',
+          datetime: '',
+          type: '1',
+        });
+      } else {
+        listData.value[0].list = [];
+      }
+    },
+  );
+
+  onMounted(async () => {
+    order.getOrderCount();
   });
 
   function onNoticeClick(record: ListItem) {
-    createMessage.success('你点击了通知，ID=' + record.id);
     // 可以直接将其标记为已读（为标题添加删除线）,此处演示的代码会切换删除线状态
     record.titleDelete = !record.titleDelete;
+    go({
+      path: PageEnum.ORDER_LIST,
+    });
   }
 </script>
 <style lang="less">

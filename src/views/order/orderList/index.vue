@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="px-[16px] mt-16px">
-      <TableTitle :total="total" />
+      <TableTitle />
     </div>
     <BasicTable @register="registerTable">
       <template #bodyCell="{ column, record }">
@@ -93,28 +93,24 @@
   import TableTitle from './components/tableTitle.vue';
   import { onMounted, ref } from 'vue';
   import { useTagsStore } from '@/store/modules/tags';
-  import { orderCount } from '@/api/order/index';
+  import { useOrderStore } from '@/store/modules/order';
   // import { demoListApi } from '@/api/demo/table';
 
   const route = useRoute();
 
   const tags = useTagsStore();
 
+  const order = useOrderStore();
+
   const [registerModal, { openModal }] = useModal();
 
   const { uploadUrl } = useGlobSetting();
-
-  const total = ref(0);
 
   const [registerTable, { reload }] = useTable({
     title: 'Order List',
     api: (params) => {
       const { pageNum, status, pageSize, id, email } = params;
-      if (!status) {
-        orderCount({ status: ORDER_STATUS.PAID }).then((totalRes) => {
-          total.value = totalRes;
-        });
-      }
+      order.initOrderCount();
       return orderList({
         status: status || ORDER_STATUS_GROUP.join(','),
         pageSize,
