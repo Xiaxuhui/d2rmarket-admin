@@ -7,9 +7,9 @@ export enum TYPE_ENUM {
 
 export enum QUALITY_ENUM {
   UNDEFINED,
-  Common,
+  Normal,
   Magic,
-  Uncommon,
+  Rare,
   Unique,
   Suit,
   Runewords,
@@ -205,8 +205,8 @@ export const TYPE_TEXT = {
 
 export const QUALITY_SELECTION = [
   {
-    label: 'Common',
-    value: QUALITY_ENUM.Common,
+    label: 'Normal',
+    value: QUALITY_ENUM.Normal,
     key: '1',
   },
   {
@@ -215,8 +215,8 @@ export const QUALITY_SELECTION = [
     key: '2',
   },
   {
-    label: 'Uncommon',
-    value: QUALITY_ENUM.Uncommon,
+    label: 'Rare',
+    value: QUALITY_ENUM.Rare,
     key: '3',
   },
   {
@@ -242,9 +242,9 @@ export const QUALITY_SELECTION = [
 ];
 
 export const QUALITY_TEXT = {
-  [QUALITY_ENUM.Common]: 'Common',
+  [QUALITY_ENUM.Normal]: 'Normal',
   [QUALITY_ENUM.Magic]: 'Magic',
-  [QUALITY_ENUM.Uncommon]: 'Uncommon',
+  [QUALITY_ENUM.Rare]: 'Rare',
   [QUALITY_ENUM.Unique]: 'Unique',
   [QUALITY_ENUM.Suit]: 'Suit',
   [QUALITY_ENUM.Runewords]: 'Runewords',

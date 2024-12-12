@@ -19,8 +19,8 @@ export default defineApplicationConfig({
     server: {
       proxy: {
         '/basic-api': {
-          target: 'https://d2test.dyna1.asia/api/',
-          // target: 'http://localhost:3000',
+          // target: 'https://d2test.dyna1.asia/api/',
+          target: 'http://192.168.50.211:8849',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/basic-api`), ''),

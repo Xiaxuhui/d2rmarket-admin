@@ -212,7 +212,7 @@
     {
       field: 'sundry',
       component: 'Switch',
-      label: 'Sundry goods',
+      label: 'Other goods',
       defaultValue: false,
       colProps: {
         span: 8,
@@ -410,7 +410,7 @@
         if (pricesMap[index + 1]) {
           const item = pricesMap[index + 1];
           return {
-            price: item.price || '',
+            price: item.price ? item.price / 100 : '',
             inventory: item.price ? item.stock ?? '' : '',
           };
         }
@@ -556,7 +556,7 @@
         .map((item, index) => {
           return {
             season: item.id,
-            price: price[index].price,
+            price: price[index].price ? Math.floor(price[index].price * 100) : undefined,
             stock: price[index].inventory,
           };
         })
