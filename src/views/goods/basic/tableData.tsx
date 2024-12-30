@@ -10,6 +10,7 @@ export const getFormConfig: () => Partial<FormProps> = () => {
     resetButtonOptions: {
       text: 'Reset(重置)',
     },
+    autoSubmitOnEnter: true,
     schemas: [
       {
         field: `type`,

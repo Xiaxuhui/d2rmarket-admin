@@ -41,10 +41,15 @@
 
   const order = useOrderStore();
 
+  const orderTip = ref(new Audio('/src/assets/audio/order.mp3'));
+
   watch(
     () => order.orderCount,
     (val) => {
       if (val) {
+        orderTip.value?.play().catch((error) => {
+          console.error('播放失败:', error);
+        });
         listData.value[0].list.push({
           id: '1',
           avatar: 'https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png',
@@ -60,6 +65,7 @@
   );
 
   onMounted(async () => {
+    console.log('orderTip.value', orderTip.value);
     order.getOrderCount();
   });
 
