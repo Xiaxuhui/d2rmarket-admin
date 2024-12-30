@@ -23,7 +23,7 @@
         />
       </template>
       <template #resetBefore>
-        <a-button class="mr-2" @click="back">Back</a-button>
+        <a-button class="mr-2" @click="back">Back(返回)</a-button>
       </template>
     </BasicForm>
   </div>
@@ -83,19 +83,19 @@
 
   const priceColumns = [
     {
-      title: 'Name',
+      title: 'Name(名称)',
       dataIndex: 'name',
       key: 'name',
       width: 100,
     },
     {
-      title: 'Price',
+      title: 'Price(价格)',
       dataIndex: 'price',
       key: 'price',
       width: 100,
     },
     {
-      title: 'Inventory',
+      title: 'Inventory(库存)',
       dataIndex: 'inventory',
       key: 'inventory',
       width: 100,
@@ -104,19 +104,19 @@
 
   const affixColumn = [
     {
-      title: 'Name',
+      title: 'Name(名称)',
       dataIndex: 'name',
       key: 'name',
       width: 200,
     },
     {
-      title: 'Value',
+      title: 'Value(值)',
       dataIndex: 'value',
       key: 'value',
       width: 100,
     },
     {
-      title: 'Opt',
+      title: 'Opt(操作)',
       dataIndex: 'opt',
       key: 'opt',
       width: 100,
@@ -125,13 +125,13 @@
 
   const requireColumn = [
     {
-      title: 'Name',
+      title: 'Name(名称)',
       dataIndex: 'name',
       key: 'name',
       width: 100,
     },
     {
-      title: 'Value',
+      title: 'Value(值)',
       dataIndex: 'value',
       key: 'value',
       width: 100,
@@ -140,15 +140,15 @@
 
   const requireDateSource = [
     {
-      name: 'Strength',
+      name: 'Strength(力量)',
       id: REQUIRE_TYPE.STRENGTH,
     },
     {
-      name: 'Level',
+      name: 'Level(等级)',
       id: REQUIRE_TYPE.LEVEL,
     },
     {
-      name: 'Dexterity',
+      name: 'Dexterity(敏捷)',
       id: REQUIRE_TYPE.DEXTERITY,
     },
   ];
@@ -157,7 +157,7 @@
     {
       field: 'divider-basic',
       component: 'Divider',
-      label: 'GOODS SETTING',
+      label: 'GOODS SETTING(商品设置)',
       colProps: {
         span: 24,
       },
@@ -166,7 +166,7 @@
       field: 'name',
       component: 'Input',
       required: true,
-      label: 'Name:',
+      label: 'Name(名称):',
       colProps: {
         span: 8,
       },
@@ -174,7 +174,7 @@
     {
       field: 'channelName',
       component: 'Cascader',
-      label: 'Type:',
+      label: 'Type(类型):',
       required: true,
       colProps: {
         span: 8,
@@ -190,7 +190,7 @@
       field: 'img',
       component: 'Input',
       required: true,
-      label: 'Image:',
+      label: 'Image(图片):',
       render({ model, field }) {
         return <ImgSelector vModel={model[field]} imgList={currentImgList.value} />;
       },
@@ -198,7 +198,7 @@
     {
       field: 'quality',
       component: 'Select',
-      label: 'Quality:',
+      label: 'Quality(品质):',
       colProps: {
         span: 8,
       },
@@ -212,7 +212,7 @@
     {
       field: 'sundry',
       component: 'Switch',
-      label: 'Other goods',
+      label: 'Other(其他)',
       defaultValue: false,
       colProps: {
         span: 8,
@@ -221,7 +221,7 @@
     {
       field: 'hot',
       component: 'Switch',
-      label: 'Hot',
+      label: 'Hot(热销)',
       defaultValue: false,
       colProps: {
         span: 8,
@@ -230,7 +230,7 @@
     {
       field: 'specific',
       component: 'Switch',
-      label: 'Role specific',
+      label: 'Role specific(角色专属)',
       defaultValue: false,
       colProps: {
         span: 8,
@@ -239,7 +239,7 @@
     {
       field: 'role',
       component: 'Select',
-      label: 'Role:',
+      label: 'Role(角色):',
       defaultValue: undefined,
       componentProps: {
         options: ROLE_SELECTION,
@@ -257,7 +257,7 @@
     {
       field: 'discounts',
       component: 'ApiSelect',
-      label: 'Activity:',
+      label: 'Activity(活动):',
       defaultValue: undefined,
       componentProps: {
         // more details see /src/components/Form/src/components/ApiSelect.vue
@@ -286,7 +286,7 @@
     {
       field: 'tags',
       component: 'CheckboxGroup',
-      label: 'Tags:',
+      label: 'Tags(标签):',
       colProps: {
         span: 8,
       },
@@ -297,7 +297,7 @@
     },
     {
       field: 'affix',
-      label: 'Affix:',
+      label: 'Affix(词缀):',
       slot: 'localSearch',
       colProps: {
         span: 10,
@@ -307,7 +307,7 @@
     },
     {
       field: 'required',
-      label: 'Required:',
+      label: 'Required(要求):',
       slot: 'localRequire',
       defaultValue: [],
       colProps: {
@@ -317,7 +317,7 @@
     {
       field: 'price',
       component: 'Input',
-      label: 'Price/Inventory:',
+      label: 'Price/Inventory(价格/库存):',
       required: true,
       defaultValue: Array.from({ length: 10 }, () => ({})),
       render({ model, field }, { disabled }) {
@@ -347,14 +347,14 @@
   // });
 
   const [register, { updateSchema, setFieldsValue }] = useForm({
-    labelWidth: 120,
+    labelWidth: 200,
     isNotRow: true,
     schemas: unref(schemas),
     actionColOptions: {
       span: 10,
     },
     submitButtonOptions: {
-      text: 'Submit',
+      text: 'Submit(提交)',
     },
     showResetButton: false,
     showSubmitButton: Boolean(!goodsId || isEdit),

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-[600px] h-full pt-4 pr-4 overflow-auto">
+  <div class="max-w-[800px] h-full pt-4 pr-4 overflow-auto">
     <Table
       :columns="columns"
       :data-source="dataSource"
@@ -7,14 +7,14 @@
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'detail'">
-          <a @click="showDetail(record)">detail</a>
+          <a @click="showDetail(record)">detail(详情)</a>
         </template>
         <template v-if="column.dataIndex === 'operation'">
           <TableAction
             stopButtonPropagation
             :actions="[
               {
-                label: 'send',
+                label: 'send(发送)',
                 icon: 'material-symbols:send-outline',
                 ifShow: record.status === ORDER_STATUS.PAID,
                 onClick() {
@@ -30,13 +30,13 @@
     </Table>
     <Card title="Detail">
       <div class="flex">
-        <div class="flex-1 text-base font-bold text-center">Name</div>
+        <div class="flex-1 text-base font-bold text-center">Name(名称)</div>
         <div class="flex-1 text-base font-bold text-center">Id</div>
-        <div class="flex-1 text-base font-bold text-center">LOC</div>
-        <div class="flex-1 text-base font-bold text-center">Num</div>
-        <div class="flex-1 text-base font-bold text-center">Unit Price</div>
-        <div class="flex-1 text-base font-bold text-center">Discount Price</div>
-        <div class="flex-1 text-base font-bold text-center">Price</div>
+        <div class="flex-1 text-base font-bold text-center">LOC(地点)</div>
+        <div class="flex-1 text-base font-bold text-center">Num(数量)</div>
+        <div class="flex-1 text-base font-bold text-center">Unit Price(单价)</div>
+        <div class="flex-1 text-base font-bold text-center">Discount Price(折扣价)</div>
+        <div class="flex-1 text-base font-bold text-center">Price(价格)</div>
       </div>
       <div
         class="flex leading-[40px]"
@@ -60,10 +60,10 @@
     </Card>
     <div class="flex-col mt-[10px]">
       <div class="leading-[40px] text-xl font-bold text-center text-right"
-        >Coupon: {{ orderRecord.coupon ? `${orderRecord.coupon}` : '' }}</div
+        >Coupon(优惠券码): {{ orderRecord.coupon ? `${orderRecord.coupon}` : '' }}</div
       >
       <div class="leading-[40px] text-xl font-bold text-center text-right">
-        Total Price:
+        Total Price(总价):
         <span class="text-[#ff8c00]">
           {{ numberFixed((+orderRecord.relAmount || 0) / 100, 2) }}
         </span>

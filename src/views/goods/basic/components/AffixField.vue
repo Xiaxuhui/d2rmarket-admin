@@ -1,5 +1,5 @@
 <template>
-  <FormItem label="Affix">
+  <FormItem label="Affix(词缀)">
     <FormTag
       v-model:value="valueArr"
       title="Add Affix"

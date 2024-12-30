@@ -1,8 +1,13 @@
 <template>
   <BasicTable @register="registerTable">
     <template #toolbar>
-      <a-button type="primary" @click="batchUpdate(GOODS_STATE.Publish)">Batch Publish</a-button>
-      <a-button @click="batchUpdate(GOODS_STATE.Unpublish)">Batch Unpublish</a-button>
+      <a-button danger :disabled="!canBatchDelete" @click="batchDelete(GOODS_STATE.Delete)"
+        >Batch Delete(批量删除)</a-button
+      >
+      <a-button type="primary" @click="batchUpdate(GOODS_STATE.Publish)"
+        >Batch Publish(批量发布)</a-button
+      >
+      <a-button @click="batchUpdate(GOODS_STATE.Unpublish)">Batch Unpublish(批量下架)</a-button>
       <a-button
         type="primary"
         @click="
@@ -12,7 +17,7 @@
             });
           }
         "
-        >Create</a-button
+        >Create(创建)</a-button
       >
     </template>
     <template #bodyCell="{ column, record }">
@@ -21,7 +26,7 @@
           stopButtonPropagation
           :actions="[
             {
-              label: 'publish',
+              label: 'publish(上架)',
               icon: 'material-symbols:publish-sharp',
               ifShow: [GOODS_STATE.Unpublish, GOODS_STATE.Init].includes(record.state),
               onClick() {
@@ -29,7 +34,7 @@
               },
             },
             {
-              label: 'unpublish',
+              label: 'unpublish(下架)',
               icon: 'fluent-mdl2:unpublish-content',
               ifShow: record.state === GOODS_STATE.Publish,
               onClick() {
@@ -37,14 +42,14 @@
               },
             },
             {
-              label: 'View',
+              label: 'View(查看)',
               icon: 'hugeicons:view',
               onClick() {
                 view(record.id);
               },
             },
             {
-              label: 'edit',
+              label: 'edit(编辑)',
               icon: 'fe:edit',
               ifShow: [GOODS_STATE.Unpublish, GOODS_STATE.Init].includes(record.state),
               onClick() {
@@ -52,11 +57,12 @@
               },
             },
             {
-              label: 'delete',
+              label: 'delete(删除)',
               icon: 'ic:outline-delete-outline',
               color: 'error',
               popConfirm: {
-                title: 'confirm delete?',
+                title: 'confirm delete(确认删除)?',
+                cancelText: 'cancel(取消)',
                 confirm: () => {
                   publish(record.id, GOODS_STATE.Delete);
                 },
@@ -77,7 +83,12 @@
   import { GOODS_STATE } from '@/contants';
   import { ref } from 'vue';
 
+  defineOptions({
+    name: 'GoodsList',
+  });
+
   const selectRowKeys = ref<Array<string | number>>([]);
+  const canBatchDelete = ref(true);
 
   const [registerTable, { reload }] = useTable({
     title: 'Goods List',
@@ -92,8 +103,15 @@
     pagination: { pageSize: 20 },
     rowSelection: {
       type: 'checkbox',
-      onChange(selectedRowKeys) {
+      onChange(selectedRowKeys, selectedRows) {
         selectRowKeys.value = selectedRowKeys;
+        canBatchDelete.value = true;
+        for (let item of selectedRows) {
+          if (![GOODS_STATE.Unpublish, GOODS_STATE.Init].includes(item.state)) {
+            canBatchDelete.value = false;
+            break;
+          }
+        }
       },
     },
     showSelectionBar: true,
@@ -124,6 +142,12 @@
   };
 
   const batchUpdate = (state) => {
+    updateProductState({ ids: selectRowKeys.value.join(','), state }).then(() => {
+      reload();
+    });
+  };
+
+  const batchDelete = (state) => {
     updateProductState({ ids: selectRowKeys.value.join(','), state }).then(() => {
       reload();
     });

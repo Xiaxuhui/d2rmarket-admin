@@ -1,5 +1,5 @@
 <template>
-  <FormItem label="Image" labelCenter>
+  <FormItem label="Image(图片)" labelCenter>
     <Upload
       name="file"
       :file-list="modelValue"

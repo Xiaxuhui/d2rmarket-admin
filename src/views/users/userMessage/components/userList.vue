@@ -4,7 +4,7 @@
       <div class="min-h-[40px] w-full p-[10px]">
         <Select
           show-search
-          placeholder="Select a person"
+          placeholder="Select a person(选择)"
           style="width: 200px"
           :options="selectOptions"
           optionFilterProp="label"

@@ -1,7 +1,7 @@
 {
-  "goods": "Goods",
-  "goodsList": "Goods List",
-  "basic": "Basic",
-  "basicSetting": "Basic Setting",
-  "goodsSetting": "Goods Setting"
+  "goods": "Goods(商品)",
+  "goodsList": "Goods List(商品列表)",
+  "basic": "Basic(基础)",
+  "basicSetting": "Basic Setting(基础设置)",
+  "goodsSetting": "Goods Setting(商品设置)"
 }

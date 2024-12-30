@@ -16,11 +16,17 @@ const { appDomain } = useGlobSetting();
 
 export const getPromoteFormConfig: () => Partial<FormProps> = () => {
   return {
-    labelWidth: 100,
+    labelWidth: 150,
+    submitButtonOptions: {
+      text: 'Search(查询)',
+    },
+    resetButtonOptions: {
+      text: 'Reset(重置)',
+    },
     schemas: [
       {
         field: `name`,
-        label: `Name:`,
+        label: `Name(名称):`,
         component: 'Input',
         colProps: {
           xl: 12,
@@ -38,7 +44,7 @@ export const getPromoteFormConfig: () => Partial<FormProps> = () => {
       },
       {
         field: `type`,
-        label: `Type:`,
+        label: `Type(类型):`,
         component: 'Select',
         componentProps: {
           options: TYPE_SELECTION,
@@ -50,7 +56,7 @@ export const getPromoteFormConfig: () => Partial<FormProps> = () => {
       },
       {
         field: `quality`,
-        label: `Quality:`,
+        label: `Quality(品质):`,
         component: 'Select',
         componentProps: {
           options: QUALITY_SELECTION,
@@ -62,7 +68,7 @@ export const getPromoteFormConfig: () => Partial<FormProps> = () => {
       },
       {
         field: `role`,
-        label: `RoleSpecific:`,
+        label: `RoleSpecific(角色专属):`,
         component: 'Select',
         componentProps: {
           options: ROLE_SELECTION,
@@ -84,12 +90,12 @@ export function getBasicColumns(): BasicColumn[] {
       fixed: 'left',
     },
     {
-      title: 'name',
+      title: 'name(名称)',
       dataIndex: 'name',
       ellipsis: true,
     },
     {
-      title: 'img',
+      title: 'img(图片)',
       dataIndex: 'imageUrl',
       align: 'center',
       customRender({ value }) {
@@ -110,7 +116,7 @@ export function getBasicColumns(): BasicColumn[] {
       },
     },
     {
-      title: 'type',
+      title: 'type(类型)',
       dataIndex: 'ptype',
       customRender({ value, record }) {
         return (
@@ -121,14 +127,14 @@ export function getBasicColumns(): BasicColumn[] {
       },
     },
     {
-      title: 'quality',
+      title: 'quality(品质)',
       dataIndex: 'quality',
       customRender({ value }) {
         return <div>{QUALITY_TEXT[value] || '-'}</div>;
       },
     },
     {
-      title: 'role specific',
+      title: 'role specific(角色专属)',
       dataIndex: 'role',
       customRender({ value }) {
         if (!value) {
@@ -138,7 +144,7 @@ export function getBasicColumns(): BasicColumn[] {
       },
     },
     {
-      title: 'activity id',
+      title: 'activity id(活动id)',
       dataIndex: 'discounts',
       customRender({ value }) {
         if (!value) {
@@ -148,7 +154,7 @@ export function getBasicColumns(): BasicColumn[] {
       },
     },
     {
-      title: 'ctime',
+      title: 'ctime(创建时间)',
       dataIndex: 'ctime',
       customRender({ value }) {
         return formatToDateTime(value * 1000);
@@ -159,7 +165,7 @@ export function getBasicColumns(): BasicColumn[] {
     //   dataIndex: 'inventory',
     // },
     {
-      title: 'status',
+      title: 'status(状态)',
       dataIndex: 'state',
       customRender({ value }) {
         return STATUS_TEXT[value];
@@ -170,8 +176,8 @@ export function getBasicColumns(): BasicColumn[] {
     //   dataIndex: 'price',
     // },
     {
-      title: 'operation',
-      width: 350,
+      title: 'operation(操作)',
+      width: 400,
       dataIndex: 'operation',
     },
   ];

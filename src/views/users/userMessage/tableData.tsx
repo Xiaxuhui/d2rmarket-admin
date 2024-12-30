@@ -1,87 +1,34 @@
-import { BasicColumn, FormProps } from '@/components/Table';
 import { ORDER_TEXT } from '@/contants';
 import { getColorText } from '@/utils';
 import { formatToDateTime } from '@/utils/dateUtil';
 import { ColumnsType } from 'ant-design-vue/lib/table';
 
-export const getWithDrawFormConfig: () => Partial<FormProps> = () => {
-  return {
-    labelWidth: 100,
-    schemas: [
-      {
-        field: `email`,
-        label: `Email:`,
-        component: 'Input',
-        colProps: {
-          xl: 12,
-          xxl: 8,
-        },
-      },
-      {
-        field: `uid`,
-        label: `Uid:`,
-        component: 'Input',
-        colProps: {
-          xl: 12,
-          xxl: 8,
-        },
-      },
-    ],
-  };
-};
-
-export function getBasicColumns(): BasicColumn[] {
-  return [
-    {
-      title: 'Uid',
-      dataIndex: 'uid',
-      fixed: 'left',
-      width: 200,
-    },
-
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      ellipsis: true,
-    },
-    {
-      title: 'New Message',
-      dataIndex: 'num',
-    },
-    {
-      title: 'Detail',
-      width: 200,
-      dataIndex: 'operation',
-    },
-  ];
-}
-
 export const columns: ColumnsType<any> = [
   {
-    title: 'OrderId',
+    title: 'OrderId(订单id)',
     dataIndex: 'id',
   },
   {
-    title: 'Create Time',
+    title: 'Create Time(创建时间)',
     dataIndex: 'ctime',
     customRender({ value }) {
       return formatToDateTime(value * 1000);
     },
   },
   {
-    title: 'Status',
+    title: 'Status(状态)',
     dataIndex: 'status',
     customRender({ value }) {
       return <div style={{ color: getColorText(value) }}>{ORDER_TEXT[value]}</div>;
     },
   },
   {
-    title: 'Detail',
+    title: 'Detail(详情)',
     dataIndex: 'detail',
     key: 'detail',
   },
   {
-    title: 'Operation',
+    title: 'Operation(操作)',
     dataIndex: 'operation',
   },
 ];

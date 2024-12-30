@@ -107,12 +107,12 @@ export const ROLE_TEXT = {
 };
 
 export const ORDER_TEXT = {
-  [ORDER_STATUS.CANCEL]: 'cancel',
-  [ORDER_STATUS.UNPAID]: 'unpaid',
-  [ORDER_STATUS.PAID]: 'paid',
-  [ORDER_STATUS.BE_SENDING]: 'sent',
-  [ORDER_STATUS.DONE]: 'sent',
-  [ORDER_STATUS.OVERTIME]: 'overtime',
+  [ORDER_STATUS.CANCEL]: 'cancel(取消)',
+  [ORDER_STATUS.UNPAID]: 'unpaid(待支付)',
+  [ORDER_STATUS.PAID]: 'paid(已支付)',
+  [ORDER_STATUS.BE_SENDING]: 'sent(已发送)',
+  [ORDER_STATUS.DONE]: 'sent(已发送)',
+  [ORDER_STATUS.OVERTIME]: 'overtime(超时)',
 };
 
 export const ORDER_SELECTION = [
@@ -175,22 +175,22 @@ export const ROLE_SELECTION = [
 
 export const TYPE_SELECTION = [
   {
-    label: 'Misc',
+    label: 'MISC(杂项)',
     value: TYPE_ENUM.MISC,
     key: '1',
   },
   {
-    label: 'Armor',
+    label: 'Armor(护甲)',
     value: TYPE_ENUM.Armor,
     key: '2',
   },
   {
-    label: 'Weapon',
+    label: 'Weapon（武器）',
     value: TYPE_ENUM.Weapon,
     key: '3',
   },
   {
-    label: 'Currency',
+    label: 'Currency(通货)',
     value: TYPE_ENUM.Currency,
     key: '4',
   },

@@ -7,7 +7,7 @@
       :disabled="!!baseId && !isEdit"
     >
       <template #resetBefore>
-        <a-button class="mr-2" @click="back">back</a-button>
+        <a-button class="mr-2" @click="back">back(返回)</a-button>
       </template>
     </BasicForm>
   </div>
@@ -63,7 +63,7 @@
       {
         field: 'divider-basic',
         component: 'Divider',
-        label: 'ADD BASE GOODS',
+        label: 'ADD BASE GOODS(添加基础商品)',
         colProps: {
           span: 24,
         },
@@ -71,7 +71,7 @@
       {
         field: 'name',
         component: 'Input',
-        label: 'Name:',
+        label: 'Name(名称):',
         required: true,
         colProps: {
           span: 8,
@@ -80,7 +80,7 @@
       {
         field: 'type',
         component: 'Select',
-        label: 'Type:',
+        label: 'Type(类型):',
         required: true,
         colProps: {
           span: 8,
@@ -92,7 +92,7 @@
       {
         field: 'imgs',
         component: 'Input',
-        label: 'Image:',
+        label: 'Image(图片):',
         colProps: {
           span: 20,
         },
@@ -103,7 +103,7 @@
       {
         field: 'affix',
         component: 'Input',
-        label: 'Affix:',
+        label: 'Affix(词缀):',
         colProps: {
           span: 20,
         },
@@ -122,7 +122,7 @@
       span: 12,
     },
     submitButtonOptions: {
-      text: 'Submit',
+      text: 'Submit(提交)',
     },
     showSubmitButton: Boolean(!baseId || isEdit),
     showResetButton: false,

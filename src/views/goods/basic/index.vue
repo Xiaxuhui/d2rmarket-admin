@@ -11,7 +11,7 @@
               });
             }
           "
-          >Create</a-button
+          >Create(创建)</a-button
         >
       </template>
       <template #bodyCell="{ column, record }">
@@ -20,21 +20,21 @@
             stopButtonPropagation
             :actions="[
               {
-                label: 'Edit',
+                label: 'Edit(编辑)',
                 icon: 'fe:edit',
                 onClick() {
                   editBasic(record.id);
                 },
               },
               {
-                label: 'View',
+                label: 'View(查看)',
                 icon: 'hugeicons:view',
                 onClick() {
                   viewBasic(record.id);
                 },
               },
               {
-                label: 'Delete',
+                label: 'Delete(删除)',
                 icon: 'material-symbols:delete-outline',
                 color: 'error',
                 popConfirm: {
@@ -57,6 +57,10 @@
   import { useGo } from '@/hooks/web/usePage';
   import { PageEnum } from '@/enums/pageEnum';
   import { baseList, deletePropBase } from '@/api/goods';
+
+  defineOptions({
+    name: 'Basic',
+  });
 
   const [register, { reload }] = useTable({
     title: 'Basic Goods',

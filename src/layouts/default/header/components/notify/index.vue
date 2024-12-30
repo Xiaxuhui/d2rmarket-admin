@@ -44,7 +44,6 @@
   watch(
     () => order.orderCount,
     (val) => {
-      console.log('order.orderCount', order.orderCount);
       if (val) {
         listData.value[0].list.push({
           id: '1',
