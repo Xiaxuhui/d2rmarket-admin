@@ -12,6 +12,8 @@
           :selections="currentSelections"
           :columns="affixColumn"
           :disabled="!!goodsId && !isEdit"
+          :model="model"
+          @refresh="refreshAffixList"
         />
       </template>
       <template #localRequire="{ model, field }">
@@ -32,7 +34,14 @@
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { computed, onMounted, ref, unref, watch } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import { QUALITY_SELECTION, ROLE_SELECTION, TAGS_OPTIONS } from '@/contants';
+  import {
+    QUALITY_SELECTION,
+    ROLE_SELECTION,
+    TAGS_OPTIONS,
+    RUNE_WORDS_SELECTION,
+    QUALITY_ENUM,
+    ROLE_SKILL_SELECTION,
+  } from '@/contants';
   import ImgSelector from './components/imgSelector.vue';
   import FieldTable from './components/fieldTable.vue';
   import uniteTable from './components/uniteTable.vue';
@@ -80,6 +89,8 @@
   const discountLoaded = ref(false);
 
   const activityDiscount = ref<number>();
+
+  const skillOptions = ref([]);
 
   const priceColumns = [
     {
@@ -210,6 +221,27 @@
       },
     },
     {
+      field: 's1',
+      component: 'Select',
+      label: 'RuneWords(符文之语):',
+      colProps: {
+        span: 8,
+      },
+      componentProps: {
+        options: RUNE_WORDS_SELECTION,
+        getPopupContainer(trigger) {
+          return trigger.parentNode;
+        },
+        showSearch: true,
+        filterOption(input: string, option: any) {
+          return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        },
+      },
+      ifShow: ({ values }) => {
+        return values.quality === QUALITY_ENUM.Runewords;
+      },
+    },
+    {
       field: 'sundry',
       component: 'Switch',
       label: 'Other(其他)',
@@ -241,8 +273,41 @@
       component: 'Select',
       label: 'Role(角色):',
       defaultValue: undefined,
+      componentProps({ formModel }) {
+        return {
+          options: ROLE_SELECTION,
+          getPopupContainer(trigger) {
+            return trigger.parentNode;
+          },
+          onChange(val) {
+            skillOptions.value = ROLE_SKILL_SELECTION[val as number];
+            if (!val) {
+              formModel.s2 = undefined;
+            }
+            updateSchema({
+              field: 's2',
+              defaultValue: undefined,
+              componentProps: {
+                options: ROLE_SKILL_SELECTION[val as number],
+              },
+            });
+          },
+        };
+      },
+      colProps: {
+        span: 8,
+      },
+      ifShow: ({ values }) => {
+        return values.specific;
+      },
+    },
+    {
+      field: 's2',
+      component: 'Select',
+      label: 'Skill(技能):',
+      defaultValue: undefined,
       componentProps: {
-        options: ROLE_SELECTION,
+        options: skillOptions.value,
         getPopupContainer(trigger) {
           return trigger.parentNode;
         },
@@ -375,6 +440,8 @@
       discounts,
       tags,
       hot,
+      s1,
+      s2,
     } = res;
     const [strength, level, dexterity] = required.split(',');
     const pricesMap = (prices || []).reduce((prev, nxt) => {
@@ -393,6 +460,8 @@
       hot: Boolean(hot),
       discounts,
       tags,
+      s1: s1 ? +s1 : undefined,
+      s2: s2 ? +s2 : undefined,
       required: {
         [REQUIRE_TYPE.STRENGTH]: strength,
         [REQUIRE_TYPE.LEVEL]: level,
@@ -491,22 +560,31 @@
         colProps: {
           span: 8,
         },
-        componentProps: {
-          options: goods.typeOption,
-          onChange: (_, opt) => {
-            if (opt && opt[1]) {
-              currentType.value = `${opt[0].value}${opt[1].value}`;
-              currentImgList.value = opt[1].imgList;
-              currentSelections.value = opt[1].affixList;
-            } else {
-              currentType.value = '';
-            }
-          },
-          showSearch: {
-            // 自定义搜索逻辑
-            filter: (inputValue, path) =>
-              path.some((option) => option.label.toLowerCase().includes(inputValue.toLowerCase())),
-          },
+        componentProps() {
+          return {
+            options: goods.typeOption,
+            onChange: (val, opt) => {
+              if (opt && opt[1]) {
+                currentType.value = `${opt[0].value}${opt[1].value}`;
+                currentImgList.value = opt[1].imgList;
+                currentSelections.value = opt[1].affixList;
+              } else {
+                currentType.value = '';
+              }
+              if (val && val[0] === 1 && val[1] === 2053) {
+                setFieldsValue({
+                  specific: true,
+                });
+              }
+            },
+            showSearch: {
+              // 自定义搜索逻辑
+              filter: (inputValue, path) =>
+                path.some((option) =>
+                  option.label.toLowerCase().includes(inputValue.toLowerCase()),
+                ),
+            },
+          };
         },
       });
     });
@@ -515,6 +593,20 @@
     });
     initData();
   });
+
+  const refreshAffixList = async (channelName: string[]) => {
+    await goods.getBaseList();
+    const [ptype, type] = channelName;
+    for (let item of goods.typeOption) {
+      if (+ptype === item.value && item.children) {
+        for (let child of item.children) {
+          if (+type === child.value) {
+            currentSelections.value = child.affixList;
+          }
+        }
+      }
+    }
+  };
 
   const formatValues = (values: any) => {
     const {
@@ -531,6 +623,8 @@
       discounts,
       hot,
       tags,
+      s1,
+      s2,
     } = values;
     const [, type] = channelName || [];
     return {
@@ -543,6 +637,8 @@
       discounts,
       hot: hot ? 1 : 0,
       tags: tags || [],
+      s1,
+      s2,
       attrs: Object.entries(affix).map(([key, item]) => {
         return {
           aid: key,

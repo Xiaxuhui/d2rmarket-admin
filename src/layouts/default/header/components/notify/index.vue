@@ -41,7 +41,7 @@
 
   const order = useOrderStore();
 
-  const orderTip = ref(new Audio('/src/assets/audio/order.mp3'));
+  const orderTip = ref(new Audio('/src/assets/audio/order.m4a'));
 
   watch(
     () => order.orderCount,
@@ -65,7 +65,6 @@
   );
 
   onMounted(async () => {
-    console.log('orderTip.value', orderTip.value);
     order.getOrderCount();
   });
 

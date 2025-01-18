@@ -1,20 +1,23 @@
 <template>
   <div>
-    <ApiSelect
-      :api="optionsListApi"
-      v-model:value="selectValue"
-      showSearch
-      alwaysLoad
-      optionFilterProp="label"
-      labelField="label"
-      valueField="value"
-      @options-change="optionsChange"
-      :getPopupContainer="
-        (trigger) => {
-          return trigger.parentNode;
-        }
-      "
-    />
+    <div class="flex items-center">
+      <ApiSelect
+        :api="optionsListApi"
+        v-model:value="selectValue"
+        showSearch
+        alwaysLoad
+        optionFilterProp="label"
+        labelField="label"
+        valueField="value"
+        @options-change="optionsChange"
+        :getPopupContainer="
+          (trigger) => {
+            return trigger.parentNode;
+          }
+        "
+      />
+      <a class="ml-2" @click="refreshList">refresh</a>
+    </div>
     <UniteTable
       class="mt-[10px]"
       v-model="valueMap"
@@ -46,9 +49,13 @@
       default: () => [],
     },
     disabled: Boolean,
+    model: {
+      type: Object as PropType<{ [key: string]: any }>,
+      default: () => ({}),
+    },
   });
 
-  const emits = defineEmits(['update:modelValue']);
+  const emits = defineEmits(['update:modelValue', 'refresh']);
 
   const dataSource = ref<{ name: string; id: number; key?: number; [key: string]: any }[]>([]);
 
@@ -78,6 +85,12 @@
     return props.selections.map((item) => {
       return { label: item.label, value: item.value + '' };
     });
+  };
+
+  const refreshList = () => {
+    if (props.model.channelName) {
+      emits('refresh', props.model.channelName);
+    }
   };
 
   const optionsChange = (val) => {

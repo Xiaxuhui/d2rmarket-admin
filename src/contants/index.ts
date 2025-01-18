@@ -41,7 +41,6 @@ export enum ROLE_ENUM {
   Paladin,
   Necro,
   Sorceress,
-  Merc,
 }
 
 export enum TAGS_ENUM {
@@ -52,6 +51,29 @@ export enum TAGS_ENUM {
   Prevent_Monster_Healing,
   Ignore_Targets_Defense,
   Half_Freeze_Duration,
+}
+
+export enum RUNE_WORDS {
+  SPIRIT = 1,
+  INFINITY,
+  ENIGMA,
+  FORTITUDE,
+  GRIEF,
+  CALL_TO_ARMS,
+  MOSIC,
+  METAMORPHOSIS,
+  PLAGUE,
+  MIST,
+  DELIRIUM,
+  CURE,
+  HEART_OF_THE_OAK,
+  DEATH,
+  EXILE,
+  HONOR,
+  FAITH,
+  PHOENIX,
+  DOOM,
+  BEAST,
 }
 
 export const TAGS_TEXT = {
@@ -103,7 +125,107 @@ export const ROLE_TEXT = {
   [ROLE_ENUM.Paladin]: 'Paladin',
   [ROLE_ENUM.Necro]: 'Necro',
   [ROLE_ENUM.Sorceress]: 'Sorceress',
-  [ROLE_ENUM.Merc]: 'Merc',
+};
+
+export const ROLE_SKILL_SELECTION = {
+  [ROLE_ENUM.Sorceress]: [
+    {
+      label: 'Cold',
+      value: 1,
+    },
+    {
+      label: 'Lightning',
+      value: 2,
+    },
+    {
+      label: 'Fire',
+      value: 3,
+    },
+  ],
+  [ROLE_ENUM.Amazon]: [
+    {
+      label: 'Javelin and Spear',
+      value: 1,
+    },
+    {
+      label: 'Passive and Magic',
+      value: 2,
+    },
+    {
+      label: 'Bow and Crossbow',
+      value: 3,
+    },
+  ],
+  [ROLE_ENUM.Assassin]: [
+    {
+      label: 'Martial Arts',
+      value: 1,
+    },
+    {
+      label: 'Shadow Disciplines',
+      value: 2,
+    },
+    {
+      label: 'Traps',
+      value: 3,
+    },
+  ],
+  [ROLE_ENUM.Barbarian]: [
+    {
+      label: 'Combat',
+      value: 1,
+    },
+    {
+      label: 'Combat Masteries',
+      value: 2,
+    },
+    {
+      label: 'Warcry',
+      value: 3,
+    },
+  ],
+  [ROLE_ENUM.Druid]: [
+    {
+      label: 'Elemental',
+      value: 1,
+    },
+    {
+      label: 'Shapeshifting',
+      value: 2,
+    },
+    {
+      label: 'Summoning',
+      value: 3,
+    },
+  ],
+  [ROLE_ENUM.Paladin]: [
+    {
+      label: 'Defensive Auras',
+      value: 1,
+    },
+    {
+      label: 'Offensive Auras',
+      value: 2,
+    },
+    {
+      label: 'Combat',
+      value: 3,
+    },
+  ],
+  [ROLE_ENUM.Necro]: [
+    {
+      label: 'Summoning',
+      value: 1,
+    },
+    {
+      label: 'Poison and Bone Spells',
+      value: 2,
+    },
+    {
+      label: 'Curses',
+      value: 3,
+    },
+  ],
 };
 
 export const ORDER_TEXT = {
@@ -127,6 +249,118 @@ export const ORDER_SELECTION = [
   {
     label: ORDER_TEXT[ORDER_STATUS.DONE],
     value: `${ORDER_STATUS.DONE},${ORDER_STATUS.BE_SENDING}`,
+  },
+];
+
+const RUNE_WORDS_TEXT = {
+  [RUNE_WORDS.SPIRIT]: 'Spirit',
+  [RUNE_WORDS.INFINITY]: 'Infinity',
+  [RUNE_WORDS.ENIGMA]: 'Enigma',
+  [RUNE_WORDS.FORTITUDE]: 'Fortitude',
+  [RUNE_WORDS.GRIEF]: 'Grief',
+  [RUNE_WORDS.CALL_TO_ARMS]: 'Call To Arms',
+  [RUNE_WORDS.MOSIC]: 'Mosic',
+  [RUNE_WORDS.METAMORPHOSIS]: 'Metamorphosis',
+  [RUNE_WORDS.PLAGUE]: 'Plague',
+  [RUNE_WORDS.MIST]: 'Mist',
+  [RUNE_WORDS.DELIRIUM]: 'Delirium',
+  [RUNE_WORDS.CURE]: 'Cure',
+  [RUNE_WORDS.HEART_OF_THE_OAK]: 'Heart Of The Oak',
+  [RUNE_WORDS.DEATH]: 'Death',
+  [RUNE_WORDS.EXILE]: 'Exile',
+  [RUNE_WORDS.HONOR]: 'Honor',
+  [RUNE_WORDS.FAITH]: 'Faith',
+  [RUNE_WORDS.PHOENIX]: 'Phoenix',
+  [RUNE_WORDS.DOOM]: 'Doom',
+  [RUNE_WORDS.BEAST]: 'Beast',
+};
+
+export const RUNE_WORDS_SELECTION = [
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.SPIRIT],
+    value: RUNE_WORDS.SPIRIT,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.INFINITY],
+    value: RUNE_WORDS.INFINITY,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.ENIGMA],
+    value: RUNE_WORDS.ENIGMA,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.FORTITUDE],
+    value: RUNE_WORDS.FORTITUDE,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.GRIEF],
+    value: RUNE_WORDS.GRIEF,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.CALL_TO_ARMS],
+    value: RUNE_WORDS.CALL_TO_ARMS,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.MOSIC],
+    value: RUNE_WORDS.MOSIC,
+  },
+
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.METAMORPHOSIS],
+    value: RUNE_WORDS.METAMORPHOSIS,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.PLAGUE],
+    value: RUNE_WORDS.PLAGUE,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.MIST],
+    value: RUNE_WORDS.MIST,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.DELIRIUM],
+    value: RUNE_WORDS.DELIRIUM,
+  },
+
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.CURE],
+    value: RUNE_WORDS.CURE,
+  },
+
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.HEART_OF_THE_OAK],
+    value: RUNE_WORDS.HEART_OF_THE_OAK,
+  },
+
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.DEATH],
+    value: RUNE_WORDS.DEATH,
+  },
+
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.EXILE],
+    value: RUNE_WORDS.EXILE,
+  },
+
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.HONOR],
+    value: RUNE_WORDS.HONOR,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.FAITH],
+    value: RUNE_WORDS.FAITH,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.PHOENIX],
+    value: RUNE_WORDS.PHOENIX,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.DOOM],
+    value: RUNE_WORDS.DOOM,
+  },
+  {
+    label: RUNE_WORDS_TEXT[RUNE_WORDS.BEAST],
+    value: RUNE_WORDS.BEAST,
   },
 ];
 
@@ -165,11 +399,6 @@ export const ROLE_SELECTION = [
     label: ROLE_TEXT[ROLE_ENUM.Sorceress],
     value: ROLE_ENUM.Sorceress,
     key: ROLE_ENUM.Sorceress,
-  },
-  {
-    label: ROLE_TEXT[ROLE_ENUM.Merc],
-    value: ROLE_ENUM.Merc,
-    key: ROLE_ENUM.Merc,
   },
 ];
 
