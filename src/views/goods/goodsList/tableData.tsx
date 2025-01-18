@@ -171,13 +171,16 @@ export function getBasicColumns(): BasicColumn[] {
         return STATUS_TEXT[value];
       },
     },
-    // {
-    //   title: 'price',
-    //   dataIndex: 'price',
-    // },
+    {
+      title: 'hot(热销状态)',
+      dataIndex: 'hot',
+      customRender({ value }) {
+        return value ? 'hot sale' : 'Non-hot';
+      },
+    },
     {
       title: 'operation(操作)',
-      width: 400,
+      width: 500,
       dataIndex: 'operation',
     },
   ];

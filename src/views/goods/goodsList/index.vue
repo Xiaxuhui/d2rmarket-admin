@@ -57,6 +57,18 @@
               },
             },
             {
+              label: 'hot(热销)',
+              icon: 'material-symbols:local-fire-department',
+              ifShow: !record.hot,
+              onClick() {},
+            },
+            {
+              label: 'hot(取消热销)',
+              ifShow: !!record.hot,
+              icon: 'material-symbols:local-fire-department',
+              onClick() {},
+            },
+            {
               label: 'delete(删除)',
               icon: 'ic:outline-delete-outline',
               color: 'error',
